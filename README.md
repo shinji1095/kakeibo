@@ -28,11 +28,35 @@
 # フォルダ構成
 
 ```shell
+
 lib/
+├── main.dart
+├── app.dart
+├── core/
+│   ├── theme/
+│   │   ├── app_theme.dart       // テーマクラス（ThemeDataを管理）
+│   │   └── theme_extension.dart // extensionでスタイルや色を管理
+│   ├── utils/
+│   │   ├── date_utils.dart      // 日付関連のユーティリティ（例）
+│   │   └── format_utils.dart    // 文字列フォーマット関連（例）
+│   └── constants/
+│       └── app_colors.dart      // 色を定数で管理（オプション）
+├── presentation/
+│   ├── pages/
+│   │   ├── input/
+│   │   │   └── input_page.dart
+│   │   ├── calendar/
+│   │   │   └── calendar_page.dart
+│   │   ├── report/
+│   │   │   └── report_page.dart
+│   │   └── assets/
+│   │       └── assets_page.dart
+│   └── widgets/
+│       └── bottom_navigation.dart
 ├── application/
 ├── data/
-├── presentation/
 └── domain/
+
 
 ```
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakeibo/presentation/widgets/bottom_navigation.dart';
+import 'package:kakeibo/presentation/widgets/category_button.dart';
 
 class InputPage extends StatefulWidget {
   const InputPage({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _InputPageState extends State<InputPage> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('シンプル家計簿'),
+        title: const Text('35家計簿フトコロ'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -63,9 +64,9 @@ class _InputPageState extends State<InputPage> with SingleTickerProviderStateMix
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.orange,
-                ),
+                // style: ElevatedButton.styleFrom(
+                //   foregroundColor: Theme.of(context).elevatedButtonTheme.,
+                // ),
                 onPressed: () {
                   // TODO: 入力処理
                 },
@@ -111,10 +112,10 @@ class ExpenseInputView extends StatelessWidget {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.shade100,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   color: Colors.orange.shade100,
+                    //   borderRadius: BorderRadius.circular(4),
+                    // ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
@@ -152,12 +153,11 @@ class ExpenseInputView extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _CategoryButton(label: '食費', icon: Icons.restaurant),
-              _CategoryButton(label: '日用品', icon: Icons.shopping_basket),
-              _CategoryButton(label: '交通費', icon: Icons.directions_bus),
-              _CategoryButton(label: '趣味', icon: Icons.music_note),
-              _CategoryButton(label: '編集する', icon: Icons.edit),
-              // ...など適宜
+              CategoryButton(label: '食費', icon: Icons.restaurant),
+              CategoryButton(label: '日用品', icon: Icons.shopping_basket),
+              CategoryButton(label: '交通費', icon: Icons.directions_bus),
+              CategoryButton(label: '趣味', icon: Icons.music_note),
+              CategoryButton(label: '編集する', icon: Icons.edit),
             ],
           ),
         ],
@@ -187,10 +187,10 @@ class IncomeInputView extends StatelessWidget {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.shade100,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   color: Colors.orange.shade100,
+                    //   borderRadius: BorderRadius.circular(4),
+                    // ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
@@ -228,44 +228,16 @@ class IncomeInputView extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _CategoryButton(label: '給料', icon: Icons.account_balance_wallet),
-              _CategoryButton(label: 'おこづかい', icon: Icons.savings),
-              _CategoryButton(label: '賞与', icon: Icons.card_giftcard),
-              _CategoryButton(label: '副業', icon: Icons.store),
-              _CategoryButton(label: '投資', icon: Icons.monetization_on),
-              _CategoryButton(label: '臨時収入', icon: Icons.volunteer_activism),
-              _CategoryButton(label: '編集する', icon: Icons.edit),
-              // ...など適宜
+              CategoryButton(label: '給料', icon: Icons.account_balance_wallet),
+              CategoryButton(label: 'おこづかい', icon: Icons.savings),
+              CategoryButton(label: '賞与', icon: Icons.card_giftcard),
+              CategoryButton(label: '副業', icon: Icons.store),
+              CategoryButton(label: '投資', icon: Icons.monetization_on),
+              CategoryButton(label: '臨時収入', icon: Icons.volunteer_activism),
+              CategoryButton(label: '編集する', icon: Icons.edit),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-// カテゴリボタンの例
-class _CategoryButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-
-  const _CategoryButton({
-    Key? key,
-    required this.label,
-    required this.icon,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: () {
-        // TODO: カテゴリ選択処理
-      },
-      icon: Icon(icon, color: Colors.orange),
-      label: Text(label),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.orange,
-        side: const BorderSide(color: Colors.orange),
       ),
     );
   }
