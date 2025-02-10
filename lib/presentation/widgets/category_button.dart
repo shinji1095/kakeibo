@@ -18,12 +18,12 @@ class CategoryButton extends StatelessWidget {
       onPressed: () {
         // TODO: カテゴリ選択処理
       },
-      icon: Icon(icon, color: Theme.of(context).primaryColor),
-      label: Text(label),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: Theme.of(context).secondaryHeaderColor,
-        side: const BorderSide(color:AppColors.secondary),
-      ),
+      icon: Icon(icon, color: AppColors.secondary),
+      label: Text(label, style: const TextStyle(color: Colors.black87)),
+      // // style: OutlinedButton.styleFrom(
+      // //   foregroundColor: Theme.of(context).secondaryHeaderColor,
+      // //   side: const BorderSide(color:AppColors.secondary),
+      // ),
     );
   }
 }

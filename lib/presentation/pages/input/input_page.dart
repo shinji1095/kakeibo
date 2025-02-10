@@ -38,6 +38,7 @@ class _InputPageState extends State<InputPage> with SingleTickerProviderStateMix
     return Scaffold(
       appBar: AppBar(
         title: const Text('35家計簿フトコロ'),
+        // backgroundColor: Colors.blue,
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -119,7 +120,12 @@ class ExpenseInputView extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
-                        Text('2025年2月4日 (火)'),
+                        Text('2025年2月4日 (火)',
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87
+                          ),
+                        ),
                         Icon(Icons.calendar_today, size: 20),
                       ],
                     ),

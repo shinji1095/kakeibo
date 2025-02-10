@@ -5,6 +5,7 @@ class AppTheme {
   // アプリ全体で使用するカラーパレット
   static const Color primaryColor = AppColors.primary;
   static const Color backgroundColor = AppColors.background;
+  static const Color errorColor = AppColors.error;
   static const Color textPrimaryColor = AppColors.textPrimary;
   static const Color textSecondaryColor = AppColors.textSecondary;
 
@@ -13,7 +14,7 @@ class AppTheme {
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(fontSize: 16, color: textPrimaryColor),
+      bodyLarge: TextStyle(fontSize: 16, color: Colors.lightBlue),
       bodyMedium: TextStyle(fontSize: 14, color: textSecondaryColor),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -24,7 +25,7 @@ class AppTheme {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: primaryColor,
+        foregroundColor: textPrimaryColor,
         side: const BorderSide(color: primaryColor),
         textStyle: const TextStyle(fontSize: 14),
       ),
@@ -42,7 +43,11 @@ class AppTheme {
       ),
       labelStyle: TextStyle(color: textPrimaryColor),
       hintStyle: TextStyle(color: textSecondaryColor),
-    )
+    ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: primaryColor,
+        foregroundColor: textPrimaryColor,
+      )
   );
 
   // ダークテーマ
