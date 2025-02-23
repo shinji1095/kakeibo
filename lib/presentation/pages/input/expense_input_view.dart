@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kakeibo/presentation/widgets/category_button.dart'; // CategoryButtonをインポート
 
-class IncomeInputView extends StatelessWidget {
-  const IncomeInputView({Key? key}) : super(key: key);
+class ExpenseInputView extends StatelessWidget {
+  const ExpenseInputView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,23 +17,27 @@ class IncomeInputView extends StatelessWidget {
           const SizedBox(height: 16),
 
           // メモ
-          _buildTextField(context, label: 'メモ', hint: '未入力'),
+          _buildTextField(context,label: 'メモ', hint: '未入力'),
 
           const SizedBox(height: 16),
 
           // 金額
-          _buildTextField(context, label: '収入', hint: '0', suffix: '円', isNumber: true),
+          _buildTextField(context,label: '支出', hint: '0', suffix: '円', isNumber: true),
 
           const SizedBox(height: 16),
 
           // カテゴリ
           _buildCategorySection([
-            const CategoryButton(label: '給料', icon: Icons.account_balance_wallet),
-            const CategoryButton(label: 'おこづかい', icon: Icons.savings),
-            const CategoryButton(label: '賞与', icon: Icons.card_giftcard),
-            const CategoryButton(label: '副業', icon: Icons.store),
-            const CategoryButton(label: '投資', icon: Icons.monetization_on),
-            const CategoryButton(label: '臨時収入', icon: Icons.volunteer_activism),
+            const CategoryButton(label: '食費', icon: Icons.restaurant),
+            const CategoryButton(label: '日用品', icon: Icons.shopping_basket),
+            const CategoryButton(label: '美容', icon: Icons.brush),
+            const CategoryButton(label: '衣服', icon: Icons.checkroom),
+            const CategoryButton(label: '交際費', icon: Icons.group),
+            const CategoryButton(label: '医療費', icon: Icons.medical_services),
+            const CategoryButton(label: '教育費', icon: Icons.school),
+            const CategoryButton(label: '光熱費', icon: Icons.lightbulb),
+            const CategoryButton(label: '通信費', icon: Icons.phone),
+            const CategoryButton(label: '住居費', icon: Icons.home),
             const CategoryButton(label: '編集する', icon: Icons.edit),
           ]),
         ],
@@ -41,7 +45,7 @@ class IncomeInputView extends StatelessWidget {
     );
   }
 
-  // 日付選択用のウィジェット
+  // 以下、IncomeInputViewのものを再利用
   Widget _buildDatePicker(BuildContext context, String label, String date) {
     return Row(
       children: [
@@ -57,7 +61,7 @@ class IncomeInputView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.blueAccent),
+                border: Border.all(color: Colors.blue),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,7 +77,6 @@ class IncomeInputView extends StatelessWidget {
     );
   }
 
-  // テキストフィールド
   Widget _buildTextField(BuildContext context, {
     required String label,
     required String hint,
@@ -92,7 +95,6 @@ class IncomeInputView extends StatelessWidget {
 
 
 
-  // カテゴリ選択セクション
   Widget _buildCategorySection(List<Widget> categories) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

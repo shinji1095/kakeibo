@@ -3,6 +3,7 @@ import 'package:kakeibo/presentation/pages/input/input_page.dart';
 import 'package:kakeibo/presentation/pages/calendar/calendar_page.dart';
 import 'package:kakeibo/presentation/pages/report/report_page.dart';
 import 'package:kakeibo/presentation/pages/assets/assets_page.dart';
+import 'package:kakeibo/presentation/pages/report/report_page.dart';
 import 'package:kakeibo/core/thema/app_thema.dart';
 
 class App extends StatelessWidget {

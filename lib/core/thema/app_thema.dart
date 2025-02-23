@@ -13,16 +13,19 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
+
     textTheme: const TextTheme(
       bodyLarge: TextStyle(fontSize: 16, color: Colors.lightBlue),
       bodyMedium: TextStyle(fontSize: 14, color: textSecondaryColor),
     ),
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor, // ボタンの背景色
         foregroundColor: Colors.white, // ボタン内の文字色
       )
     ),
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: textPrimaryColor,
@@ -30,24 +33,46 @@ class AppTheme {
         textStyle: const TextStyle(fontSize: 14),
       ),
     ),
-    inputDecorationTheme: const InputDecorationTheme(
+
+    // テキストフィールドの統一スタイル
+    inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(color: primaryColor),
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade400),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        borderSide: BorderSide(color: primaryColor, width: 2),
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.orange, width: 2),
       ),
-      labelStyle: TextStyle(color: textPrimaryColor),
-      hintStyle: TextStyle(color: textSecondaryColor),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      labelStyle: TextStyle(color: Colors.black87, fontSize: 14),
     ),
+
       appBarTheme: const AppBarTheme(
         backgroundColor: primaryColor,
         foregroundColor: textPrimaryColor,
-      )
+      ),
+
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.white, // ボトムバーの背景色
+      selectedItemColor: Colors.blueAccent, // 選択中のアイテムの色
+      unselectedItemColor: Colors.grey, // 未選択アイテムの色
+      selectedLabelStyle: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: Colors.blue, // 選択中の文字色
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: 12,
+        color: Colors.black, // 未選択の文字色
+      ),
+    ),
+
   );
 
   // ダークテーマ
@@ -62,6 +87,20 @@ class AppTheme {
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.black,
       foregroundColor: Colors.white,
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.black, // ボトムバー背景色
+      selectedItemColor: Colors.orange, // 選択されたアイテムの色
+      unselectedItemColor: Colors.black87, // 未選択のアイテムの色
+      selectedLabelStyle: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: Colors.orange,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: 12,
+        color: Colors.black87,
+      ),
     ),
   );
 
