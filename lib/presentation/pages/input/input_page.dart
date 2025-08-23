@@ -1,78 +1,222 @@
 import 'package:flutter/material.dart';
-import 'package:kakeibo/presentation/widgets/bottom_navigation.dart';
-import 'package:kakeibo/presentation/widgets/category_button.dart';
-import 'package:kakeibo/presentation/pages/input/income_input_view.dart';
-import 'package:flutter/material.dart';
-import 'package:kakeibo/presentation/widgets/base_page.dart';
-import 'package:kakeibo/presentation/pages/input/expense_input_view.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakeibo/domain/entities/transaction.dart';
+import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 
-class InputPage extends StatefulWidget {
-  const InputPage({Key? key}) : super(key: key);
+class InputPage extends ConsumerStatefulWidget {
+  const InputPage({super.key});
 
   @override
-  State<InputPage> createState() => _InputPageState();
+  ConsumerState<InputPage> createState() => _InputPageState();
 }
 
-class _InputPageState extends State<InputPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _InputPageState extends ConsumerState<InputPage> with SingleTickerProviderStateMixin {
+  late TabController _tab;
+
+  final _amountCtrl = TextEditingController();
+  final _memoCtrl = TextEditingController();
+  DateTime _date = DateTime.now();
+  int _categoryId = 1; // default seed cat id
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this); // 支出・収入の2タブ
-    _tabController.addListener(() {
-      setState(() {}); // タブ切り替え時に画面を再描画
-    });
+    _tab = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tab.dispose();
+    _amountCtrl.dispose();
+    _memoCtrl.dispose();
     super.dispose();
   }
 
-  // ボタンのラベルをタブによって変える例
-  String get submitButtonLabel {
-    return _tabController.index == 0 ? '支出を入力する' : '収入を入力する';
+  Future<void> _submit(TransactionType type) async {
+    final amount = int.tryParse(_amountCtrl.text) ?? 0;
+    if (amount == 0) return;
+    final tx = KakeiboTransaction(
+      date: _date,
+      amount: Money(amount),
+      memo: _memoCtrl.text,
+      categoryId: _categoryId,
+      type: type,
+    );
+    await ref.read(addTransactionProvider).call(tx);
+    _amountCtrl.clear();
+    _memoCtrl.clear();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(type == TransactionType.expense ? '支出を保存しました' : '収入を保存しました')));
+    }
+    ref.invalidate(transactionsProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      currentIndex: 0, // 「入力」タブのインデックス
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('35家計簿フトコロ'),
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(text: '支出'),
-              Tab(text: '収入'),
-            ],
+    return Scaffold(
+      appBar: AppBar(title: const Text('入力')),
+      body: Column(
+        children: [
+          TabBar(
+            controller: _tab,
+            tabs: const [Tab(text: '支出'), Tab(text: '収入')],
           ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          children: const [
-            ExpenseInputView(),
-            IncomeInputView(),
-          ],
-        ),
-        floatingActionButton: SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: 入力処理
-              },
-              child: Text(submitButtonLabel),
+          Expanded(
+            child: TabBarView(
+              controller: _tab,
+              children: [
+                _buildForm(TransactionType.expense),
+                _buildForm(TransactionType.income),
+              ],
             ),
           ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        ],
       ),
+      bottomNavigationBar: const _BottomNav(currentIndex: 0),
+    );
+  }
+
+  Widget _buildForm(TransactionType type) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _amountCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: '金額（円）'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: InkWell(
+                  onTap: () async {
+                    final picked = await showDatePicker(
+                      context: context,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      initialDate: _date,
+                      locale: const Locale('ja', 'JP'),
+                    );
+                    if (picked != null) setState(() => _date = picked);
+                  },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(labelText: '日付'),
+                    child: Text('${_date.year}年${_date.month}月${_date.day}日'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _memoCtrl,
+            decoration: const InputDecoration(labelText: 'メモ'),
+          ),
+          const SizedBox(height: 12),
+          // Simple category picker placeholder
+          DropdownButtonFormField<int>(
+            value: _categoryId,
+            items: const [
+              DropdownMenuItem(value: 1, child: Text('食費/給料など(デモ)')),
+              DropdownMenuItem(value: 2, child: Text('交通/臨時収入(デモ)')),
+              DropdownMenuItem(value: 3, child: Text('光熱費(デモ)')),
+            ],
+            onChanged: (v) => setState(() => _categoryId = v ?? 1),
+            decoration: const InputDecoration(labelText: 'カテゴリ'),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _submit(type),
+              icon: const Icon(Icons.save),
+              label: Text(type == TransactionType.expense ? '支出を保存' : '収入を保存'),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Divider(),
+          const SizedBox(height: 8),
+          const Text('今月の一覧', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          _MonthlyList(),
+        ],
+      ),
+    );
+  }
+}
+
+class _MonthlyList extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final listAsync = ref.watch(transactionsProvider);
+    return listAsync.when(
+      data: (list) {
+        if (list.isEmpty) return const Text('まだデータがありません');
+        return Column(
+          children: list
+              .map((tx) => ListTile(
+                    leading: Icon(tx.type == TransactionType.expense ? Icons.remove_circle : Icons.add_circle),
+                    title: Text('${tx.amount.value} 円'),
+                    subtitle: Text('${tx.date.year}/${tx.date.month}/${tx.date.day}  ${tx.memo}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        await ref.read(deleteTransactionProvider).call(tx.id!);
+                        ref.invalidate(transactionsProvider);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('削除しました')));
+                        }
+                      },
+                    ),
+                  ))
+              .toList(),
+        );
+      },
+      loading: () => const Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, st) => Text('Error: $e'),
+    );
+  }
+}
+
+class _BottomNav extends StatelessWidget {
+  final int currentIndex;
+  const _BottomNav({required this.currentIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationBar(
+      selectedIndex: currentIndex,
+      onDestinationSelected: (i) {
+        switch (i) {
+          case 0:
+            // already on input
+            break;
+          case 1:
+            context.go('/calendar');
+            break;
+          case 2:
+            context.go('/report');
+            break;
+          case 3:
+            context.go('/assets');
+            break;
+        }
+      },
+      destinations: const [
+        NavigationDestination(icon: Icon(Icons.edit), label: '入力'),
+        NavigationDestination(icon: Icon(Icons.calendar_month), label: 'カレンダー'),
+        NavigationDestination(icon: Icon(Icons.pie_chart), label: 'レポート'),
+        NavigationDestination(icon: Icon(Icons.account_balance_wallet), label: '資産'),
+      ],
     );
   }
 }

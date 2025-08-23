@@ -1,29 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/presentation/pages/input/input_page.dart';
 import 'package:kakeibo/presentation/pages/calendar/calendar_page.dart';
 import 'package:kakeibo/presentation/pages/report/report_page.dart';
 import 'package:kakeibo/presentation/pages/assets/assets_page.dart';
-import 'package:kakeibo/presentation/pages/report/report_page.dart';
-import 'package:kakeibo/core/thema/app_thema.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+class KakeiboApp extends StatelessWidget {
+  const KakeiboApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '35家計簿~フトコロ~', // アプリのタイトル
-      debugShowCheckedModeBanner: false, // デバッグバナーを非表示
-      theme: AppTheme.lightTheme, // ライトテーマを適用
-      darkTheme: AppTheme.darkTheme, // ダークテーマを適用
-      themeMode: ThemeMode.system, // システム設定に応じてテーマを切り替え
-      initialRoute: '/', // アプリ起動時の初期画面
-      routes: {
-        '/': (context) => const InputPage(), // 初期画面：入力ページ
-        '/calendar': (context) => const CalendarPage(), // カレンダーページ
-        '/report': (context) => const ReportPage(), // レポートページ
-        '/assets': (context) => const AssetsPage(), // 資産ページ
-      },
+    final router = _router;
+
+    return ProviderScope(
+      child: MaterialApp.router(
+        title: '35家計簿 ~フトコロ~',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        routerConfig: router,
+        locale: const Locale('ja', 'JP'),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ja', 'JP'),
+          Locale('en', 'US'),
+        ],
+      ),
     );
   }
 }
+
+final _router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(path: '/', builder: (ctx, st) => const InputPage(), name: 'input'),
+    GoRoute(path: '/calendar', builder: (ctx, st) => const CalendarPage(), name: 'calendar'),
+    GoRoute(path: '/report', builder: (ctx, st) => const ReportPage(), name: 'report'),
+    GoRoute(path: '/assets', builder: (ctx, st) => const AssetsPage(), name: 'assets'),
+  ],
+);
