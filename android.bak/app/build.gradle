@@ -1,0 +1,43 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    // Flutter プラグイン（settings.gradle の loader と対）
+    id "dev.flutter.flutter-plugin"
+}
+
+android {
+    namespace = "com.example.kakeibo"
+
+    // Flutter 側が提供するバージョンを利用（settings.gradle の構成に一致）
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    defaultConfig {
+        applicationId = "com.example.kakeibo"
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            // デモ用: デバッグ鍵で署名
+            signingConfig = signingConfigs.debug
+            // 必要に応じて minifyEnabled / proguardFiles を設定
+        }
+    }
+
+    // Java / Kotlin は 17 を推奨（AGP 8.x 互換）
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+flutter {
+    source = "../.."
+}

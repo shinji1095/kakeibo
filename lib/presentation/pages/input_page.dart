@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
+import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 
 class InputPage extends ConsumerStatefulWidget {
   const InputPage({super.key});
@@ -47,15 +47,18 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
     _amountCtrl.clear();
     _memoCtrl.clear();
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(type == TransactionType.expense ? '支出を保存しました' : '収入を保存しました')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(type == TransactionType.expense ? '支出を保存しました' : '収入を保存しました')),
+      );
     }
     ref.invalidate(transactionsProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('入力')),
+    return AppScaffold(
+      title: '入力',
+      currentIndex: 1,
       body: Column(
         children: [
           TabBar(
@@ -73,7 +76,6 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
           ),
         ],
       ),
-      bottomNavigationBar: const _BottomNav(currentIndex: 0),
     );
   }
 
@@ -119,7 +121,6 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
             decoration: const InputDecoration(labelText: 'メモ'),
           ),
           const SizedBox(height: 12),
-          // Simple category picker placeholder
           DropdownButtonFormField<int>(
             value: _categoryId,
             items: const [
@@ -144,7 +145,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
           const SizedBox(height: 8),
           const Text('今月の一覧', style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          _MonthlyList(),
+          const _MonthlyList(),
         ],
       ),
     );
@@ -152,6 +153,8 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
 }
 
 class _MonthlyList extends ConsumerWidget {
+  const _MonthlyList();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final listAsync = ref.watch(transactionsProvider);
@@ -160,21 +163,23 @@ class _MonthlyList extends ConsumerWidget {
         if (list.isEmpty) return const Text('まだデータがありません');
         return Column(
           children: list
-              .map((tx) => ListTile(
-                    leading: Icon(tx.type == TransactionType.expense ? Icons.remove_circle : Icons.add_circle),
-                    title: Text('${tx.amount.value} 円'),
-                    subtitle: Text('${tx.date.year}/${tx.date.month}/${tx.date.day}  ${tx.memo}'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () async {
-                        await ref.read(deleteTransactionProvider).call(tx.id!);
-                        ref.invalidate(transactionsProvider);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('削除しました')));
-                        }
-                      },
-                    ),
-                  ))
+              .map(
+                (tx) => ListTile(
+              leading: Icon(tx.type == TransactionType.expense ? Icons.remove_circle : Icons.add_circle),
+              title: Text('${tx.amount.value} 円'),
+              subtitle: Text('${tx.date.year}/${tx.date.month}/${tx.date.day}  ${tx.memo}'),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  await ref.read(deleteTransactionProvider).call(tx.id!);
+                  ref.invalidate(transactionsProvider);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('削除しました')));
+                  }
+                },
+              ),
+            ),
+          )
               .toList(),
         );
       },
@@ -183,40 +188,6 @@ class _MonthlyList extends ConsumerWidget {
         child: Center(child: CircularProgressIndicator()),
       ),
       error: (e, st) => Text('Error: $e'),
-    );
-  }
-}
-
-class _BottomNav extends StatelessWidget {
-  final int currentIndex;
-  const _BottomNav({required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: currentIndex,
-      onDestinationSelected: (i) {
-        switch (i) {
-          case 0:
-            // already on input
-            break;
-          case 1:
-            context.go('/calendar');
-            break;
-          case 2:
-            context.go('/report');
-            break;
-          case 3:
-            context.go('/assets');
-            break;
-        }
-      },
-      destinations: const [
-        NavigationDestination(icon: Icon(Icons.edit), label: '入力'),
-        NavigationDestination(icon: Icon(Icons.calendar_month), label: 'カレンダー'),
-        NavigationDestination(icon: Icon(Icons.pie_chart), label: 'レポート'),
-        NavigationDestination(icon: Icon(Icons.account_balance_wallet), label: '資産'),
-      ],
     );
   }
 }
