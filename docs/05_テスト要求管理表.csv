@@ -1,0 +1,55 @@
+﻿TestReqID,種別,関連画面,関連機能,関連NFR,テスト内容,テストレベル,優先度,合格基準,自動化,備考
+TR-FR-001,FR,"P01,P02,P03,P04,P05,P10",(ナビゲーション),,起動後にトップバー/ボトムバーから各主要画面へ遷移でき、戻る導線が破綻しない。,Integration,Must,ボトムバー主要画面(P01/P02/P03/P04/P05)へ到達可能。トップバーからP10へ到達し、設定配下(P06/P07/P09)へ到達してP10へ戻れる。,Yes/Partial,遷移仕様は 03_画面遷移.md を根拠。
+TR-FR-002,FR,"P10,P06,P07,P08,P09","F033,F034,F037,F038,F039",,設定（P10）から各設定配下画面へ遷移し、設定変更が期待通りに反映される。,Integration,Must,設定変更後に主要画面で反映され、再起動後も保持される（NFR-DATA-001と整合）。,Yes/Partial,永続化はNFR-DATA-001で担保。
+TR-FR-010,FR,P03,"F001,F003,F004,F006","NFR-REL-004,NFR-UX-001",支出の追加：日付/カテゴリ/属性/金額(整数)/メモを入力し保存できる。,Integration,Must,保存後、P02一覧・P04内訳・P05推移・P06CSVに反映される。,Yes/Partial,F006(支出メモ)は02_機能要件定義に存在。画面へのUI実装を確認。
+TR-FR-011,FR,P03,"F002,F005,F007","NFR-REL-004,NFR-UX-001",収入の追加：日付/カテゴリ/金額(整数)/メモを入力し保存できる。,Integration,Must,保存後、P02一覧・P04内訳・P05推移・P06CSVに反映される。,Yes/Partial,F007(収入メモ)のUI実装を確認。
+TR-FR-020,FR,"P02,P03","F008,F009,F010,F011",,取引一覧の表示と編集：一覧から取引を選択して編集画面を開き、変更を保存/キャンセルできる。,Integration,Must,保存で一覧/集計/CSVに更新反映、キャンセルで不変。,Yes/Partial,P03は追加/編集共通UI。
+TR-FR-021,FR,P02,"F012,F013","NFR-UX-002,NFR-DATA-004",取引削除：削除前確認ダイアログを必須とし、削除後は完全削除される。,Integration,Must,確認でCancel時は不変、OK時はDBから削除され一覧/集計/CSVに反映される。,Yes/Partial,削除は復元不可（完全削除）。
+TR-FR-030,FR,P01,"F040,F041",,家計簿開始日設定と35/42日切替により期間境界が正しく再計算される。,Unit+Integration,Must,開始日/期間長変更後、期間カレンダー・内訳・推移の対象期間が一致する。,Yes/Partial,期間の定義はユーザー回答（期間カレンダー連続35/42日表示）。
+TR-FR-031,FR,P01,"F045,F046",,期間カレンダー表示：期間色分けが表示され、期間境界が視認できる。,Widget,Should,期間の色分けが欠落せず、日付グリッドが表示される。,Yes/Partial,見た目の最終判断は手動確認も併用。
+TR-FR-032,FR,P01,"F042,F047",,やりくり費：期間ごとに設定され、残額のみが表示される。,Unit+Integration,Must,期間支出に応じて残額が正しく変動し、表示が残額のみである。,Yes/Partial,設定変更は『以後の期間から適用』。
+TR-FR-040,FR,P04,"F014,F015,F019,F020",,内訳：収入/支出切替と支出属性フィルタによりカテゴリ内訳が正しく表示される。,Unit+Integration,Must,フィルタ条件に一致する取引のみで内訳・合計が一致。,Yes/Partial,週内訳(F016/F017)は要件に存在するため実装時に追加試験。
+TR-FR-050,FR,P05,"F021,F022,F023,F024,F025,F026,F027,F028",,推移：月/週推移、表示期間切替、収入/支出/収支切替、属性フィルタ、棒グラフ表示が正しい。,Unit+Widget,Must,集計値とグラフ表示が一致し、切替で表示対象が正しく変わる。,Yes/Partial,
+TR-FR-060,FR,P06,"F029,F030,F031,F032","NFR-DATA-005,NFR-SEC-004",CSVエクスポート：期間指定、列仕様、保存、共有が成立する。,Integration+Manual,Must,CSV列（日付/カテゴリ/収支/金額/属性）が仕様通りで、保存/共有ができる。,Yes/Partial,共有はOS依存のため手動確認併用。
+TR-FR-070,FR,P07,F035,NFR-DATA-003,カテゴリ管理：追加/編集/削除ができ、削除時は関連取引が未分類へ置換される。,Integration,Must,カテゴリ操作が入力/集計/CSVに反映。削除後も参照整合が崩れない。,Yes/Partial,収入カテゴリと支出カテゴリは完全に分離。
+TR-FR-080,FR,P08,F036,"NFR-NOTIF-001,NFR-NOTIF-002,NFR-REL-003",リマインダー：曜日指定/複数時刻/複数件を設定でき、権限拒否でも破綻しない。,Manual(実機),Could,指定条件で通知が発火し、重複しない。権限拒否時は案内が表示される。,No/Partial,通知文言は固定。 初期リリース対象外（F036）。
+TR-FR-090,FR,P09,"F043,F044",,ボーナス：ボーナス月表示とカウントダウンが設定に応じて表示される。,Widget+Integration,Could,設定後に表示が反映される。,Yes/Partial,『ボーナス収入』の概念は無し（ユーザー回答）。
+TR-NFR-PERF-001,NFR,P01,,NFR-PERF-001,通常起動（コールドスタート）後にホーム（P01）が快適に表示されること。,Performance,Must,Release相当で起動〜P01初期表示まで3秒以内（代表端末）。,Yes/Partial,Debug計測は参考値。
+TR-NFR-PERF-002,NFR,"P01,P02,P03,P04,P05,P10",,NFR-PERF-002,ボトムバータブ切替（P01/P02/P03/P04/P05）および設定（P10）の表示が待たされないこと。,Performance,Must,タブ切替〜主要コンテンツ描画完了まで300ms以内（通常データ量）。,No/Partial,補足: P10はトップバーから遷移。
+TR-NFR-PERF-003,NFR,P02,,NFR-PERF-003,取引一覧（P02）のスクロールがカクつかないこと。,Performance,Must,期間内取引1000件で実用上の引っかかりがない（目標: 60fps相当）。,Yes/Partial,件数は最大想定で調整可。
+TR-NFR-PERF-004,NFR,"P04,P05",,NFR-PERF-004,内訳（P04）/推移（P05）の集計が実用的な時間で完了すること。,Performance,Must,期間集計および週集計の更新が500ms以内（最大データ量）。,No/Partial,
+TR-NFR-PERF-005,NFR,"P06,F029-F032",,NFR-PERF-005,CSVエクスポートが待てる時間で完了すること。,Performance,Should,取引2000件のCSV生成が2秒以内。,No/Partial,共有処理はOS依存。
+TR-NFR-PERF-006,NFR,全画面,,NFR-PERF-006,連続操作（タブ切替、一覧スクロール、グラフ表示）でメモリリーク相当の増加がないこと。,Performance,Should,10分連続操作でメモリ使用量が安定し、OOM/クラッシュしない。,No/Partial,
+TR-NFR-REL-001,NFR,全機能,,NFR-REL-001,ネットワークが無くても主要機能が成立すること。,Integration+Manual,Must,機内モードで入力/編集/集計/カテゴリ管理/CSV生成/設定が完走する。,No/Partial,
+TR-NFR-REL-002,NFR,"DB, F001-F013,F035",,NFR-REL-002,DB書き込み中の異常終了でもデータ破損しないこと。,Integration+Manual,Must,強制終了後に起動でき、直近操作が保存済/未保存で矛盾しない。,Partial,
+TR-NFR-REL-003,NFR,"P08,F036",,NFR-REL-003,通知権限が拒否されてもアプリが破綻しないこと。,Integration+Manual,Could,権限拒否状態でもP08表示・設定操作が可能で、案内が表示される。,Partial,初期リリース対象外（F036 / P08）。
+TR-NFR-REL-004,NFR,"P03,F001-F005",,NFR-REL-004,不正入力でクラッシュしないこと（例: 金額空欄、巨大値）。,Integration+Manual,Must,不正入力はエラー表示で抑止され、クラッシュしない。,Yes/Partial,金額は整数のみ。
+TR-NFR-REL-005,NFR,全画面,,NFR-REL-005,想定外エラー時にユーザーが復帰できる導線を提供すること。,Integration+Manual,Should,致命的でないエラーはダイアログ/スナックバーで通知し、再試行/戻るが可能。,No/Partial,
+TR-NFR-DATA-001,NFR,F001-F047,,NFR-DATA-001,取引/カテゴリ/設定/リマインダー/ボーナス等が再起動後も保持されること。,Data+Integration,Must,各データの追加・変更後、アプリ再起動しても内容が維持される。,Partial,
+TR-NFR-DATA-002,NFR,DB,,NFR-DATA-002,アプリ更新でDBスキーマが変わってもユーザーデータが失われないこと。,Data+Integration,Must,schemaVersion更新時にマイグレーションが定義され、旧DBから起動できる。,Partial,
+TR-NFR-DATA-003,NFR,"P07,F035",,NFR-DATA-003,カテゴリ削除時、既存取引は「未分類」に置換されること。,Data+Integration,Must,カテゴリ削除後も一覧/集計で例外が出ず、未分類として表示・集計される。,No/Partial,収入/支出カテゴリは分離。
+TR-NFR-DATA-004,NFR,"P02,F012,F013",,NFR-DATA-004,取引削除は完全削除であり、復元機能は持たないこと。,Data+Integration,Must,削除後はDBから消え、一覧/集計/CSVに反映されない。,Yes/Partial,
+TR-NFR-DATA-005,NFR,"P06,F029-F032",,NFR-DATA-005,CSVは指定期間のデータを正しく出力すること。,Data+Integration,Must,"DBの対象期間レコードとCSVの件数・内容が一致する（列: 日付,カテゴリ,収支,金額,属性）。",Yes/Partial,金額は整数。
+TR-NFR-DATA-006,NFR,全機能,,NFR-DATA-006,データ量が増えてもアプリが破綻しないこと。,Data+Integration,Should,取引2万件、カテゴリ200件、リマインダー50件で起動/一覧/集計が可能。,No/Partial,上限は運用で調整。
+TR-NFR-DATA-007,NFR,運用ドキュメント,,NFR-DATA-007,端末機種変更時の移行/バックアップ方針を明記すること。,Data+Integration,Could,バックアップ可否、方法（OSバックアップ等）がドキュメント化されている。,No/Partial,アプリ内エクスポート無しの場合はその旨を明確化。
+TR-NFR-SEC-001,NFR,全機能,,NFR-SEC-001,家計データを外部に送信しない（ローカル完結）こと。,Security/Review,Must,通常操作で外部通信が発生しない（解析SDK等含む）。,No/Partial,F034の挙動は別途確定。
+TR-NFR-SEC-002,NFR,"P10,F034",,NFR-SEC-002,データ共有（F034）OFF時は外部送信が絶対に発生しないこと。,Security/Review,Must,OFF状態で通信がゼロ。ON状態でも現段階では送信しない（将来拡張を除く）。,No/Partial,仕様確定後に差し替え。
+TR-NFR-SEC-003,NFR,全機能,,NFR-SEC-003,ログに個人情報（取引メモ、金額、カテゴリ名等）を出さないこと。,Security/Review,Must,例外ログに取引内容が含まれない。,No/Partial,
+TR-NFR-SEC-004,NFR,"P06,F032",,NFR-SEC-004,CSV共有は外部アプリに渡る可能性があるため注意喚起すること。,Security/Review,Should,共有前に確認ダイアログを表示し、キャンセル可能。,Partial,
+TR-NFR-SEC-005,NFR,全機能,,NFR-SEC-005,アプリが要求するOS権限を最小限にすること。,Security/Review,Must,必須権限は通知のみ（または要件で定義したもののみ）。不要な権限は要求しない。,No/Partial,初期リリースではリマインダー機能（F036）を提供しないため、通知権限要求は不要（将来追加時に見直し）。
+TR-NFR-UX-001,NFR,P03,,NFR-UX-001,金額は整数のみ入力可能で、エラーが分かりやすいこと。,Widget+Integration,Must,小数/空欄/負数/上限超過は保存不可で、エラーメッセージ表示。,Partial,
+TR-NFR-UX-002,NFR,"P02,P07",,NFR-UX-002,削除など破壊的操作は誤操作防止があること。,Widget+Integration,Should,削除実行前に確認（ダイアログ等）を挟み、取り消し導線を検討する。,Partial,完全削除要件と両立。
+TR-NFR-UX-003,NFR,"P01,P04,P05",,NFR-UX-003,期間（35/42）移動が迷わず行えること。,Widget+Integration,Should,前/次期間の遷移が一貫し、現在期間が明確に表示される。,No/Partial,
+TR-NFR-ACC-001,NFR,全画面,,NFR-ACC-001,端末の文字サイズ変更に追従し、主要導線が操作可能なこと。,Manual(実機),Should,fontScale最大でもボタン/タブ/入力が欠けず、操作できる。,Partial,
+TR-NFR-ACC-002,NFR,主要画面,,NFR-ACC-002,主要操作要素にラベルが付与され、TalkBack/VoiceOverで理解可能なこと。,Manual(実機),Should,ボトムバー、主要ボタン、入力項目に意味のある読み上げがある。,No/Partial,
+TR-NFR-COMP-001,NFR,全機能,,NFR-COMP-001,最小対応OS（Android/iOS）を定義し、その範囲で動作保証すること。,Manual(端末/OS),Must,pubspec/ビルド設定/ドキュメントに最小対応OSが明記され、CIでビルドが通る。,Yes/Partial,最小OSの数値は要決定。
+TR-NFR-COMP-002,NFR,全画面,,NFR-COMP-002,一般的なスマホ画面サイズでレイアウトが破綻しないこと。,Manual(端末/OS),Must,小型〜大型の代表端末で主要UIが欠けない。,Partial,タブ/グラフ/カレンダー重視。
+TR-NFR-COMP-003,NFR,全画面,,NFR-COMP-003,ダークモードの対応方針を定義し、可読性を満たすこと。,Manual(端末/OS),Should,方針（対応/非対応）がドキュメント化され、対応する場合は主要画面で可読。,Partial,
+TR-NFR-MAINT-001,NFR,全コード,,NFR-MAINT-001,UIとデータ層の責務分離を維持し、直接DBアクセスを禁止すること。,Review+CI,Must,DB操作はRepository/UseCase経由に統一。,No/Partial,
+TR-NFR-MAINT-002,NFR,domain/data,,NFR-MAINT-002,重要ロジック（期間計算、集計、CSV、未分類置換、通知スケジュール）を自動テストで担保すること。,Review+CI,Must,主要ケースがCIで常に実行され、失敗時に原因が特定可能。,Yes/Partial,
+TR-NFR-OPS-001,NFR,全機能,,NFR-OPS-001,不具合解析に必要な最低限のログを出し、個人情報は出さないこと。,Review+Manual,Must,画面ID/処理種別/例外はログに残るが、取引内容は含まれない。,No/Partial,NFR-SEC-003と整合。
+TR-NFR-OPS-002,NFR,全画面,,NFR-OPS-002,DBエラー/権限エラー等でユーザーが次の行動を選べること。,Review+Manual,Should,少なくとも『戻る』『再試行』、必要時は『設定を開く』が提供される。,No/Partial,
+TR-NFR-NOTIF-001,NFR,"P08,F036",,NFR-NOTIF-001,リマインダーは曜日指定と複数時刻に対応し、正しいタイミングで通知されること。,Manual(実機),Could,設定した曜日・時刻に通知が発火し、不要な曜日には出ない。,No/Partial,通知文言は固定。 初期リリース対象外（F036 / P08）。
+TR-NFR-NOTIF-002,NFR,P08,,NFR-NOTIF-002,同一リマインダーが重複通知しないこと。,Manual(実機),Could,同一条件で通知が二重に出ない（再登録/再起動/アップデート後）。,Partial,初期リリース対象外（F036 / P08）。
+TR-NFR-NOTIF-003,NFR,P08,,NFR-NOTIF-003,端末タイムゾーン変更後も通知時刻がユーザー意図に沿うこと。,Manual(実機),Could,タイムゾーン変更後もローカル時刻ベースで発火する（方針を定義）。,Partial,日本のみ運用ならCouldに変更可。 初期リリース対象外（F036 / P08）。
+TR-NFR-I18N-001,NFR,"P10,F039",,NFR-I18N-001,言語変更（F039）の対象範囲を定義し、切替後に反映されること。,Manual,Could,切替後に主要ラベルが反映され、未翻訳はフォールバックする。,No/Partial,初期は日本語のみでも可（要件次第）。
