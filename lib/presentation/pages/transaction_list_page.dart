@@ -65,7 +65,7 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
       body: Column(
         children: [
           _PeriodHeader(
-            rangeLabel: '${_formatDate(range.start)} 〜 ${_formatDate(endInclusive)}',
+            rangeLabel: '${_formatDate(range.start)} ～ ${_formatDate(endInclusive)}',
             onPrev: () => _shiftPeriod(-1),
             onNext: () => _shiftPeriod(1),
           ),

@@ -40,11 +40,23 @@ class ExpenseAttributeFilterChips extends ConsumerWidget {
         ...allAttributes.map(
           (attr) => FilterChip(
             label: Text(attr.label),
+            avatar: Icon(_iconFor(attr), size: 18),
             selected: selected.contains(attr),
             onSelected: (value) => toggleAttribute(attr, value),
           ),
         ),
       ],
     );
+  }
+}
+
+IconData _iconFor(ExpenseAttribute attr) {
+  switch (attr) {
+    case ExpenseAttribute.fixed:
+      return Icons.lock;
+    case ExpenseAttribute.variable:
+      return Icons.account_balance_wallet;
+    case ExpenseAttribute.bonus:
+      return Icons.card_giftcard;
   }
 }

@@ -18,6 +18,13 @@ final monthProvider = StateProvider<DateTime>((ref) {
 
 final periodOffsetProvider = StateProvider<int>((ref) => 0);
 
+enum TrendRangeType { period, week }
+
+enum TrendMetric { balance, income, expense }
+
+final trendRangeTypeProvider = StateProvider<TrendRangeType>((ref) => TrendRangeType.period);
+final trendMetricProvider = StateProvider<TrendMetric>((ref) => TrendMetric.balance);
+
 final expenseAttributeFilterProvider = StateProvider<Set<ExpenseAttribute>>(
   (ref) => ExpenseAttribute.values.toSet(),
 );
@@ -61,6 +68,29 @@ final periodTotalsProvider = FutureProvider<List<({DateTime start, DateTime end,
   final count = ref.watch(trendCountProvider);
   final length = range.end.difference(range.start).inDays;
   final ranges = buildPeriodRanges(range.start, length, count);
+  final use = sl<GetTotalByRange>();
+  final filters = ref.watch(expenseAttributeFilterProvider);
+
+  final results = <({DateTime start, DateTime end, int income, int expense})>[];
+  for (final r in ranges) {
+    final income = await use(r.start, r.end, TransactionType.income);
+    final expense = await use(
+      r.start,
+      r.end,
+      TransactionType.expense,
+      expenseAttributes: filters,
+    );
+    results.add((start: r.start, end: r.end, income: income, expense: expense));
+  }
+
+  return results;
+});
+
+final weeklyTotalsProvider = FutureProvider<List<({DateTime start, DateTime end, int income, int expense})>>((ref) async {
+  final range = ref.watch(periodRangeProvider);
+  final count = ref.watch(trendCountProvider);
+  final anchor = range.end.subtract(const Duration(days: 1));
+  final ranges = buildWeekRanges(range.start, anchor, count);
   final use = sl<GetTotalByRange>();
   final filters = ref.watch(expenseAttributeFilterProvider);
 

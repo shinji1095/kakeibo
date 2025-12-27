@@ -7,12 +7,16 @@ class SettingsState {
   final ThemeMode themeMode;
   final DateTime kakeiboStartDate;
   final int periodLengthDays;
+  final int periodBudget;
+  final int bonusMonth;
 
   const SettingsState({
     required this.fontScale,
     required this.themeMode,
     required this.kakeiboStartDate,
     required this.periodLengthDays,
+    required this.periodBudget,
+    required this.bonusMonth,
   });
 
   factory SettingsState.initial() {
@@ -22,6 +26,8 @@ class SettingsState {
       themeMode: ThemeMode.system,
       kakeiboStartDate: DateTime(now.year, now.month, 1),
       periodLengthDays: 35,
+      periodBudget: 50000,
+      bonusMonth: now.month,
     );
   }
 
@@ -30,12 +36,16 @@ class SettingsState {
     ThemeMode? themeMode,
     DateTime? kakeiboStartDate,
     int? periodLengthDays,
+    int? periodBudget,
+    int? bonusMonth,
   }) {
     return SettingsState(
       fontScale: fontScale ?? this.fontScale,
       themeMode: themeMode ?? this.themeMode,
       kakeiboStartDate: kakeiboStartDate ?? this.kakeiboStartDate,
       periodLengthDays: periodLengthDays ?? this.periodLengthDays,
+      periodBudget: periodBudget ?? this.periodBudget,
+      bonusMonth: bonusMonth ?? this.bonusMonth,
     );
   }
 }
@@ -59,6 +69,16 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   void setPeriodLengthDays(int days) {
     final v = days == 42 ? 42 : 35;
     state = state.copyWith(periodLengthDays: v);
+  }
+
+  void setPeriodBudget(int value) {
+    final v = value < 0 ? 0 : value;
+    state = state.copyWith(periodBudget: v);
+  }
+
+  void setBonusMonth(int month) {
+    final v = month.clamp(1, 12);
+    state = state.copyWith(bonusMonth: v);
   }
 }
 

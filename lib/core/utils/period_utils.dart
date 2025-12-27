@@ -29,3 +29,25 @@ List<({DateTime start, DateTime end})> buildPeriodRanges(
     return (start: start, end: end);
   });
 }
+
+List<({DateTime start, DateTime end})> buildWeekRanges(
+  DateTime baseStart,
+  DateTime anchorDate,
+  int count,
+) {
+  final safeCount = count <= 0 ? 0 : count;
+  if (safeCount == 0) return const [];
+
+  final normalizedStart = truncateDate(baseStart);
+  final normalizedAnchor = truncateDate(anchorDate);
+  final diffDays = normalizedAnchor.difference(normalizedStart).inDays;
+  final weekIndex = diffDays < 0 ? 0 : diffDays ~/ 7;
+  final currentWeekStart = normalizedStart.add(Duration(days: weekIndex * 7));
+
+  return List.generate(safeCount, (i) {
+    final stepsFromCurrent = safeCount - 1 - i;
+    final start = currentWeekStart.subtract(Duration(days: 7 * stepsFromCurrent));
+    final end = start.add(const Duration(days: 7));
+    return (start: start, end: end);
+  });
+}

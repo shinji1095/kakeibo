@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/presentation/providers/home_provider.dart';
+import 'package:kakeibo/presentation/providers/settings_provider.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
+import 'package:kakeibo/presentation/widgets/period_calendar.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -11,6 +13,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stats = ref.watch(homeStatsProvider);
+    final settings = ref.watch(settingsProvider);
     final endInclusive = stats.periodEndExclusive.subtract(const Duration(days: 1));
 
     return AppScaffold(
@@ -37,10 +40,21 @@ class HomePage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('期間カレンダー/収支/残額表示は未実装です（プレースホルダー）'),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('期間カレンダー', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  PeriodCalendar(
+                    periodStart: stats.periodStart,
+                    periodLengthDays: stats.periodLengthDays,
+                    appStart: settings.kakeiboStartDate,
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 12),

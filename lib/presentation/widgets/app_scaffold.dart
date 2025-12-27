@@ -38,6 +38,22 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildAddIcon() {
+      final scheme = Theme.of(context).colorScheme;
+      return Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: scheme.primary,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.add,
+          color: scheme.onPrimary,
+        ),
+      );
+    }
+
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: (i) {
@@ -60,12 +76,16 @@ class AppBottomNav extends StatelessWidget {
             break;
         }
       },
-      destinations: const [
-        NavigationDestination(icon: Icon(Icons.home), label: 'ホーム'),
-        NavigationDestination(icon: Icon(Icons.list), label: '一覧'),
-        NavigationDestination(icon: Icon(Icons.edit), label: '入力'),
-        NavigationDestination(icon: Icon(Icons.pie_chart), label: '内訳'),
-        NavigationDestination(icon: Icon(Icons.show_chart), label: '推移'),
+      destinations: [
+        const NavigationDestination(icon: Icon(Icons.home), label: 'ホーム'),
+        const NavigationDestination(icon: Icon(Icons.list), label: '一覧'),
+        NavigationDestination(
+          icon: buildAddIcon(),
+          selectedIcon: buildAddIcon(),
+          label: '入力',
+        ),
+        const NavigationDestination(icon: Icon(Icons.pie_chart), label: '内訳'),
+        const NavigationDestination(icon: Icon(Icons.show_chart), label: '推移'),
       ],
     );
   }

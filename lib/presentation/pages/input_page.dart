@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
+import 'package:kakeibo/presentation/widgets/expense_attribute_icon_selector.dart';
 
 class InputPage extends ConsumerStatefulWidget {
   const InputPage({super.key});
@@ -183,21 +183,9 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
               ),
               if (type == TransactionType.expense) ...[
                 const SizedBox(height: 12),
-                DropdownButtonFormField<ExpenseAttribute>(
-                  value: _expenseAttribute,
-                  decoration: const InputDecoration(labelText: '支出属性'),
-                  items: ExpenseAttribute.values
-                      .map(
-                        (attr) => DropdownMenuItem(
-                          value: attr,
-                          child: Text(attr.label),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _expenseAttribute = value);
-                  },
+                ExpenseAttributeIconSelector(
+                  selected: _expenseAttribute,
+                  onSelected: (value) => setState(() => _expenseAttribute = value),
                 ),
               ],
               const SizedBox(height: 24),
@@ -209,93 +197,12 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
                   label: Text(type == TransactionType.expense ? '支出を保存' : '収入を保存'),
                 ),
               ),
-              const SizedBox(height: 24),
-              const Divider(),
-              const SizedBox(height: 8),
-              const Text('期間内の一覧', style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              const _PeriodList(),
             ],
           ),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, st) => Center(child: Text('Error: $e')),
-    );
-  }
-}
-
-class _PeriodList extends ConsumerWidget {
-  const _PeriodList();
-
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref, KakeiboTransaction tx) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('削除確認'),
-        content: const Text('この取引を削除しますか？'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('キャンセル')),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('削除')),
-        ],
-      ),
-    );
-
-    if (ok == true) {
-      await ref.read(deleteTransactionProvider).call(tx.id!);
-      ref.invalidate(transactionsProvider);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('削除しました')));
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final listAsync = ref.watch(transactionsProvider);
-    final categoriesAsync = ref.watch(categoriesProvider);
-    final categoryMap = <int, Category>{
-      for (final c in categoriesAsync.value ?? <Category>[]) if (c.id != null) c.id!: c,
-    };
-
-    return listAsync.when(
-      data: (list) {
-        if (list.isEmpty) return const Text('まだデータがありません');
-        return Column(
-          children: list
-              .map(
-                (tx) {
-                  final cat = categoryMap[tx.categoryId];
-                  final catLabel = cat?.name ?? 'カテゴリ${tx.categoryId}';
-                  final typeLabel = tx.type == TransactionType.expense ? '支出' : '収入';
-                  final attrLabel = tx.type == TransactionType.expense
-                      ? (tx.expenseAttribute ?? kDefaultExpenseAttribute).label
-                      : null;
-                  final memo = tx.memo.trim();
-                  final subtitle = '${tx.date.year}/${tx.date.month}/${tx.date.day}  $typeLabel / $catLabel'
-                      '${attrLabel == null ? '' : ' / $attrLabel'}'
-                      '${memo.isEmpty ? '' : ' / $memo'}';
-
-                  return ListTile(
-                    leading: Icon(tx.type == TransactionType.expense ? Icons.remove_circle : Icons.add_circle),
-                    title: Text('${tx.amount.value} 円'),
-                    subtitle: Text(subtitle),
-                    onTap: () => context.push('/edit', extra: tx),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => _confirmDelete(context, ref, tx),
-                    ),
-                  );
-                },
-              )
-              .toList(),
-        );
-      },
-      loading: () => const Padding(
-        padding: EdgeInsets.all(16),
-        child: Center(child: CircularProgressIndicator()),
-      ),
-      error: (e, st) => Text('Error: $e'),
     );
   }
 }

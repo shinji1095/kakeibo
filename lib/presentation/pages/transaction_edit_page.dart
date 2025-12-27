@@ -5,6 +5,7 @@ import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
+import 'package:kakeibo/presentation/widgets/expense_attribute_icon_selector.dart';
 
 class TransactionEditPage extends ConsumerStatefulWidget {
   final KakeiboTransaction transaction;
@@ -163,18 +164,9 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
               ),
               if (_type == TransactionType.expense) ...[
                 const SizedBox(height: 12),
-                DropdownButtonFormField<ExpenseAttribute>(
-                  value: _expenseAttribute,
-                  decoration: const InputDecoration(labelText: '支出属性'),
-                  items: ExpenseAttribute.values
-                      .map(
-                        (attr) => DropdownMenuItem(
-                          value: attr,
-                          child: Text(attr.label),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) => setState(() => _expenseAttribute = value),
+                ExpenseAttributeIconSelector(
+                  selected: _expenseAttribute ?? kDefaultExpenseAttribute,
+                  onSelected: (value) => setState(() => _expenseAttribute = value),
                 ),
               ],
               const SizedBox(height: 24),
