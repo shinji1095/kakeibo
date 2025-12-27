@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
+import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
 
 class TransactionEditPage extends ConsumerStatefulWidget {
   final KakeiboTransaction transaction;
@@ -103,7 +104,8 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
       appBar: AppBar(title: const Text('取引の編集')),
       body: categoriesAsync.when(
         data: (categories) {
-          _ensureCategorySelected(categories);
+          final selectable = categories.where((c) => c.id != null).toList();
+          _ensureCategorySelected(selectable);
 
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -153,18 +155,11 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
                 decoration: const InputDecoration(labelText: 'メモ'),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<int>(
-                value: _categoryId,
-                items: categories
-                    .map(
-                      (c) => DropdownMenuItem<int>(
-                        value: c.id,
-                        child: Text(c.name),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (v) => setState(() => _categoryId = v),
-                decoration: const InputDecoration(labelText: 'カテゴリ'),
+              CategoryIconSelector(
+                label: 'カテゴリ',
+                categories: selectable,
+                selectedId: _categoryId,
+                onSelected: (id) => setState(() => _categoryId = id),
               ),
               if (_type == TransactionType.expense) ...[
                 const SizedBox(height: 12),

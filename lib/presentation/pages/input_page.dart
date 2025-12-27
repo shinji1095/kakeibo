@@ -5,6 +5,7 @@ import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
+import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
 
 class InputPage extends ConsumerStatefulWidget {
   const InputPage({super.key});
@@ -121,7 +122,8 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
 
     return categoriesAsync.when(
       data: (categories) {
-        _ensureCategorySelected(type, categories);
+        final selectable = categories.where((c) => c.id != null).toList();
+        _ensureCategorySelected(type, selectable);
         final selectedId = type == TransactionType.expense ? _expenseCategoryId : _incomeCategoryId;
 
         return SingleChildScrollView(
@@ -165,26 +167,19 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
                 decoration: const InputDecoration(labelText: 'メモ'),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<int>(
-                value: selectedId,
-                items: categories
-                    .map(
-                      (c) => DropdownMenuItem<int>(
-                        value: c.id,
-                        child: Text(c.name),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (v) {
+              CategoryIconSelector(
+                label: 'カテゴリ',
+                categories: selectable,
+                selectedId: selectedId,
+                onSelected: (id) {
                   setState(() {
                     if (type == TransactionType.expense) {
-                      _expenseCategoryId = v;
+                      _expenseCategoryId = id;
                     } else {
-                      _incomeCategoryId = v;
+                      _incomeCategoryId = id;
                     }
                   });
                 },
-                decoration: const InputDecoration(labelText: 'カテゴリ'),
               ),
               if (type == TransactionType.expense) ...[
                 const SizedBox(height: 12),
