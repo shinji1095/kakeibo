@@ -1,53 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
 
-class SettingsPage extends ConsumerStatefulWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
-
-  @override
-  ConsumerState<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends ConsumerState<SettingsPage> {
-  late final TextEditingController _fixedAmountCtrl;
-  final FocusNode _fixedAmountFocus = FocusNode();
 
   String _formatDate(DateTime d) => '${d.year}年${d.month}月${d.day}日';
 
-  @override
-  void initState() {
-    super.initState();
-    final s = ref.read(settingsProvider);
-    _fixedAmountCtrl = TextEditingController(text: s.fixedExpenseAmount.toString());
-
-    _fixedAmountFocus.addListener(() {
-      if (!_fixedAmountFocus.hasFocus) {
-        final v = int.tryParse(_fixedAmountCtrl.text) ?? 0;
-        ref.read(settingsProvider.notifier).setFixedExpenseAmount(v);
-      }
-    });
+  void _showPlaceholder(BuildContext context, String label) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$label は未実装です')),
+    );
   }
 
   @override
-  void dispose() {
-    _fixedAmountCtrl.dispose();
-    _fixedAmountFocus.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
-
-    // Keep controller in sync when updated externally (and not editing)
-    if (!_fixedAmountFocus.hasFocus) {
-      final want = settings.fixedExpenseAmount.toString();
-      if (_fixedAmountCtrl.text != want) {
-        _fixedAmountCtrl.text = want;
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(title: const Text('設定')),
@@ -122,16 +92,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: DropdownButtonFormField<int>(
-                    value: settings.salaryDay,
-                    decoration: const InputDecoration(labelText: '給料日（毎月）'),
-                    items: List.generate(
-                      31,
-                          (i) => DropdownMenuItem(value: i + 1, child: Text('${i + 1}日')),
-                    ),
+                    value: settings.periodLengthDays,
+                    decoration: const InputDecoration(labelText: '期間の長さ（35/42日）'),
+                    items: const [
+                      DropdownMenuItem(value: 35, child: Text('35日')),
+                      DropdownMenuItem(value: 42, child: Text('42日')),
+                    ],
                     onChanged: (v) {
                       if (v == null) return;
-                      notifier.setSalaryDay(v);
+                      notifier.setPeriodLengthDays(v);
                     },
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('設定変更は以後の期間から適用されます'),
                   ),
                 ),
               ],
@@ -139,42 +116,62 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ),
           const SizedBox(height: 16),
 
-          Text('固定支出', style: Theme.of(context).textTheme.titleMedium),
+          Text('アカウント', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  DropdownButtonFormField<int?>(
-                    value: settings.fixedExpenseDay,
-                    decoration: const InputDecoration(labelText: '固定支出の日（毎月）'),
-                    items: [
-                      const DropdownMenuItem<int?>(value: null, child: Text('未設定')),
-                      ...List.generate(
-                        31,
-                            (i) => DropdownMenuItem<int?>(value: i + 1, child: Text('${i + 1}日')),
-                      ),
-                    ],
-                    onChanged: (v) => notifier.setFixedExpenseDay(v),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _fixedAmountCtrl,
-                    focusNode: _fixedAmountFocus,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: '固定支出の金額（円）',
-                      hintText: '例：80000',
-                    ),
-                    onChanged: (s) {
-                      final v = int.tryParse(s);
-                      if (v == null) return;
-                      notifier.setFixedExpenseAmount(v);
-                    },
-                  ),
-                ],
-              ),
+            child: Column(
+              children: [
+                ListTile(
+                  title: const Text('プロフィール設定'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showPlaceholder(context, 'プロフィール設定'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  title: const Text('データ共有設定'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showPlaceholder(context, 'データ共有設定'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  title: const Text('言語設定'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showPlaceholder(context, '言語設定'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Text('管理', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  title: const Text('CSVエクスポート'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/csv'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  title: const Text('カテゴリ管理'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/categories'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  title: const Text('ボーナス設定'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/bonus'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  title: const Text('リマインダー管理'),
+                  subtitle: const Text('初期リリース対象外'),
+                  enabled: false,
+                ),
+              ],
             ),
           ),
         ],

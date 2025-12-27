@@ -1,23 +1,43 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
+import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 
-class ReportPage extends ConsumerWidget {
-  const ReportPage({super.key});
+class BreakdownPage extends ConsumerWidget {
+  const BreakdownPage({super.key});
+
+  void _shiftMonth(WidgetRef ref, DateTime month, int delta) {
+    ref.read(monthProvider.notifier).state = DateTime(month.year, month.month + delta);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final month = ref.watch(monthProvider);
-    return Scaffold(
-      appBar: AppBar(title: const Text('レポート')),
+    return AppScaffold(
+      title: '内訳',
+      currentIndex: 3,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('${month.year}年${month.month}月', style: Theme.of(context).textTheme.titleLarge),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.chevron_left),
+                onPressed: () => _shiftMonth(ref, month, -1),
+              ),
+              Text('${month.year}年${month.month}月', style: Theme.of(context).textTheme.titleLarge),
+              IconButton(
+                icon: const Icon(Icons.chevron_right),
+                onPressed: () => _shiftMonth(ref, month, 1),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          const Text('期間/属性フィルタは未実装（プレースホルダー）'),
           const SizedBox(height: 12),
           const Card(
             child: Padding(
@@ -48,7 +68,6 @@ class ReportPage extends ConsumerWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const _BottomNav(currentIndex: 2),
     );
   }
 }
@@ -74,7 +93,6 @@ class _Pie extends ConsumerWidget {
               value: total.toDouble(),
               title: '${(total / (sum == 0 ? 1 : sum) * 100).toStringAsFixed(0)}%',
               radius: 70,
-              // random color for demo (in real app, load from category table)
               color: Color((rnd.nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
             ));
           });
@@ -83,39 +101,6 @@ class _Pie extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('Error: $e')),
       ),
-    );
-  }
-}
-
-class _BottomNav extends StatelessWidget {
-  final int currentIndex;
-  const _BottomNav({required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: currentIndex,
-      onDestinationSelected: (i) {
-        switch (i) {
-          case 0:
-            context.go('/');
-            break;
-          case 1:
-            context.go('/calendar');
-            break;
-          case 2:
-            break;
-          case 3:
-            context.go('/assets');
-            break;
-        }
-      },
-      destinations: const [
-        NavigationDestination(icon: Icon(Icons.edit), label: '入力'),
-        NavigationDestination(icon: Icon(Icons.calendar_month), label: 'カレンダー'),
-        NavigationDestination(icon: Icon(Icons.pie_chart), label: 'レポート'),
-        NavigationDestination(icon: Icon(Icons.account_balance_wallet), label: '資産'),
-      ],
     );
   }
 }

@@ -47,25 +47,25 @@ class AppBottomNav extends StatelessWidget {
             context.go('/');
             break;
           case 1:
-            context.go('/input');
+            context.go('/list');
             break;
           case 2:
-            context.go('/calendar');
+            context.go('/input');
             break;
           case 3:
-            context.go('/report');
+            context.go('/breakdown');
             break;
           case 4:
-            context.go('/assets');
+            context.go('/trend');
             break;
         }
       },
       destinations: const [
         NavigationDestination(icon: Icon(Icons.home), label: 'ホーム'),
+        NavigationDestination(icon: Icon(Icons.list), label: '一覧'),
         NavigationDestination(icon: Icon(Icons.edit), label: '入力'),
-        NavigationDestination(icon: Icon(Icons.calendar_month), label: 'カレンダー'),
-        NavigationDestination(icon: Icon(Icons.pie_chart), label: 'レポート'),
-        NavigationDestination(icon: Icon(Icons.account_balance_wallet), label: '資産'),
+        NavigationDestination(icon: Icon(Icons.pie_chart), label: '内訳'),
+        NavigationDestination(icon: Icon(Icons.show_chart), label: '推移'),
       ],
     );
   }

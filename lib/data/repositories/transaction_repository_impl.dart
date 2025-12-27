@@ -24,6 +24,22 @@ class TransactionRepositoryImpl implements TransactionRepository {
   }
 
   @override
+  Future<void> update(KakeiboTransaction tx) async {
+    if (tx.id == null) {
+      throw ArgumentError('Transaction id is required for update');
+    }
+    await (db.update(db.transactions)..where((tbl) => tbl.id.equals(tx.id!))).write(
+      TransactionsCompanion(
+        date: d.Value(tx.date),
+        amount: d.Value(tx.amount.value),
+        memo: d.Value(tx.memo),
+        categoryId: d.Value(tx.categoryId),
+        type: d.Value(tx.type == TransactionType.expense ? 0 : 1),
+      ),
+    );
+  }
+
+  @override
   Future<void> delete(int id) {
     return (db.delete(db.transactions)..where((tbl) => tbl.id.equals(id))).go();
   }
@@ -32,20 +48,25 @@ class TransactionRepositoryImpl implements TransactionRepository {
   Future<List<KakeiboTransaction>> getByMonth(DateTime monthFirstDay) async {
     final month = DateTime(monthFirstDay.year, monthFirstDay.month);
     final next = DateTime(month.year, month.month + 1);
+    return getByRange(month, next);
+  }
+
+  @override
+  Future<List<KakeiboTransaction>> getByRange(DateTime startInclusive, DateTime endExclusive) async {
     final rows = await (db.select(db.transactions)
-      ..where((t) => t.date.isBiggerOrEqualValue(month) & t.date.isSmallerThanValue(next))
-      ..orderBy([(t) => d.OrderingTerm.asc(t.date)]))
+          ..where((t) => t.date.isBiggerOrEqualValue(startInclusive) & t.date.isSmallerThanValue(endExclusive))
+          ..orderBy([(t) => d.OrderingTerm.asc(t.date)]))
         .get();
 
     return rows
         .map((r) => KakeiboTransaction(
-      id: r.id,
-      date: r.date,
-      amount: Money(r.amount),
-      memo: r.memo,
-      categoryId: r.categoryId,
-      type: r.type == 0 ? TransactionType.expense : TransactionType.income,
-    ))
+              id: r.id,
+              date: r.date,
+              amount: Money(r.amount),
+              memo: r.memo,
+              categoryId: r.categoryId,
+              type: r.type == 0 ? TransactionType.expense : TransactionType.income,
+            ))
         .toList();
   }
 
@@ -56,7 +77,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     final t = db.transactions;
     final q = db.customSelect(
       'SELECT category_id, SUM(amount) AS total FROM transactions '
-          'WHERE date >= ? AND date < ? AND type = ? GROUP BY category_id',
+      'WHERE date >= ? AND date < ? AND type = ? GROUP BY category_id',
       variables: [
         d.Variable<DateTime>(month),
         d.Variable<DateTime>(next),
@@ -80,7 +101,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     final t = db.transactions;
     final q = db.customSelect(
       'SELECT SUM(amount) AS total FROM transactions '
-          'WHERE date >= ? AND date < ? AND type = ?',
+      'WHERE date >= ? AND date < ? AND type = ?',
       variables: [
         d.Variable<DateTime>(startInclusive),
         d.Variable<DateTime>(endExclusive),

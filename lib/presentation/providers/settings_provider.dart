@@ -6,21 +6,13 @@ class SettingsState {
   final double fontScale;
   final ThemeMode themeMode;
   final DateTime kakeiboStartDate;
-  final int salaryDay;
-
-  /// Fixed expense day-of-month (1..31). null means "not set".
-  final int? fixedExpenseDay;
-
-  /// Fixed expense amount in JPY (>= 0)
-  final int fixedExpenseAmount;
+  final int periodLengthDays;
 
   const SettingsState({
     required this.fontScale,
     required this.themeMode,
     required this.kakeiboStartDate,
-    required this.salaryDay,
-    required this.fixedExpenseDay,
-    required this.fixedExpenseAmount,
+    required this.periodLengthDays,
   });
 
   factory SettingsState.initial() {
@@ -29,9 +21,7 @@ class SettingsState {
       fontScale: 1.0,
       themeMode: ThemeMode.system,
       kakeiboStartDate: DateTime(now.year, now.month, 1),
-      salaryDay: 25,
-      fixedExpenseDay: null,
-      fixedExpenseAmount: 0,
+      periodLengthDays: 35,
     );
   }
 
@@ -39,18 +29,13 @@ class SettingsState {
     double? fontScale,
     ThemeMode? themeMode,
     DateTime? kakeiboStartDate,
-    int? salaryDay,
-    int? fixedExpenseDay,
-    bool setFixedExpenseDayNull = false,
-    int? fixedExpenseAmount,
+    int? periodLengthDays,
   }) {
     return SettingsState(
       fontScale: fontScale ?? this.fontScale,
       themeMode: themeMode ?? this.themeMode,
       kakeiboStartDate: kakeiboStartDate ?? this.kakeiboStartDate,
-      salaryDay: salaryDay ?? this.salaryDay,
-      fixedExpenseDay: setFixedExpenseDayNull ? null : (fixedExpenseDay ?? this.fixedExpenseDay),
-      fixedExpenseAmount: fixedExpenseAmount ?? this.fixedExpenseAmount,
+      periodLengthDays: periodLengthDays ?? this.periodLengthDays,
     );
   }
 }
@@ -71,26 +56,12 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     state = state.copyWith(kakeiboStartDate: DateTime(date.year, date.month, date.day));
   }
 
-  void setSalaryDay(int day) {
-    final v = day.clamp(1, 31);
-    state = state.copyWith(salaryDay: v);
-  }
-
-  void setFixedExpenseDay(int? day) {
-    if (day == null) {
-      state = state.copyWith(setFixedExpenseDayNull: true);
-      return;
-    }
-    final v = day.clamp(1, 31);
-    state = state.copyWith(fixedExpenseDay: v);
-  }
-
-  void setFixedExpenseAmount(int amount) {
-    final v = amount < 0 ? 0 : amount;
-    state = state.copyWith(fixedExpenseAmount: v);
+  void setPeriodLengthDays(int days) {
+    final v = days == 42 ? 42 : 35;
+    state = state.copyWith(periodLengthDays: v);
   }
 }
 
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>(
-      (ref) => SettingsNotifier(),
+  (ref) => SettingsNotifier(),
 );

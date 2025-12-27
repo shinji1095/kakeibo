@@ -6,72 +6,51 @@ import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  String _yen(int v) {
-    final sign = v < 0 ? '-' : '';
-    final n = v.abs();
-    final s = n.toString();
-    final buf = StringBuffer();
-    for (int i = 0; i < s.length; i++) {
-      final idxFromEnd = s.length - i;
-      buf.write(s[i]);
-      if (idxFromEnd > 1 && idxFromEnd % 3 == 1) {
-        buf.write(',');
-      }
-    }
-    return '$sign${buf.toString()}';
-  }
+  String _formatDate(DateTime d) => '${d.year}年${d.month}月${d.day}日';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statsAsync = ref.watch(homeStatsProvider);
+    final stats = ref.watch(homeStatsProvider);
+    final endInclusive = stats.periodEndExclusive.subtract(const Duration(days: 1));
 
     return AppScaffold(
       title: 'ホーム',
       currentIndex: 0,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: statsAsync.when(
-            loading: () => const CircularProgressIndicator(),
-            error: (e, st) => Text('Error: $e'),
-            data: (stats) {
-              if (stats == null) {
-                return Text(
-                  '固定支出を設定してください',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge,
-                );
-              }
-
-              final bonusText = stats.isBonusMonth
-                  ? '今月はボーナス月です'
-                  : 'ボーナス月まであと${stats.daysUntilNextBonusMonthStart}日';
-
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          Text('現在の期間', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    bonusText,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '今月終了まであと${stats.daysUntilMonthEnd}日',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '差額（先月の収入 - 今月の支出）: ${_yen(stats.diff)}円',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('開始日: ${_formatDate(stats.periodStart)}'),
+                  Text('終了日: ${_formatDate(endInclusive)}'),
+                  Text('期間長: ${stats.periodLengthDays}日'),
+                  const SizedBox(height: 8),
+                  Text('終了まであと${stats.daysUntilPeriodEnd}日'),
                 ],
-              );
-            },
+              ),
+            ),
           ),
-        ),
+          const SizedBox(height: 16),
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('期間カレンダー/収支/残額表示は未実装です（プレースホルダー）'),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('ボーナス表示は未実装です（プレースホルダー）'),
+            ),
+          ),
+        ],
       ),
     );
   }
