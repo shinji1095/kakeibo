@@ -302,9 +302,17 @@ class $TransactionsTable extends Transactions
   late final GeneratedColumn<int> type = GeneratedColumn<int>(
       'type', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _expenseAttributeMeta =
+      const VerificationMeta('expenseAttribute');
+  @override
+  late final GeneratedColumn<int> expenseAttribute = GeneratedColumn<int>(
+      'expense_attribute', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, date, amount, memo, categoryId, type];
+      [id, date, amount, memo, categoryId, type, expenseAttribute];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -348,6 +356,12 @@ class $TransactionsTable extends Transactions
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
+    if (data.containsKey('expense_attribute')) {
+      context.handle(
+          _expenseAttributeMeta,
+          expenseAttribute.isAcceptableOrUnknown(
+              data['expense_attribute']!, _expenseAttributeMeta));
+    }
     return context;
   }
 
@@ -369,6 +383,8 @@ class $TransactionsTable extends Transactions
           .read(DriftSqlType.int, data['${effectivePrefix}category_id'])!,
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}type'])!,
+      expenseAttribute: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}expense_attribute'])!,
     );
   }
 
@@ -385,13 +401,15 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final String memo;
   final int categoryId;
   final int type;
+  final int expenseAttribute;
   const Transaction(
       {required this.id,
       required this.date,
       required this.amount,
       required this.memo,
       required this.categoryId,
-      required this.type});
+      required this.type,
+      required this.expenseAttribute});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -401,6 +419,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     map['memo'] = Variable<String>(memo);
     map['category_id'] = Variable<int>(categoryId);
     map['type'] = Variable<int>(type);
+    map['expense_attribute'] = Variable<int>(expenseAttribute);
     return map;
   }
 
@@ -412,6 +431,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       memo: Value(memo),
       categoryId: Value(categoryId),
       type: Value(type),
+      expenseAttribute: Value(expenseAttribute),
     );
   }
 
@@ -425,6 +445,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       memo: serializer.fromJson<String>(json['memo']),
       categoryId: serializer.fromJson<int>(json['categoryId']),
       type: serializer.fromJson<int>(json['type']),
+      expenseAttribute: serializer.fromJson<int>(json['expenseAttribute']),
     );
   }
   @override
@@ -437,6 +458,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'memo': serializer.toJson<String>(memo),
       'categoryId': serializer.toJson<int>(categoryId),
       'type': serializer.toJson<int>(type),
+      'expenseAttribute': serializer.toJson<int>(expenseAttribute),
     };
   }
 
@@ -446,7 +468,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           int? amount,
           String? memo,
           int? categoryId,
-          int? type}) =>
+          int? type,
+          int? expenseAttribute}) =>
       Transaction(
         id: id ?? this.id,
         date: date ?? this.date,
@@ -454,6 +477,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
         memo: memo ?? this.memo,
         categoryId: categoryId ?? this.categoryId,
         type: type ?? this.type,
+        expenseAttribute: expenseAttribute ?? this.expenseAttribute,
       );
   Transaction copyWithCompanion(TransactionsCompanion data) {
     return Transaction(
@@ -464,6 +488,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       categoryId:
           data.categoryId.present ? data.categoryId.value : this.categoryId,
       type: data.type.present ? data.type.value : this.type,
+      expenseAttribute: data.expenseAttribute.present
+          ? data.expenseAttribute.value
+          : this.expenseAttribute,
     );
   }
 
@@ -475,13 +502,15 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('amount: $amount, ')
           ..write('memo: $memo, ')
           ..write('categoryId: $categoryId, ')
-          ..write('type: $type')
+          ..write('type: $type, ')
+          ..write('expenseAttribute: $expenseAttribute')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, date, amount, memo, categoryId, type);
+  int get hashCode =>
+      Object.hash(id, date, amount, memo, categoryId, type, expenseAttribute);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -491,7 +520,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.amount == this.amount &&
           other.memo == this.memo &&
           other.categoryId == this.categoryId &&
-          other.type == this.type);
+          other.type == this.type &&
+          other.expenseAttribute == this.expenseAttribute);
 }
 
 class TransactionsCompanion extends UpdateCompanion<Transaction> {
@@ -501,6 +531,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<String> memo;
   final Value<int> categoryId;
   final Value<int> type;
+  final Value<int> expenseAttribute;
   const TransactionsCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
@@ -508,6 +539,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.memo = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.type = const Value.absent(),
+    this.expenseAttribute = const Value.absent(),
   });
   TransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -516,6 +548,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.memo = const Value.absent(),
     required int categoryId,
     required int type,
+    this.expenseAttribute = const Value.absent(),
   })  : date = Value(date),
         amount = Value(amount),
         categoryId = Value(categoryId),
@@ -527,6 +560,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<String>? memo,
     Expression<int>? categoryId,
     Expression<int>? type,
+    Expression<int>? expenseAttribute,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -535,6 +569,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (memo != null) 'memo': memo,
       if (categoryId != null) 'category_id': categoryId,
       if (type != null) 'type': type,
+      if (expenseAttribute != null) 'expense_attribute': expenseAttribute,
     });
   }
 
@@ -544,7 +579,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       Value<int>? amount,
       Value<String>? memo,
       Value<int>? categoryId,
-      Value<int>? type}) {
+      Value<int>? type,
+      Value<int>? expenseAttribute}) {
     return TransactionsCompanion(
       id: id ?? this.id,
       date: date ?? this.date,
@@ -552,6 +588,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       memo: memo ?? this.memo,
       categoryId: categoryId ?? this.categoryId,
       type: type ?? this.type,
+      expenseAttribute: expenseAttribute ?? this.expenseAttribute,
     );
   }
 
@@ -576,6 +613,9 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (type.present) {
       map['type'] = Variable<int>(type.value);
     }
+    if (expenseAttribute.present) {
+      map['expense_attribute'] = Variable<int>(expenseAttribute.value);
+    }
     return map;
   }
 
@@ -587,7 +627,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('amount: $amount, ')
           ..write('memo: $memo, ')
           ..write('categoryId: $categoryId, ')
-          ..write('type: $type')
+          ..write('type: $type, ')
+          ..write('expenseAttribute: $expenseAttribute')
           ..write(')'))
         .toString();
   }

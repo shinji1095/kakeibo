@@ -5,6 +5,7 @@ import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
+import 'package:kakeibo/presentation/widgets/expense_attribute_filter_chips.dart';
 
 class TransactionListPage extends ConsumerStatefulWidget {
   const TransactionListPage({super.key});
@@ -48,6 +49,9 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
   Widget build(BuildContext context) {
     final range = ref.watch(periodRangeProvider);
     final listAsync = ref.watch(transactionsProvider);
+    final expenseFilters = ref.watch(expenseAttributeFilterProvider);
+    final effectiveExpenseFilters =
+        expenseFilters.isEmpty ? ExpenseAttribute.values.toSet() : expenseFilters;
     final categoriesAsync = ref.watch(categoriesProvider);
     final categoryMap = <int, Category>{
       for (final c in categoriesAsync.value ?? <Category>[]) if (c.id != null) c.id!: c,
@@ -87,14 +91,21 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
             ],
           ),
           const SizedBox(height: 8),
-          const Text('支出属性フィルタは未実装です（プレースホルダー）'),
+          const Text('支出属性'),
+          const SizedBox(height: 4),
+          const ExpenseAttributeFilterChips(),
           const SizedBox(height: 8),
           Expanded(
             child: listAsync.when(
               data: (list) {
-                final filtered = _filterType == null
-                    ? list
-                    : list.where((tx) => tx.type == _filterType).toList();
+                final filtered = list.where((tx) {
+                  if (_filterType != null && tx.type != _filterType) return false;
+                  if (tx.type == TransactionType.expense) {
+                    final attr = tx.expenseAttribute ?? kDefaultExpenseAttribute;
+                    if (!effectiveExpenseFilters.contains(attr)) return false;
+                  }
+                  return true;
+                }).toList();
 
                 if (filtered.isEmpty) {
                   return const Center(child: Text('取引がありません'));
@@ -108,8 +119,12 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
                     final cat = categoryMap[tx.categoryId];
                     final catLabel = cat?.name ?? 'カテゴリ${tx.categoryId}';
                     final typeLabel = tx.type == TransactionType.expense ? '支出' : '収入';
+                    final attrLabel = tx.type == TransactionType.expense
+                        ? (tx.expenseAttribute ?? kDefaultExpenseAttribute).label
+                        : null;
                     final memo = tx.memo.trim();
                     final subtitle = '${_formatDate(tx.date)}  $typeLabel / $catLabel'
+                        '${attrLabel == null ? '' : ' / $attrLabel'}'
                         '${memo.isEmpty ? '' : ' / $memo'}';
 
                     return ListTile(

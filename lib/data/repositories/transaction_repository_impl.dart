@@ -11,6 +11,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
 
   @override
   Future<int> add(KakeiboTransaction tx) async {
+    final expenseAttribute = (tx.expenseAttribute ?? kDefaultExpenseAttribute).dbValue;
     final id = await db.into(db.transactions).insert(
       TransactionsCompanion.insert(
         date: tx.date,
@@ -18,6 +19,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
         memo: d.Value(tx.memo),
         categoryId: tx.categoryId,
         type: tx.type == TransactionType.expense ? 0 : 1,
+        expenseAttribute: d.Value(expenseAttribute),
       ),
     );
     return id;
@@ -28,6 +30,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     if (tx.id == null) {
       throw ArgumentError('Transaction id is required for update');
     }
+    final expenseAttribute = (tx.expenseAttribute ?? kDefaultExpenseAttribute).dbValue;
     await (db.update(db.transactions)..where((tbl) => tbl.id.equals(tx.id!))).write(
       TransactionsCompanion(
         date: d.Value(tx.date),
@@ -35,6 +38,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
         memo: d.Value(tx.memo),
         categoryId: d.Value(tx.categoryId),
         type: d.Value(tx.type == TransactionType.expense ? 0 : 1),
+        expenseAttribute: d.Value(expenseAttribute),
       ),
     );
   }
@@ -66,6 +70,9 @@ class TransactionRepositoryImpl implements TransactionRepository {
               memo: r.memo,
               categoryId: r.categoryId,
               type: r.type == 0 ? TransactionType.expense : TransactionType.income,
+              expenseAttribute: r.type == 0
+                  ? (expenseAttributeFromDb(r.expenseAttribute) ?? kDefaultExpenseAttribute)
+                  : null,
             ))
         .toList();
   }

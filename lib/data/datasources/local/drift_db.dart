@@ -23,6 +23,8 @@ class Transactions extends Table {
   TextColumn get memo => text().withDefault(const Constant(''))();
   IntColumn get categoryId => integer().references(Categories, #id)();
   IntColumn get type => integer()(); // 0: expense, 1: income
+  IntColumn get expenseAttribute =>
+      integer().withDefault(const Constant(1))(); // 0: fixed, 1: variable, 2: bonus
 }
 
 @DriftDatabase(tables: [Categories, Transactions])
@@ -30,7 +32,19 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+        },
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.addColumn(transactions, transactions.expenseAttribute);
+          }
+        },
+      );
 
   // Seed default categories if empty
   Future<void> ensureSeeded() async {

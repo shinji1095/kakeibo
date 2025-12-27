@@ -1,5 +1,46 @@
 enum TransactionType { expense, income }
 
+enum ExpenseAttribute { fixed, variable, bonus }
+
+const ExpenseAttribute kDefaultExpenseAttribute = ExpenseAttribute.variable;
+
+extension ExpenseAttributeX on ExpenseAttribute {
+  String get label {
+    switch (this) {
+      case ExpenseAttribute.fixed:
+        return '固定費';
+      case ExpenseAttribute.variable:
+        return 'やりくり費';
+      case ExpenseAttribute.bonus:
+        return 'ボーナス支出';
+    }
+  }
+
+  int get dbValue {
+    switch (this) {
+      case ExpenseAttribute.fixed:
+        return 0;
+      case ExpenseAttribute.variable:
+        return 1;
+      case ExpenseAttribute.bonus:
+        return 2;
+    }
+  }
+}
+
+ExpenseAttribute? expenseAttributeFromDb(int? value) {
+  switch (value) {
+    case 0:
+      return ExpenseAttribute.fixed;
+    case 1:
+      return ExpenseAttribute.variable;
+    case 2:
+      return ExpenseAttribute.bonus;
+    default:
+      return null;
+  }
+}
+
 class Money {
   /// Amount in yen (integer).
   final int value;
@@ -21,6 +62,7 @@ class KakeiboTransaction {
   final String memo;
   final int categoryId;
   final TransactionType type;
+  final ExpenseAttribute? expenseAttribute;
 
   const KakeiboTransaction({
     this.id,
@@ -29,7 +71,11 @@ class KakeiboTransaction {
     required this.memo,
     required this.categoryId,
     required this.type,
-  });
+    this.expenseAttribute,
+  }) : assert(
+          type != TransactionType.expense || expenseAttribute != null,
+          'Expense attribute is required for expense transactions.',
+        );
 
   KakeiboTransaction copyWith({
     int? id,
@@ -38,6 +84,7 @@ class KakeiboTransaction {
     String? memo,
     int? categoryId,
     TransactionType? type,
+    ExpenseAttribute? expenseAttribute,
   }) {
     return KakeiboTransaction(
       id: id ?? this.id,
@@ -46,6 +93,7 @@ class KakeiboTransaction {
       memo: memo ?? this.memo,
       categoryId: categoryId ?? this.categoryId,
       type: type ?? this.type,
+      expenseAttribute: expenseAttribute ?? this.expenseAttribute,
     );
   }
 }

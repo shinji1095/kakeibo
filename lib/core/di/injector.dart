@@ -9,6 +9,7 @@ import 'package:kakeibo/domain/repositories/category_repository.dart';
 import 'package:kakeibo/domain/repositories/transaction_repository.dart';
 import 'package:kakeibo/domain/usecases/add_transaction.dart';
 import 'package:kakeibo/domain/usecases/delete_transaction.dart';
+import 'package:kakeibo/domain/usecases/get_category_totals_by_range.dart';
 import 'package:kakeibo/domain/usecases/get_categories.dart';
 import 'package:kakeibo/domain/usecases/get_monthly_summary.dart';
 import 'package:kakeibo/domain/usecases/get_total_by_range.dart';
@@ -42,5 +43,6 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => GetTransactionsByRange(sl()));
   sl.registerLazySingleton(() => GetMonthlySummary(sl()));
   sl.registerLazySingleton(() => GetTotalByRange(sl()));
+  sl.registerLazySingleton(() => GetCategoryTotalsByRange(sl()));
   sl.registerLazySingleton(() => GetCategories(sl()));
 }

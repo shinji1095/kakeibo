@@ -23,6 +23,7 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
   late TextEditingController _amountCtrl;
   late TextEditingController _memoCtrl;
   int? _categoryId;
+  ExpenseAttribute? _expenseAttribute;
 
   @override
   void initState() {
@@ -30,6 +31,9 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
     _type = widget.transaction.type;
     _date = widget.transaction.date;
     _categoryId = widget.transaction.categoryId;
+    _expenseAttribute = widget.transaction.type == TransactionType.expense
+        ? (widget.transaction.expenseAttribute ?? kDefaultExpenseAttribute)
+        : null;
     _amountCtrl = TextEditingController(text: widget.transaction.amount.value.toString());
     _memoCtrl = TextEditingController(text: widget.transaction.memo);
   }
@@ -60,6 +64,12 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
       }
       return;
     }
+    if (_type == TransactionType.expense && _expenseAttribute == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('支出属性を選択してください')));
+      }
+      return;
+    }
     if (_categoryId == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('カテゴリを選択してください')));
@@ -73,6 +83,7 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
       memo: _memoCtrl.text,
       categoryId: _categoryId,
       type: _type,
+      expenseAttribute: _type == TransactionType.expense ? _expenseAttribute : null,
     );
 
     await ref.read(updateTransactionProvider).call(updated);
@@ -109,6 +120,7 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
                   setState(() {
                     _type = v;
                     _categoryId = null;
+                    _expenseAttribute = v == TransactionType.expense ? kDefaultExpenseAttribute : null;
                   });
                 },
               ),
@@ -154,6 +166,22 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
                 onChanged: (v) => setState(() => _categoryId = v),
                 decoration: const InputDecoration(labelText: 'カテゴリ'),
               ),
+              if (_type == TransactionType.expense) ...[
+                const SizedBox(height: 12),
+                DropdownButtonFormField<ExpenseAttribute>(
+                  value: _expenseAttribute,
+                  decoration: const InputDecoration(labelText: '支出属性'),
+                  items: ExpenseAttribute.values
+                      .map(
+                        (attr) => DropdownMenuItem(
+                          value: attr,
+                          child: Text(attr.label),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) => setState(() => _expenseAttribute = value),
+                ),
+              ],
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,

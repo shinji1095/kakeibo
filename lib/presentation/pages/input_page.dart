@@ -21,6 +21,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
   DateTime _date = DateTime.now();
   int? _expenseCategoryId;
   int? _incomeCategoryId;
+  ExpenseAttribute _expenseAttribute = kDefaultExpenseAttribute;
 
   @override
   void initState() {
@@ -77,6 +78,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
       memo: _memoCtrl.text,
       categoryId: categoryId,
       type: type,
+      expenseAttribute: type == TransactionType.expense ? _expenseAttribute : null,
     );
     await ref.read(addTransactionProvider).call(tx);
     _amountCtrl.clear();
@@ -186,7 +188,22 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
               ),
               if (type == TransactionType.expense) ...[
                 const SizedBox(height: 12),
-                const Text('支出属性は未実装です（プレースホルダー）'),
+                DropdownButtonFormField<ExpenseAttribute>(
+                  value: _expenseAttribute,
+                  decoration: const InputDecoration(labelText: '支出属性'),
+                  items: ExpenseAttribute.values
+                      .map(
+                        (attr) => DropdownMenuItem(
+                          value: attr,
+                          child: Text(attr.label),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() => _expenseAttribute = value);
+                  },
+                ),
               ],
               const SizedBox(height: 24),
               SizedBox(
@@ -256,8 +273,12 @@ class _PeriodList extends ConsumerWidget {
                   final cat = categoryMap[tx.categoryId];
                   final catLabel = cat?.name ?? 'カテゴリ${tx.categoryId}';
                   final typeLabel = tx.type == TransactionType.expense ? '支出' : '収入';
+                  final attrLabel = tx.type == TransactionType.expense
+                      ? (tx.expenseAttribute ?? kDefaultExpenseAttribute).label
+                      : null;
                   final memo = tx.memo.trim();
                   final subtitle = '${tx.date.year}/${tx.date.month}/${tx.date.day}  $typeLabel / $catLabel'
+                      '${attrLabel == null ? '' : ' / $attrLabel'}'
                       '${memo.isEmpty ? '' : ' / $memo'}';
 
                   return ListTile(
