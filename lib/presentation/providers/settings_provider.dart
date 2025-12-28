@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakeibo/core/theme/app_theme.dart';
 
 @immutable
 class SettingsState {
   final double fontScale;
+  final AppColorTheme colorTheme;
   final ThemeMode themeMode;
   final DateTime kakeiboStartDate;
   final int periodLengthDays;
@@ -12,6 +14,7 @@ class SettingsState {
 
   const SettingsState({
     required this.fontScale,
+    required this.colorTheme,
     required this.themeMode,
     required this.kakeiboStartDate,
     required this.periodLengthDays,
@@ -23,6 +26,7 @@ class SettingsState {
     final now = DateTime.now();
     return SettingsState(
       fontScale: 1.0,
+      colorTheme: AppColorTheme.sky,
       themeMode: ThemeMode.system,
       kakeiboStartDate: DateTime(now.year, now.month, 1),
       periodLengthDays: 35,
@@ -33,6 +37,7 @@ class SettingsState {
 
   SettingsState copyWith({
     double? fontScale,
+    AppColorTheme? colorTheme,
     ThemeMode? themeMode,
     DateTime? kakeiboStartDate,
     int? periodLengthDays,
@@ -41,6 +46,7 @@ class SettingsState {
   }) {
     return SettingsState(
       fontScale: fontScale ?? this.fontScale,
+      colorTheme: colorTheme ?? this.colorTheme,
       themeMode: themeMode ?? this.themeMode,
       kakeiboStartDate: kakeiboStartDate ?? this.kakeiboStartDate,
       periodLengthDays: periodLengthDays ?? this.periodLengthDays,
@@ -56,6 +62,10 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   void setFontScale(double value) {
     final v = value.clamp(0.8, 1.4);
     state = state.copyWith(fontScale: v);
+  }
+
+  void setColorTheme(AppColorTheme theme) {
+    state = state.copyWith(colorTheme: theme);
   }
 
   void setThemeMode(ThemeMode mode) {

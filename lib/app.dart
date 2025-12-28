@@ -24,8 +24,8 @@ class KakeiboApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
 
-    final baseLight = AppTheme.lightTheme;
-    final baseDark = AppTheme.darkTheme;
+    final baseLight = AppTheme.themeFor(settings.colorTheme, Brightness.light);
+    final baseDark = AppTheme.themeFor(settings.colorTheme, Brightness.dark);
 
     final ThemeData lightTheme = baseLight.copyWith(
       textTheme: baseLight.textTheme.apply(fontSizeFactor: settings.fontScale),

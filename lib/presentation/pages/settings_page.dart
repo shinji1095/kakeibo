@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -47,9 +48,25 @@ class SettingsPage extends ConsumerWidget {
                     onChanged: notifier.setFontScale,
                   ),
                   const SizedBox(height: 8),
+                  DropdownButtonFormField<AppColorTheme>(
+                    value: settings.colorTheme,
+                    decoration: const InputDecoration(labelText: 'カラーテーマ'),
+                    items: [
+                      for (final theme in AppColorTheme.values)
+                        DropdownMenuItem(
+                          value: theme,
+                          child: Text(theme.label),
+                        ),
+                    ],
+                    onChanged: (v) {
+                      if (v == null) return;
+                      notifier.setColorTheme(v);
+                    },
+                  ),
+                  const SizedBox(height: 8),
                   DropdownButtonFormField<ThemeMode>(
                     value: settings.themeMode,
-                    decoration: const InputDecoration(labelText: 'カラーテーマ'),
+                    decoration: const InputDecoration(labelText: '表示モード'),
                     items: const [
                       DropdownMenuItem(value: ThemeMode.system, child: Text('システム')),
                       DropdownMenuItem(value: ThemeMode.light, child: Text('ライト')),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
+import 'package:kakeibo/presentation/utils/category_icons.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 import 'package:kakeibo/presentation/widgets/expense_attribute_filter_chips.dart';
 
@@ -118,6 +119,10 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
                     final tx = filtered[index];
                     final cat = categoryMap[tx.categoryId];
                     final catLabel = cat?.name ?? 'カテゴリ${tx.categoryId}';
+                    final catColor = cat != null ? Color(cat.color) : Theme.of(context).colorScheme.primary;
+                    final iconColor = ThemeData.estimateBrightnessForColor(catColor) == Brightness.dark
+                        ? Colors.white
+                        : Colors.black;
                     final typeLabel = tx.type == TransactionType.expense ? '支出' : '収入';
                     final attrLabel = tx.type == TransactionType.expense
                         ? (tx.expenseAttribute ?? kDefaultExpenseAttribute).label
@@ -128,8 +133,12 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
                         '${memo.isEmpty ? '' : ' / $memo'}';
 
                     return ListTile(
-                      leading: Icon(
-                        tx.type == TransactionType.expense ? Icons.remove_circle : Icons.add_circle,
+                      leading: CircleAvatar(
+                        backgroundColor: catColor,
+                        child: Icon(
+                          cat == null ? Icons.category : categoryIconFor(cat),
+                          color: iconColor,
+                        ),
                       ),
                       title: Text('${tx.amount.value} 円'),
                       subtitle: Text(subtitle),
