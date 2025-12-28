@@ -9,6 +9,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<List<domain.Category>> getAll() async {
+    await db.ensureSeeded();
     final rows = await (db.select(db.categories)
           ..orderBy([(t) => d.OrderingTerm.asc(t.id)]))
         .get();

@@ -14,6 +14,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stats = ref.watch(homeStatsProvider);
     final settings = ref.watch(settingsProvider);
+    final calendarSummaryAsync = ref.watch(homeCalendarSummaryProvider);
     final endInclusive = stats.periodEndExclusive.subtract(const Duration(days: 1));
 
     return AppScaffold(
@@ -43,17 +44,57 @@ class HomePage extends ConsumerWidget {
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('期間カレンダー', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 12),
-                  PeriodCalendar(
-                    periodStart: stats.periodStart,
-                    periodLengthDays: stats.periodLengthDays,
-                    appStart: settings.kakeiboStartDate,
-                  ),
-                ],
+              child: calendarSummaryAsync.when(
+                data: (summary) {
+                  final remaining = summary.remainingBudget;
+                  final remainingStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: remaining < 0 ? Colors.red : Colors.green,
+                      );
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('期間カレンダー', style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('やりくり費 残額'),
+                          Text('${remaining}円', style: remainingStyle),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      PeriodCalendar(
+                        periodStart: stats.periodStart,
+                        periodLengthDays: stats.periodLengthDays,
+                        appStart: settings.kakeiboStartDate,
+                        totalsByDay: summary.totalsByDay,
+                      ),
+                    ],
+                  );
+                },
+                loading: () => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('期間カレンダー', style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    const LinearProgressIndicator(),
+                    const SizedBox(height: 12),
+                    PeriodCalendar(
+                      periodStart: stats.periodStart,
+                      periodLengthDays: stats.periodLengthDays,
+                      appStart: settings.kakeiboStartDate,
+                      totalsByDay: <DateTime, ({int income, int expense})>{},
+                    ),
+                  ],
+                ),
+                error: (e, st) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('期間カレンダー', style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    Text('Error: $e'),
+                  ],
+                ),
               ),
             ),
           ),

@@ -236,18 +236,6 @@ class TrendPage extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  ...list.map((item) {
-                    final end = item.end.subtract(const Duration(days: 1));
-                    final diff = item.income - item.expense;
-                    return Card(
-                      child: ListTile(
-                        title: Text('${_formatDate(item.start)} ～ ${_formatDate(end)}'),
-                        subtitle: Text('収入 ${item.income}円 / 支出 ${item.expense}円'),
-                        trailing: Text('差額 ${diff}円'),
-                      ),
-                    );
-                  }),
                 ],
               );
             },

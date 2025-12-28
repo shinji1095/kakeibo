@@ -131,6 +131,13 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (type == TransactionType.expense) ...[
+                ExpenseAttributeIconSelector(
+                  selected: _expenseAttribute,
+                  onSelected: (value) => setState(() => _expenseAttribute = value),
+                ),
+                const SizedBox(height: 12),
+              ],
               Row(
                 children: [
                   Expanded(
@@ -181,13 +188,6 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
                   });
                 },
               ),
-              if (type == TransactionType.expense) ...[
-                const SizedBox(height: 12),
-                ExpenseAttributeIconSelector(
-                  selected: _expenseAttribute,
-                  onSelected: (value) => setState(() => _expenseAttribute = value),
-                ),
-              ],
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,

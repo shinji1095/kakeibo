@@ -5,12 +5,14 @@ class PeriodCalendar extends StatelessWidget {
   final DateTime periodStart;
   final int periodLengthDays;
   final DateTime appStart;
+  final Map<DateTime, ({int income, int expense})> totalsByDay;
 
   const PeriodCalendar({
     super.key,
     required this.periodStart,
     required this.periodLengthDays,
     required this.appStart,
+    required this.totalsByDay,
   });
 
   @override
@@ -48,7 +50,7 @@ class PeriodCalendar extends StatelessWidget {
             crossAxisCount: 7,
             crossAxisSpacing: 4,
             mainAxisSpacing: 4,
-            childAspectRatio: 1.1,
+            childAspectRatio: 0.9,
           ),
           itemCount: totalCells,
           itemBuilder: (context, index) {
@@ -56,15 +58,44 @@ class PeriodCalendar extends StatelessWidget {
               return const SizedBox.shrink();
             }
             final date = days[index - offset];
+            final totals = totalsByDay[truncateDate(date)];
+            final income = totals?.income ?? 0;
+            final expense = totals?.expense ?? 0;
             return Container(
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Center(
-                child: Text(
-                  '${date.day}',
-                  style: Theme.of(context).textTheme.bodySmall,
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${date.day}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    if (income > 0)
+                      Text(
+                        '+$income',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall
+                            ?.copyWith(color: Colors.blue),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    if (expense > 0)
+                      Text(
+                        '-$expense',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall
+                            ?.copyWith(color: Colors.red),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
                 ),
               ),
             );

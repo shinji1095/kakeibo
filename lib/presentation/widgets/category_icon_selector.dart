@@ -25,29 +25,56 @@ class CategoryIconSelector extends StatelessWidget {
 
     return InputDecorator(
       decoration: InputDecoration(labelText: label),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: selectable.map((category) {
-          final color = Color(category.color);
-          final iconColor = ThemeData.estimateBrightnessForColor(color) == Brightness.dark
-              ? Colors.white
-              : Colors.black;
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: selectable.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 1.4,
+        ),
+        itemBuilder: (context, index) {
+          final category = selectable[index];
+          final isSelected = category.id == selectedId;
+          final theme = Theme.of(context);
+          final borderColor = isSelected ? theme.colorScheme.primary : theme.dividerColor;
+          final backgroundColor = isSelected
+              ? theme.colorScheme.primary.withOpacity(0.08)
+              : theme.colorScheme.surface;
+          final iconColor = Color(category.color);
 
-          return ChoiceChip(
-            label: Text(category.name),
-            avatar: CircleAvatar(
-              backgroundColor: color,
-              child: Icon(
-                categoryIconFor(category),
-                size: 16,
-                color: iconColor,
+          return Material(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => onSelected(category.id!),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: borderColor, width: isSelected ? 2 : 1),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(categoryIconFor(category), size: 20, color: iconColor),
+                    const SizedBox(height: 4),
+                    Text(
+                      category.name,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall,
+                    ),
+                  ],
+                ),
               ),
             ),
-            selected: category.id == selectedId,
-            onSelected: (_) => onSelected(category.id!),
           );
-        }).toList(),
+        },
       ),
     );
   }
