@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
 
 class BonusSettingsPage extends ConsumerStatefulWidget {
@@ -41,6 +42,7 @@ class _BonusSettingsPageState extends ConsumerState<BonusSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
     final budgetText = settings.periodBudget.toString();
@@ -50,11 +52,11 @@ class _BonusSettingsPageState extends ConsumerState<BonusSettingsPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('ボーナス設定')),
+      appBar: AppBar(title: Text(l10n.bonusSettingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('やりくり費', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.bonusBudgetTitle, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: Padding(
@@ -67,34 +69,34 @@ class _BonusSettingsPageState extends ConsumerState<BonusSettingsPage> {
                     focusNode: _budgetFocus,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(
-                      labelText: '期間のやりくり費（円）',
-                      hintText: '例: 50000',
+                    decoration: InputDecoration(
+                      labelText: l10n.bonusBudgetLabel,
+                      hintText: l10n.bonusBudgetHint,
                     ),
                     onFieldSubmitted: (_) => _commitBudget(),
                   ),
                   const SizedBox(height: 8),
-                  const Text('デフォルトは50,000円です'),
+                  Text(l10n.bonusBudgetNote),
                   const SizedBox(height: 4),
-                  const Text('設定変更は以後の期間から適用されます'),
+                  Text(l10n.bonusBudgetApplyNote),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
-          Text('ボーナス月', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.bonusMonthTitle, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: DropdownButtonFormField<int>(
                 value: settings.bonusMonth,
-                decoration: const InputDecoration(labelText: 'ボーナス月'),
+                decoration: InputDecoration(labelText: l10n.bonusMonthLabel),
                 items: List.generate(
                   12,
                   (i) => DropdownMenuItem(
                     value: i + 1,
-                    child: Text('${i + 1}月'),
+                    child: Text(l10n.formatMonth(i + 1)),
                   ),
                 ),
                 onChanged: (value) {

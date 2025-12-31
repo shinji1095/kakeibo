@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
@@ -22,17 +23,22 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
     ref.read(periodOffsetProvider.notifier).state += delta;
   }
 
-  String _formatDate(DateTime d) => '${d.year}/${d.month}/${d.day}';
-
   Future<void> _confirmDelete(KakeiboTransaction tx) async {
+    final l10n = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('削除確認'),
-        content: const Text('この取引を削除しますか？'),
+        title: Text(l10n.deleteConfirmTitle),
+        content: Text(l10n.deleteConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('キャンセル')),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('削除')),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.deleteCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.deleteOk),
+          ),
         ],
       ),
     );
@@ -41,13 +47,14 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
       await ref.read(deleteTransactionProvider).call(tx.id!);
       ref.invalidate(transactionsProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('削除しました')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.deletedMessage)));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final range = ref.watch(periodRangeProvider);
     final listAsync = ref.watch(transactionsProvider);
     final expenseFilters = ref.watch(expenseAttributeFilterProvider);
@@ -61,12 +68,12 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
     final endInclusive = range.end.subtract(const Duration(days: 1));
 
     return AppScaffold(
-      title: '一覧',
+      title: l10n.listTitle,
       currentIndex: 1,
       body: Column(
         children: [
           _PeriodHeader(
-            rangeLabel: '${_formatDate(range.start)} ～ ${_formatDate(endInclusive)}',
+            rangeLabel: '${l10n.formatDate(range.start)}${l10n.rangeSeparator}${l10n.formatDate(endInclusive)}',
             onPrev: () => _shiftPeriod(-1),
             onNext: () => _shiftPeriod(1),
           ),
@@ -75,24 +82,24 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
             spacing: 8,
             children: [
               ChoiceChip(
-                label: const Text('すべて'),
+                label: Text(l10n.filterAll),
                 selected: _filterType == null,
                 onSelected: (_) => setState(() => _filterType = null),
               ),
               ChoiceChip(
-                label: const Text('支出'),
+                label: Text(l10n.filterExpense),
                 selected: _filterType == TransactionType.expense,
                 onSelected: (_) => setState(() => _filterType = TransactionType.expense),
               ),
               ChoiceChip(
-                label: const Text('収入'),
+                label: Text(l10n.filterIncome),
                 selected: _filterType == TransactionType.income,
                 onSelected: (_) => setState(() => _filterType = TransactionType.income),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          const Text('支出属性'),
+          Text(l10n.expenseAttribute),
           const SizedBox(height: 4),
           const ExpenseAttributeFilterChips(),
           const SizedBox(height: 8),
@@ -109,7 +116,7 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
                 }).toList();
 
                 if (filtered.isEmpty) {
-                  return const Center(child: Text('取引がありません'));
+                  return Center(child: Text(l10n.noTransactions));
                 }
 
                 return ListView.separated(
@@ -118,17 +125,17 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
                   itemBuilder: (context, index) {
                     final tx = filtered[index];
                     final cat = categoryMap[tx.categoryId];
-                    final catLabel = cat?.name ?? 'カテゴリ${tx.categoryId}';
+                    final catLabel = cat?.name ?? l10n.categoryFallback(tx.categoryId);
                     final catColor = cat != null ? Color(cat.color) : Theme.of(context).colorScheme.primary;
                     final iconColor = ThemeData.estimateBrightnessForColor(catColor) == Brightness.dark
                         ? Colors.white
                         : Colors.black;
-                    final typeLabel = tx.type == TransactionType.expense ? '支出' : '収入';
+                    final typeLabel = tx.type == TransactionType.expense ? l10n.typeExpense : l10n.typeIncome;
                     final attrLabel = tx.type == TransactionType.expense
-                        ? (tx.expenseAttribute ?? kDefaultExpenseAttribute).label
+                        ? l10n.expenseAttributeLabel(tx.expenseAttribute ?? kDefaultExpenseAttribute)
                         : null;
                     final memo = tx.memo.trim();
-                    final subtitle = '${_formatDate(tx.date)}  $typeLabel / $catLabel'
+                    final subtitle = '${l10n.formatDate(tx.date)}  $typeLabel / $catLabel'
                         '${attrLabel == null ? '' : ' / $attrLabel'}'
                         '${memo.isEmpty ? '' : ' / $memo'}';
 
@@ -140,7 +147,7 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
                           color: iconColor,
                         ),
                       ),
-                      title: Text('${tx.amount.value} 円'),
+                      title: Text(l10n.formatCurrency(tx.amount.value)),
                       subtitle: Text(subtitle),
                       onTap: () => context.push('/edit', extra: tx),
                       trailing: IconButton(
@@ -152,7 +159,7 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, st) => Center(child: Text('Error: $e')),
+              error: (e, st) => Center(child: Text(l10n.errorMessage(e))),
             ),
           ),
         ],

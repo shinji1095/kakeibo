@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/presentation/widgets/placeholder_page.dart';
 
 class CsvExportPage extends StatelessWidget {
@@ -6,9 +7,10 @@ class CsvExportPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlaceholderPage(
-      title: 'CSVエクスポート',
-      message: 'CSVエクスポートは未実装です（プレースホルダー）。',
+    final l10n = AppLocalizations.of(context);
+    return PlaceholderPage(
+      title: l10n.csvExportTitle,
+      message: l10n.csvExportPlaceholder,
     );
   }
 }

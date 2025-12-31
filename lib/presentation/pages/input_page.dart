@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
@@ -57,10 +58,11 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
   }
 
   Future<void> _submit(TransactionType type) async {
+    final l10n = AppLocalizations.of(context);
     final amount = int.tryParse(_amountCtrl.text);
     if (amount == null || amount <= 0) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('金額を入力してください')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.validationEnterAmount)));
       }
       return;
     }
@@ -68,7 +70,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
     final categoryId = type == TransactionType.expense ? _expenseCategoryId : _incomeCategoryId;
     if (categoryId == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('カテゴリを選択してください')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.validationSelectCategory)));
       }
       return;
     }
@@ -86,7 +88,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
     _memoCtrl.clear();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(type == TransactionType.expense ? '支出を保存しました' : '収入を保存しました')),
+        SnackBar(content: Text(type == TransactionType.expense ? l10n.savedExpense : l10n.savedIncome)),
       );
     }
     ref.invalidate(transactionsProvider);
@@ -94,14 +96,15 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AppScaffold(
-      title: '入力',
+      title: l10n.inputTitle,
       currentIndex: 2,
       body: Column(
         children: [
           TabBar(
             controller: _tab,
-            tabs: const [Tab(text: '支出'), Tab(text: '収入')],
+            tabs: [Tab(text: l10n.expenseTab), Tab(text: l10n.incomeTab)],
           ),
           Expanded(
             child: TabBarView(
@@ -118,6 +121,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
   }
 
   Widget _buildForm(TransactionType type) {
+    final l10n = AppLocalizations.of(context);
     final categoriesAsync = ref.watch(categoriesByTypeProvider(type));
 
     return categoriesAsync.when(
@@ -144,7 +148,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
                     child: TextFormField(
                       controller: _amountCtrl,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: '金額（円）'),
+                      decoration: InputDecoration(labelText: l10n.amountLabel),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -156,13 +160,13 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100),
                           initialDate: _date,
-                          locale: const Locale('ja', 'JP'),
+                          locale: l10n.locale,
                         );
                         if (picked != null) setState(() => _date = picked);
                       },
                       child: InputDecorator(
-                        decoration: const InputDecoration(labelText: '日付'),
-                        child: Text('${_date.year}年${_date.month}月${_date.day}日'),
+                        decoration: InputDecoration(labelText: l10n.dateLabel),
+                        child: Text(l10n.formatLongDate(_date)),
                       ),
                     ),
                   ),
@@ -171,11 +175,11 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
               const SizedBox(height: 12),
               TextFormField(
                 controller: _memoCtrl,
-                decoration: const InputDecoration(labelText: 'メモ'),
+                decoration: InputDecoration(labelText: l10n.memoLabel),
               ),
               const SizedBox(height: 12),
               CategoryIconSelector(
-                label: 'カテゴリ',
+                label: l10n.categoryLabel,
                 categories: selectable,
                 selectedId: selectedId,
                 onSelected: (id) {
@@ -194,7 +198,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
                 child: ElevatedButton.icon(
                   onPressed: () => _submit(type),
                   icon: const Icon(Icons.save),
-                  label: Text(type == TransactionType.expense ? '支出を保存' : '収入を保存'),
+                  label: Text(type == TransactionType.expense ? l10n.saveExpense : l10n.saveIncome),
                 ),
               ),
             ],
@@ -202,7 +206,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+      error: (e, st) => Center(child: Text(l10n.errorMessage(e))),
     );
   }
 }

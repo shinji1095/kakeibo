@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:kakeibo/core/utils/period_utils.dart';
 
 class PeriodCalendar extends StatelessWidget {
@@ -25,13 +25,14 @@ class PeriodCalendar extends StatelessWidget {
     final totalCells = offset + length;
     final periodIndex = normalizedStart.difference(normalizedAppStart).inDays ~/ length;
     final color = _periodColors[periodIndex % _periodColors.length];
+    final weekdayLabels = MaterialLocalizations.of(context).narrowWeekdays;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: _weekdayLabels
+          children: weekdayLabels
               .map((label) => Expanded(
                     child: Center(
                       child: Text(
@@ -105,8 +106,6 @@ class PeriodCalendar extends StatelessWidget {
     );
   }
 }
-
-const List<String> _weekdayLabels = ['日', '月', '火', '水', '木', '金', '土'];
 
 const List<Color> _periodColors = [
   Color(0xFFE3F2FD),

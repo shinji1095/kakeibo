@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
@@ -59,22 +59,24 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
   }
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context);
     final amount = int.tryParse(_amountCtrl.text);
     if (amount == null || amount <= 0) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('金額を入力してください')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.validationEnterAmount)));
       }
       return;
     }
     if (_type == TransactionType.expense && _expenseAttribute == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('支出属性を選択してください')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.validationSelectExpenseAttribute)));
       }
       return;
     }
     if (_categoryId == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('カテゴリを選択してください')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.validationSelectCategory)));
       }
       return;
     }
@@ -92,17 +94,18 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
     ref.invalidate(transactionsProvider);
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('更新しました')));
-      context.pop();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.updatedMessage)));
+      Navigator.of(context).maybePop();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final categoriesAsync = ref.watch(categoriesByTypeProvider(_type));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('取引の編集')),
+      appBar: AppBar(title: Text(l10n.editTitle)),
       body: categoriesAsync.when(
         data: (categories) {
           final selectable = categories.where((c) => c.id != null).toList();
@@ -113,10 +116,10 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
             children: [
               DropdownButtonFormField<TransactionType>(
                 value: _type,
-                decoration: const InputDecoration(labelText: '種別'),
-                items: const [
-                  DropdownMenuItem(value: TransactionType.expense, child: Text('支出')),
-                  DropdownMenuItem(value: TransactionType.income, child: Text('収入')),
+                decoration: InputDecoration(labelText: l10n.typeLabel),
+                items: [
+                  DropdownMenuItem(value: TransactionType.expense, child: Text(l10n.expenseTab)),
+                  DropdownMenuItem(value: TransactionType.income, child: Text(l10n.incomeTab)),
                 ],
                 onChanged: (v) {
                   if (v == null) return;
@@ -131,7 +134,7 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
               TextFormField(
                 controller: _amountCtrl,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: '金額（円）'),
+                decoration: InputDecoration(labelText: l10n.amountLabel),
               ),
               const SizedBox(height: 12),
               InkWell(
@@ -141,23 +144,23 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2100),
                     initialDate: _date,
-                    locale: const Locale('ja', 'JP'),
+                    locale: l10n.locale,
                   );
                   if (picked != null) setState(() => _date = picked);
                 },
                 child: InputDecorator(
-                  decoration: const InputDecoration(labelText: '日付'),
-                  child: Text('${_date.year}年${_date.month}月${_date.day}日'),
+                  decoration: InputDecoration(labelText: l10n.dateLabel),
+                  child: Text(l10n.formatLongDate(_date)),
                 ),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _memoCtrl,
-                decoration: const InputDecoration(labelText: 'メモ'),
+                decoration: InputDecoration(labelText: l10n.memoLabel),
               ),
               const SizedBox(height: 12),
               CategoryIconSelector(
-                label: 'カテゴリ',
+                label: l10n.categoryLabel,
                 categories: selectable,
                 selectedId: _categoryId,
                 onSelected: (id) => setState(() => _categoryId = id),
@@ -173,16 +176,17 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
+                  key: const Key('transaction-edit-update'),
                   onPressed: _submit,
                   icon: const Icon(Icons.save),
-                  label: const Text('更新'),
+                  label: Text(l10n.updateButton),
                 ),
               ),
             ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text(l10n.errorMessage(e))),
       ),
     );
   }

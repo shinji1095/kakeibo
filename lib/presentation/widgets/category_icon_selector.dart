@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/utils/category_icons.dart';
 
@@ -18,13 +19,19 @@ class CategoryIconSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final selectable = categories.where((c) => c.id != null).toList();
     if (selectable.isEmpty) {
-      return const Text('カテゴリがありません');
+      return Text(l10n.noCategories);
     }
 
     return InputDecorator(
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+      ),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),

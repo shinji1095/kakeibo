@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 
 class AppScaffold extends StatelessWidget {
   final String title;
@@ -38,6 +39,8 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     Widget buildAddIcon() {
       final scheme = Theme.of(context).colorScheme;
       return Container(
@@ -77,15 +80,15 @@ class AppBottomNav extends StatelessWidget {
         }
       },
       destinations: [
-        const NavigationDestination(icon: Icon(Icons.home), label: 'ホーム'),
-        const NavigationDestination(icon: Icon(Icons.list), label: '一覧'),
+        NavigationDestination(icon: const Icon(Icons.home), label: l10n.navHome),
+        NavigationDestination(icon: const Icon(Icons.list), label: l10n.navList),
         NavigationDestination(
           icon: buildAddIcon(),
           selectedIcon: buildAddIcon(),
-          label: '入力',
+          label: l10n.navInput,
         ),
-        const NavigationDestination(icon: Icon(Icons.pie_chart), label: '内訳'),
-        const NavigationDestination(icon: Icon(Icons.show_chart), label: '推移'),
+        NavigationDestination(icon: const Icon(Icons.pie_chart), label: l10n.navBreakdown),
+        NavigationDestination(icon: const Icon(Icons.show_chart), label: l10n.navTrend),
       ],
     );
   }

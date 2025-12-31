@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/pages/breakdown_page.dart';
@@ -36,22 +37,20 @@ class KakeiboApp extends ConsumerWidget {
     );
 
     return MaterialApp.router(
-      title: '35家計簿 ~フトコロ~',
+      title: AppLocalizations(settings.language.locale).appTitle,
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: settings.themeMode,
       routerConfig: _router,
-      locale: const Locale('ja', 'JP'),
+      locale: settings.language.locale,
       localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('ja', 'JP'),
-        Locale('en', 'US'),
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }
