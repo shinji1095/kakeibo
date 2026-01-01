@@ -15,6 +15,7 @@ class HomePage extends ConsumerWidget {
     final stats = ref.watch(homeStatsProvider);
     final settings = ref.watch(settingsProvider);
     final calendarSummaryAsync = ref.watch(homeCalendarSummaryProvider);
+    final bonusSummaryAsync = ref.watch(bonusSummaryProvider);
     final endInclusive = stats.periodEndExclusive.subtract(const Duration(days: 1));
 
     return AppScaffold(
@@ -102,7 +103,37 @@ class HomePage extends ConsumerWidget {
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(l10n.homeBonusPlaceholder),
+              child: bonusSummaryAsync.when(
+                data: (summary) {
+                  if (!summary.isBonusMonth) {
+                    return Text(l10n.bonusMonthInactive);
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.bonusSummaryTitle, style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(l10n.bonusBalanceLabel),
+                          Text(l10n.formatCurrency(summary.bonusBalance)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(l10n.bonusExpenseTotalLabel),
+                          Text(l10n.formatCurrency(summary.bonusExpenseTotal)),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+                loading: () => const LinearProgressIndicator(),
+                error: (e, st) => Text(l10n.errorMessage(e)),
+              ),
             ),
           ),
         ],

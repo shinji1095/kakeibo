@@ -7,6 +7,7 @@ import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/pages/breakdown_page.dart';
 import 'package:kakeibo/presentation/pages/bonus_settings_page.dart';
+import 'package:kakeibo/presentation/pages/annual_schedule_page.dart';
 import 'package:kakeibo/presentation/pages/category_manage_page.dart';
 import 'package:kakeibo/presentation/pages/csv_export_page.dart';
 import 'package:kakeibo/presentation/pages/home_page.dart';
@@ -67,6 +68,7 @@ final _router = GoRouter(
     GoRoute(path: '/settings/csv', builder: (ctx, st) => const CsvExportPage(), name: 'csv_export'),
     GoRoute(path: '/settings/categories', builder: (ctx, st) => const CategoryManagePage(), name: 'category_manage'),
     GoRoute(path: '/settings/bonus', builder: (ctx, st) => const BonusSettingsPage(), name: 'bonus_settings'),
+    GoRoute(path: '/settings/annual', builder: (ctx, st) => const AnnualSchedulePage(), name: 'annual_schedule'),
     GoRoute(path: '/settings/reminder', builder: (ctx, st) => const ReminderManagePage(), name: 'reminder_manage'),
     GoRoute(
       path: '/edit',

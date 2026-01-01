@@ -1,3 +1,5 @@
+import 'package:kakeibo/domain/entities/annual_schedule.dart';
+
 DateTime truncateDate(DateTime d) => DateTime(d.year, d.month, d.day);
 
 DateTime currentPeriodStart(DateTime start, int length, DateTime today) {
@@ -50,4 +52,37 @@ List<({DateTime start, DateTime end})> buildWeekRanges(
     final end = start.add(const Duration(days: 7));
     return (start: start, end: end);
   });
+}
+
+AnnualSchedulePeriod resolveSchedulePeriod(List<AnnualSchedulePeriod> periods, DateTime date) {
+  final normalized = truncateDate(date);
+  for (final period in periods) {
+    if (!normalized.isBefore(period.startDate) && !normalized.isAfter(period.endDate)) {
+      return period;
+    }
+  }
+  if (normalized.isBefore(periods.first.startDate)) {
+    return periods.first;
+  }
+  return periods.last;
+}
+
+List<({DateTime start, DateTime end})> buildScheduleRanges(
+  List<AnnualSchedulePeriod> periods,
+  int endIndex,
+  int count,
+) {
+  if (periods.isEmpty || count <= 0) return const [];
+  final safeEnd = endIndex.clamp(0, periods.length - 1);
+  final startIndex = (safeEnd - (count - 1)).clamp(0, safeEnd);
+  final ranges = <({DateTime start, DateTime end})>[];
+
+  for (var i = startIndex; i <= safeEnd; i++) {
+    final period = periods[i];
+    ranges.add((
+      start: period.startDate,
+      end: period.endDate.add(const Duration(days: 1)),
+    ));
+  }
+  return ranges;
 }

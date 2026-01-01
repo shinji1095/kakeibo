@@ -53,4 +53,29 @@ void main() {
       expect(ranges, isEmpty);
     });
   });
+
+  group('buildWeekRanges', () {
+    test('returns chronological weeks ending at anchor week', () {
+      final baseStart = DateTime(2024, 1, 1);
+      final anchor = DateTime(2024, 1, 20);
+      final ranges = buildWeekRanges(baseStart, anchor, 3);
+
+      expect(ranges.length, 3);
+      expect(ranges.first.start, DateTime(2024, 1, 1));
+      expect(ranges[1].start, DateTime(2024, 1, 8));
+      expect(ranges.last.start, DateTime(2024, 1, 15));
+      expect(ranges.last.end, DateTime(2024, 1, 22));
+    });
+
+    test('clamps to base start when anchor is before start', () {
+      final baseStart = DateTime(2024, 1, 10);
+      final anchor = DateTime(2024, 1, 5);
+      final ranges = buildWeekRanges(baseStart, anchor, 2);
+
+      expect(ranges.length, 2);
+      expect(ranges.first.start, DateTime(2024, 1, 3));
+      expect(ranges.last.start, DateTime(2024, 1, 10));
+      expect(ranges.last.end, DateTime(2024, 1, 17));
+    });
+  });
 }

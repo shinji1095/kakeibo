@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/domain/usecases/delete_transaction.dart';
 import 'package:kakeibo/presentation/pages/transaction_list_page.dart';
@@ -46,7 +48,17 @@ void main() {
         tx_providers.transactionsProvider.overrideWith((ref) async => list),
         tx_providers.deleteTransactionProvider.overrideWithValue(DeleteTransaction(fakeRepo)),
       ],
-      child: MaterialApp(home: child),
+      child: MaterialApp(
+        locale: const Locale('ja', 'JP'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: child,
+      ),
     );
   }
 

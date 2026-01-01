@@ -27,6 +27,22 @@ class Transactions extends Table {
       integer().withDefault(const Constant(1))(); // 0: fixed, 1: variable, 2: bonus
 }
 
+class AnnualSchedules extends Table {
+  IntColumn get year => integer()();
+  DateTimeColumn get startDate => dateTime()();
+  IntColumn get weekStart => integer()(); // 0=Mon..6=Sun
+
+  @override
+  Set<Column> get primaryKey => {year};
+}
+
+class AnnualPeriods extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get scheduleYear => integer().references(AnnualSchedules, #year)();
+  IntColumn get periodIndex => integer()();
+  IntColumn get days => integer()(); // 35 or 42
+}
+
 class _SeedCategory {
   final String name;
   final int color;
@@ -53,6 +69,7 @@ const List<_SeedCategory> _defaultCategories = [
   _SeedCategory(name: '交通費', color: 0xFF2196F3, type: 0),
   _SeedCategory(name: '通信費', color: 0xFF03A9F4, type: 0),
   _SeedCategory(name: '住居費', color: 0xFF795548, type: 0),
+  _SeedCategory(name: 'ボーナス支出', color: 0xFFFFB300, type: 0),
   _SeedCategory(name: '未分類', color: 0xFF9E9E9E, type: 1),
   _SeedCategory(name: '給料', color: 0xFF4CAF50, type: 1),
   _SeedCategory(name: 'おこづかい', color: 0xFF00BCD4, type: 1),
@@ -65,12 +82,12 @@ const List<_SeedCategory> _defaultCategories = [
 String _seedKey(int type, String name) => '$type:$name';
 
 
-@DriftDatabase(tables: [Categories, Transactions])
+@DriftDatabase(tables: [Categories, Transactions, AnnualSchedules, AnnualPeriods])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -80,6 +97,10 @@ class AppDatabase extends _$AppDatabase {
         onUpgrade: (m, from, to) async {
           if (from < 2) {
             await m.addColumn(transactions, transactions.expenseAttribute);
+          }
+          if (from < 3) {
+            await m.createTable(annualSchedules);
+            await m.createTable(annualPeriods);
           }
         },
       );

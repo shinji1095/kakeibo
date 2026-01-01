@@ -53,6 +53,20 @@ class Category {
   final int color; // ARGB
   final TransactionType type;
   const Category({this.id, required this.name, required this.color, required this.type});
+
+  Category copyWith({
+    int? id,
+    String? name,
+    int? color,
+    TransactionType? type,
+  }) {
+    return Category(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      color: color ?? this.color,
+      type: type ?? this.type,
+    );
+  }
 }
 
 class KakeiboTransaction {

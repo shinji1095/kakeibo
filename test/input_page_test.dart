@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/domain/usecases/add_transaction.dart';
 import 'package:kakeibo/presentation/pages/input_page.dart';
@@ -27,7 +29,17 @@ void main() {
         tx_providers.transactionsProvider.overrideWith((ref) async => const <KakeiboTransaction>[]),
         tx_providers.addTransactionProvider.overrideWithValue(AddTransaction(fakeRepo)),
       ],
-      child: MaterialApp(home: child),
+      child: MaterialApp(
+        locale: const Locale('ja', 'JP'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: child,
+      ),
     );
   }
 
@@ -36,6 +48,8 @@ void main() {
     await tester.pumpWidget(_wrap(const InputPage(), fakeRepo));
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('支出を保存'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('支出を保存'));
     await tester.pumpAndSettle();
 
@@ -57,6 +71,8 @@ void main() {
       'ランチ',
     );
 
+    await tester.ensureVisible(find.text('支出を保存'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('支出を保存'));
     await tester.pumpAndSettle();
 

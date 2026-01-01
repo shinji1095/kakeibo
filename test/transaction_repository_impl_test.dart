@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kakeibo/data/datasources/local/drift_db.dart';
@@ -6,6 +7,8 @@ import 'package:kakeibo/data/repositories/transaction_repository_impl.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 
 void main() {
+  final skipReason = Platform.isWindows ? 'sqlite3.dll is not available on this runner' : null;
+
   late AppDatabase db;
   late TransactionRepositoryImpl repo;
   late CategoryRepositoryImpl categoryRepo;
@@ -37,7 +40,7 @@ void main() {
     expect(categories, isNotEmpty);
     expect(categories.any((c) => c.type == TransactionType.expense), isTrue);
     expect(categories.any((c) => c.type == TransactionType.income), isTrue);
-  });
+  }, skip: skipReason);
 
   test('add/update/delete and range queries work', () async {
     final id1 = await repo.add(
@@ -154,5 +157,5 @@ void main() {
 
     expect(afterDelete.map((t) => t.id), contains(id2));
     expect(afterDelete.map((t) => t.id), contains(id3));
-  });
+  }, skip: skipReason);
 }

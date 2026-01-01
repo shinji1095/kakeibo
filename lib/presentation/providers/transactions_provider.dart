@@ -9,6 +9,7 @@ import 'package:kakeibo/domain/usecases/get_monthly_summary.dart';
 import 'package:kakeibo/domain/usecases/get_total_by_range.dart';
 import 'package:kakeibo/domain/usecases/get_transactions_by_range.dart';
 import 'package:kakeibo/domain/usecases/update_transaction.dart';
+import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
 
 final monthProvider = StateProvider<DateTime>((ref) {
@@ -30,8 +31,20 @@ final expenseAttributeFilterProvider = StateProvider<Set<ExpenseAttribute>>(
 );
 
 final periodRangeProvider = Provider<({DateTime start, DateTime end})>((ref) {
-  final settings = ref.watch(settingsProvider);
   final offset = ref.watch(periodOffsetProvider);
+  final schedule = ref.watch(currentAnnualScheduleProvider).valueOrNull;
+  if (schedule != null && schedule.periods.isNotEmpty) {
+    final current = resolveSchedulePeriod(schedule.periods, DateTime.now());
+    final targetIndex =
+        (current.index + offset).clamp(0, schedule.periods.length - 1).toInt();
+    final target = schedule.periods[targetIndex];
+    return (
+      start: target.startDate,
+      end: target.endDate.add(const Duration(days: 1)),
+    );
+  }
+
+  final settings = ref.watch(settingsProvider);
   final length = settings.periodLengthDays <= 0 ? 35 : settings.periodLengthDays;
   final baseStart = currentPeriodStart(settings.kakeiboStartDate, length, DateTime.now());
   final start = baseStart.add(Duration(days: length * offset));
@@ -65,9 +78,18 @@ final trendCountProvider = StateProvider<int>((ref) => 3);
 
 final periodTotalsProvider = FutureProvider<List<({DateTime start, DateTime end, int income, int expense})>>((ref) async {
   final range = ref.watch(periodRangeProvider);
+  final offset = ref.watch(periodOffsetProvider);
   final count = ref.watch(trendCountProvider);
-  final length = range.end.difference(range.start).inDays;
-  final ranges = buildPeriodRanges(range.start, length, count);
+  final schedule = ref.watch(currentAnnualScheduleProvider).valueOrNull;
+  final ranges = schedule != null && schedule.periods.isNotEmpty
+      ? buildScheduleRanges(
+          schedule.periods,
+          (resolveSchedulePeriod(schedule.periods, DateTime.now()).index + offset)
+              .clamp(0, schedule.periods.length - 1)
+              .toInt(),
+          count,
+        )
+      : buildPeriodRanges(range.start, range.end.difference(range.start).inDays, count);
   final use = sl<GetTotalByRange>();
   final filters = ref.watch(expenseAttributeFilterProvider);
 

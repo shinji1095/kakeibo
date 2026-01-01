@@ -195,6 +195,12 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
+                  title: Text(l10n.annualSchedule),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/annual'),
+                ),
+                const Divider(height: 1),
+                ListTile(
                   title: Text(l10n.reminderManage),
                   subtitle: Text(l10n.reminderOutOfScope),
                   enabled: false,

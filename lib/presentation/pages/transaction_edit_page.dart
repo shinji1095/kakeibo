@@ -132,6 +132,7 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                key: const Key('transaction-edit-amount'),
                 controller: _amountCtrl,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(labelText: l10n.amountLabel),
@@ -155,6 +156,7 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                key: const Key('transaction-edit-memo'),
                 controller: _memoCtrl,
                 decoration: InputDecoration(labelText: l10n.memoLabel),
               ),

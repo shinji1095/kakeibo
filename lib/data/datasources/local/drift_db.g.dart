@@ -634,17 +634,501 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   }
 }
 
+class $AnnualSchedulesTable extends AnnualSchedules
+    with TableInfo<$AnnualSchedulesTable, AnnualSchedule> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AnnualSchedulesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+      'year', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _startDateMeta =
+      const VerificationMeta('startDate');
+  @override
+  late final GeneratedColumn<DateTime> startDate = GeneratedColumn<DateTime>(
+      'start_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _weekStartMeta =
+      const VerificationMeta('weekStart');
+  @override
+  late final GeneratedColumn<int> weekStart = GeneratedColumn<int>(
+      'week_start', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [year, startDate, weekStart];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'annual_schedules';
+  @override
+  VerificationContext validateIntegrity(Insertable<AnnualSchedule> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('year')) {
+      context.handle(
+          _yearMeta, year.isAcceptableOrUnknown(data['year']!, _yearMeta));
+    }
+    if (data.containsKey('start_date')) {
+      context.handle(_startDateMeta,
+          startDate.isAcceptableOrUnknown(data['start_date']!, _startDateMeta));
+    } else if (isInserting) {
+      context.missing(_startDateMeta);
+    }
+    if (data.containsKey('week_start')) {
+      context.handle(_weekStartMeta,
+          weekStart.isAcceptableOrUnknown(data['week_start']!, _weekStartMeta));
+    } else if (isInserting) {
+      context.missing(_weekStartMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {year};
+  @override
+  AnnualSchedule map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AnnualSchedule(
+      year: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}year'])!,
+      startDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}start_date'])!,
+      weekStart: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}week_start'])!,
+    );
+  }
+
+  @override
+  $AnnualSchedulesTable createAlias(String alias) {
+    return $AnnualSchedulesTable(attachedDatabase, alias);
+  }
+}
+
+class AnnualSchedule extends DataClass implements Insertable<AnnualSchedule> {
+  final int year;
+  final DateTime startDate;
+  final int weekStart;
+  const AnnualSchedule(
+      {required this.year, required this.startDate, required this.weekStart});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['year'] = Variable<int>(year);
+    map['start_date'] = Variable<DateTime>(startDate);
+    map['week_start'] = Variable<int>(weekStart);
+    return map;
+  }
+
+  AnnualSchedulesCompanion toCompanion(bool nullToAbsent) {
+    return AnnualSchedulesCompanion(
+      year: Value(year),
+      startDate: Value(startDate),
+      weekStart: Value(weekStart),
+    );
+  }
+
+  factory AnnualSchedule.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AnnualSchedule(
+      year: serializer.fromJson<int>(json['year']),
+      startDate: serializer.fromJson<DateTime>(json['startDate']),
+      weekStart: serializer.fromJson<int>(json['weekStart']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'year': serializer.toJson<int>(year),
+      'startDate': serializer.toJson<DateTime>(startDate),
+      'weekStart': serializer.toJson<int>(weekStart),
+    };
+  }
+
+  AnnualSchedule copyWith({int? year, DateTime? startDate, int? weekStart}) =>
+      AnnualSchedule(
+        year: year ?? this.year,
+        startDate: startDate ?? this.startDate,
+        weekStart: weekStart ?? this.weekStart,
+      );
+  AnnualSchedule copyWithCompanion(AnnualSchedulesCompanion data) {
+    return AnnualSchedule(
+      year: data.year.present ? data.year.value : this.year,
+      startDate: data.startDate.present ? data.startDate.value : this.startDate,
+      weekStart: data.weekStart.present ? data.weekStart.value : this.weekStart,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AnnualSchedule(')
+          ..write('year: $year, ')
+          ..write('startDate: $startDate, ')
+          ..write('weekStart: $weekStart')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(year, startDate, weekStart);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AnnualSchedule &&
+          other.year == this.year &&
+          other.startDate == this.startDate &&
+          other.weekStart == this.weekStart);
+}
+
+class AnnualSchedulesCompanion extends UpdateCompanion<AnnualSchedule> {
+  final Value<int> year;
+  final Value<DateTime> startDate;
+  final Value<int> weekStart;
+  const AnnualSchedulesCompanion({
+    this.year = const Value.absent(),
+    this.startDate = const Value.absent(),
+    this.weekStart = const Value.absent(),
+  });
+  AnnualSchedulesCompanion.insert({
+    this.year = const Value.absent(),
+    required DateTime startDate,
+    required int weekStart,
+  })  : startDate = Value(startDate),
+        weekStart = Value(weekStart);
+  static Insertable<AnnualSchedule> custom({
+    Expression<int>? year,
+    Expression<DateTime>? startDate,
+    Expression<int>? weekStart,
+  }) {
+    return RawValuesInsertable({
+      if (year != null) 'year': year,
+      if (startDate != null) 'start_date': startDate,
+      if (weekStart != null) 'week_start': weekStart,
+    });
+  }
+
+  AnnualSchedulesCompanion copyWith(
+      {Value<int>? year, Value<DateTime>? startDate, Value<int>? weekStart}) {
+    return AnnualSchedulesCompanion(
+      year: year ?? this.year,
+      startDate: startDate ?? this.startDate,
+      weekStart: weekStart ?? this.weekStart,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (startDate.present) {
+      map['start_date'] = Variable<DateTime>(startDate.value);
+    }
+    if (weekStart.present) {
+      map['week_start'] = Variable<int>(weekStart.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AnnualSchedulesCompanion(')
+          ..write('year: $year, ')
+          ..write('startDate: $startDate, ')
+          ..write('weekStart: $weekStart')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AnnualPeriodsTable extends AnnualPeriods
+    with TableInfo<$AnnualPeriodsTable, AnnualPeriod> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AnnualPeriodsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _scheduleYearMeta =
+      const VerificationMeta('scheduleYear');
+  @override
+  late final GeneratedColumn<int> scheduleYear = GeneratedColumn<int>(
+      'schedule_year', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES annual_schedules (year)'));
+  static const VerificationMeta _periodIndexMeta =
+      const VerificationMeta('periodIndex');
+  @override
+  late final GeneratedColumn<int> periodIndex = GeneratedColumn<int>(
+      'period_index', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _daysMeta = const VerificationMeta('days');
+  @override
+  late final GeneratedColumn<int> days = GeneratedColumn<int>(
+      'days', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, scheduleYear, periodIndex, days];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'annual_periods';
+  @override
+  VerificationContext validateIntegrity(Insertable<AnnualPeriod> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('schedule_year')) {
+      context.handle(
+          _scheduleYearMeta,
+          scheduleYear.isAcceptableOrUnknown(
+              data['schedule_year']!, _scheduleYearMeta));
+    } else if (isInserting) {
+      context.missing(_scheduleYearMeta);
+    }
+    if (data.containsKey('period_index')) {
+      context.handle(
+          _periodIndexMeta,
+          periodIndex.isAcceptableOrUnknown(
+              data['period_index']!, _periodIndexMeta));
+    } else if (isInserting) {
+      context.missing(_periodIndexMeta);
+    }
+    if (data.containsKey('days')) {
+      context.handle(
+          _daysMeta, days.isAcceptableOrUnknown(data['days']!, _daysMeta));
+    } else if (isInserting) {
+      context.missing(_daysMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AnnualPeriod map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AnnualPeriod(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      scheduleYear: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}schedule_year'])!,
+      periodIndex: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}period_index'])!,
+      days: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}days'])!,
+    );
+  }
+
+  @override
+  $AnnualPeriodsTable createAlias(String alias) {
+    return $AnnualPeriodsTable(attachedDatabase, alias);
+  }
+}
+
+class AnnualPeriod extends DataClass implements Insertable<AnnualPeriod> {
+  final int id;
+  final int scheduleYear;
+  final int periodIndex;
+  final int days;
+  const AnnualPeriod(
+      {required this.id,
+      required this.scheduleYear,
+      required this.periodIndex,
+      required this.days});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['schedule_year'] = Variable<int>(scheduleYear);
+    map['period_index'] = Variable<int>(periodIndex);
+    map['days'] = Variable<int>(days);
+    return map;
+  }
+
+  AnnualPeriodsCompanion toCompanion(bool nullToAbsent) {
+    return AnnualPeriodsCompanion(
+      id: Value(id),
+      scheduleYear: Value(scheduleYear),
+      periodIndex: Value(periodIndex),
+      days: Value(days),
+    );
+  }
+
+  factory AnnualPeriod.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AnnualPeriod(
+      id: serializer.fromJson<int>(json['id']),
+      scheduleYear: serializer.fromJson<int>(json['scheduleYear']),
+      periodIndex: serializer.fromJson<int>(json['periodIndex']),
+      days: serializer.fromJson<int>(json['days']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'scheduleYear': serializer.toJson<int>(scheduleYear),
+      'periodIndex': serializer.toJson<int>(periodIndex),
+      'days': serializer.toJson<int>(days),
+    };
+  }
+
+  AnnualPeriod copyWith(
+          {int? id, int? scheduleYear, int? periodIndex, int? days}) =>
+      AnnualPeriod(
+        id: id ?? this.id,
+        scheduleYear: scheduleYear ?? this.scheduleYear,
+        periodIndex: periodIndex ?? this.periodIndex,
+        days: days ?? this.days,
+      );
+  AnnualPeriod copyWithCompanion(AnnualPeriodsCompanion data) {
+    return AnnualPeriod(
+      id: data.id.present ? data.id.value : this.id,
+      scheduleYear: data.scheduleYear.present
+          ? data.scheduleYear.value
+          : this.scheduleYear,
+      periodIndex:
+          data.periodIndex.present ? data.periodIndex.value : this.periodIndex,
+      days: data.days.present ? data.days.value : this.days,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AnnualPeriod(')
+          ..write('id: $id, ')
+          ..write('scheduleYear: $scheduleYear, ')
+          ..write('periodIndex: $periodIndex, ')
+          ..write('days: $days')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, scheduleYear, periodIndex, days);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AnnualPeriod &&
+          other.id == this.id &&
+          other.scheduleYear == this.scheduleYear &&
+          other.periodIndex == this.periodIndex &&
+          other.days == this.days);
+}
+
+class AnnualPeriodsCompanion extends UpdateCompanion<AnnualPeriod> {
+  final Value<int> id;
+  final Value<int> scheduleYear;
+  final Value<int> periodIndex;
+  final Value<int> days;
+  const AnnualPeriodsCompanion({
+    this.id = const Value.absent(),
+    this.scheduleYear = const Value.absent(),
+    this.periodIndex = const Value.absent(),
+    this.days = const Value.absent(),
+  });
+  AnnualPeriodsCompanion.insert({
+    this.id = const Value.absent(),
+    required int scheduleYear,
+    required int periodIndex,
+    required int days,
+  })  : scheduleYear = Value(scheduleYear),
+        periodIndex = Value(periodIndex),
+        days = Value(days);
+  static Insertable<AnnualPeriod> custom({
+    Expression<int>? id,
+    Expression<int>? scheduleYear,
+    Expression<int>? periodIndex,
+    Expression<int>? days,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (scheduleYear != null) 'schedule_year': scheduleYear,
+      if (periodIndex != null) 'period_index': periodIndex,
+      if (days != null) 'days': days,
+    });
+  }
+
+  AnnualPeriodsCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? scheduleYear,
+      Value<int>? periodIndex,
+      Value<int>? days}) {
+    return AnnualPeriodsCompanion(
+      id: id ?? this.id,
+      scheduleYear: scheduleYear ?? this.scheduleYear,
+      periodIndex: periodIndex ?? this.periodIndex,
+      days: days ?? this.days,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (scheduleYear.present) {
+      map['schedule_year'] = Variable<int>(scheduleYear.value);
+    }
+    if (periodIndex.present) {
+      map['period_index'] = Variable<int>(periodIndex.value);
+    }
+    if (days.present) {
+      map['days'] = Variable<int>(days.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AnnualPeriodsCompanion(')
+          ..write('id: $id, ')
+          ..write('scheduleYear: $scheduleYear, ')
+          ..write('periodIndex: $periodIndex, ')
+          ..write('days: $days')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $TransactionsTable transactions = $TransactionsTable(this);
+  late final $AnnualSchedulesTable annualSchedules =
+      $AnnualSchedulesTable(this);
+  late final $AnnualPeriodsTable annualPeriods = $AnnualPeriodsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [categories, transactions];
+      [categories, transactions, annualSchedules, annualPeriods];
 }
 
 typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
@@ -660,156 +1144,22 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<int> type,
 });
 
-final class $$CategoriesTableReferences
-    extends BaseReferences<_$AppDatabase, $CategoriesTable, Category> {
-  $$CategoriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<$TransactionsTable, List<Transaction>>
-      _transactionsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.transactions,
-              aliasName: $_aliasNameGenerator(
-                  db.categories.id, db.transactions.categoryId));
-
-  $$TransactionsTableProcessedTableManager get transactionsRefs {
-    final manager = $$TransactionsTableTableManager($_db, $_db.transactions)
-        .filter((f) => f.categoryId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_transactionsRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
-  }
-}
-
-class $$CategoriesTableFilterComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
-  $$CategoriesTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get color => $composableBuilder(
-      column: $table.color, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get type => $composableBuilder(
-      column: $table.type, builder: (column) => ColumnFilters(column));
-
-  Expression<bool> transactionsRefs(
-      Expression<bool> Function($$TransactionsTableFilterComposer f) f) {
-    final $$TransactionsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.transactions,
-        getReferencedColumn: (t) => t.categoryId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$TransactionsTableFilterComposer(
-              $db: $db,
-              $table: $db.transactions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-}
-
-class $$CategoriesTableOrderingComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
-  $$CategoriesTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get color => $composableBuilder(
-      column: $table.color, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get type => $composableBuilder(
-      column: $table.type, builder: (column) => ColumnOrderings(column));
-}
-
-class $$CategoriesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
-  $$CategoriesTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<int> get color =>
-      $composableBuilder(column: $table.color, builder: (column) => column);
-
-  GeneratedColumn<int> get type =>
-      $composableBuilder(column: $table.type, builder: (column) => column);
-
-  Expression<T> transactionsRefs<T extends Object>(
-      Expression<T> Function($$TransactionsTableAnnotationComposer a) f) {
-    final $$TransactionsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.transactions,
-        getReferencedColumn: (t) => t.categoryId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$TransactionsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.transactions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-}
-
 class $$CategoriesTableTableManager extends RootTableManager<
     _$AppDatabase,
     $CategoriesTable,
     Category,
     $$CategoriesTableFilterComposer,
     $$CategoriesTableOrderingComposer,
-    $$CategoriesTableAnnotationComposer,
     $$CategoriesTableCreateCompanionBuilder,
-    $$CategoriesTableUpdateCompanionBuilder,
-    (Category, $$CategoriesTableReferences),
-    Category,
-    PrefetchHooks Function({bool transactionsRefs})> {
+    $$CategoriesTableUpdateCompanionBuilder> {
   $$CategoriesTableTableManager(_$AppDatabase db, $CategoriesTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$CategoriesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$CategoriesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$CategoriesTableAnnotationComposer($db: db, $table: table),
+          filteringComposer:
+              $$CategoriesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$CategoriesTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
@@ -834,51 +1184,70 @@ class $$CategoriesTableTableManager extends RootTableManager<
             color: color,
             type: type,
           ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$CategoriesTableReferences(db, table, e)
-                  ))
-              .toList(),
-          prefetchHooksCallback: ({transactionsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (transactionsRefs) db.transactions],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (transactionsRefs)
-                    await $_getPrefetchedData<Category, $CategoriesTable,
-                            Transaction>(
-                        currentTable: table,
-                        referencedTable: $$CategoriesTableReferences
-                            ._transactionsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$CategoriesTableReferences(db, table, p0)
-                                .transactionsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.categoryId == item.id),
-                        typedResults: items)
-                ];
-              },
-            );
-          },
         ));
 }
 
-typedef $$CategoriesTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $CategoriesTable,
-    Category,
-    $$CategoriesTableFilterComposer,
-    $$CategoriesTableOrderingComposer,
-    $$CategoriesTableAnnotationComposer,
-    $$CategoriesTableCreateCompanionBuilder,
-    $$CategoriesTableUpdateCompanionBuilder,
-    (Category, $$CategoriesTableReferences),
-    Category,
-    PrefetchHooks Function({bool transactionsRefs})>;
+class $$CategoriesTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get color => $state.composableBuilder(
+      column: $state.table.color,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get type => $state.composableBuilder(
+      column: $state.table.type,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter transactionsRefs(
+      ComposableFilter Function($$TransactionsTableFilterComposer f) f) {
+    final $$TransactionsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.transactions,
+        getReferencedColumn: (t) => t.categoryId,
+        builder: (joinBuilder, parentComposers) =>
+            $$TransactionsTableFilterComposer(ComposerState($state.db,
+                $state.db.transactions, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$CategoriesTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get color => $state.composableBuilder(
+      column: $state.table.color,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get type => $state.composableBuilder(
+      column: $state.table.type,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
 typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
     Function({
   Value<int> id,
@@ -887,6 +1256,7 @@ typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
   Value<String> memo,
   required int categoryId,
   required int type,
+  Value<int> expenseAttribute,
 });
 typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
     Function({
@@ -896,162 +1266,8 @@ typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
   Value<String> memo,
   Value<int> categoryId,
   Value<int> type,
+  Value<int> expenseAttribute,
 });
-
-final class $$TransactionsTableReferences
-    extends BaseReferences<_$AppDatabase, $TransactionsTable, Transaction> {
-  $$TransactionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $CategoriesTable _categoryIdTable(_$AppDatabase db) =>
-      db.categories.createAlias(
-          $_aliasNameGenerator(db.transactions.categoryId, db.categories.id));
-
-  $$CategoriesTableProcessedTableManager get categoryId {
-    final $_column = $_itemColumn<int>('category_id')!;
-
-    final manager = $$CategoriesTableTableManager($_db, $_db.categories)
-        .filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-}
-
-class $$TransactionsTableFilterComposer
-    extends Composer<_$AppDatabase, $TransactionsTable> {
-  $$TransactionsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<DateTime> get date => $composableBuilder(
-      column: $table.date, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get amount => $composableBuilder(
-      column: $table.amount, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get memo => $composableBuilder(
-      column: $table.memo, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get type => $composableBuilder(
-      column: $table.type, builder: (column) => ColumnFilters(column));
-
-  $$CategoriesTableFilterComposer get categoryId {
-    final $$CategoriesTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.categoryId,
-        referencedTable: $db.categories,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$CategoriesTableFilterComposer(
-              $db: $db,
-              $table: $db.categories,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$TransactionsTableOrderingComposer
-    extends Composer<_$AppDatabase, $TransactionsTable> {
-  $$TransactionsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<DateTime> get date => $composableBuilder(
-      column: $table.date, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get amount => $composableBuilder(
-      column: $table.amount, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get memo => $composableBuilder(
-      column: $table.memo, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get type => $composableBuilder(
-      column: $table.type, builder: (column) => ColumnOrderings(column));
-
-  $$CategoriesTableOrderingComposer get categoryId {
-    final $$CategoriesTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.categoryId,
-        referencedTable: $db.categories,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$CategoriesTableOrderingComposer(
-              $db: $db,
-              $table: $db.categories,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$TransactionsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $TransactionsTable> {
-  $$TransactionsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get date =>
-      $composableBuilder(column: $table.date, builder: (column) => column);
-
-  GeneratedColumn<int> get amount =>
-      $composableBuilder(column: $table.amount, builder: (column) => column);
-
-  GeneratedColumn<String> get memo =>
-      $composableBuilder(column: $table.memo, builder: (column) => column);
-
-  GeneratedColumn<int> get type =>
-      $composableBuilder(column: $table.type, builder: (column) => column);
-
-  $$CategoriesTableAnnotationComposer get categoryId {
-    final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.categoryId,
-        referencedTable: $db.categories,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$CategoriesTableAnnotationComposer(
-              $db: $db,
-              $table: $db.categories,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
 
 class $$TransactionsTableTableManager extends RootTableManager<
     _$AppDatabase,
@@ -1059,22 +1275,16 @@ class $$TransactionsTableTableManager extends RootTableManager<
     Transaction,
     $$TransactionsTableFilterComposer,
     $$TransactionsTableOrderingComposer,
-    $$TransactionsTableAnnotationComposer,
     $$TransactionsTableCreateCompanionBuilder,
-    $$TransactionsTableUpdateCompanionBuilder,
-    (Transaction, $$TransactionsTableReferences),
-    Transaction,
-    PrefetchHooks Function({bool categoryId})> {
+    $$TransactionsTableUpdateCompanionBuilder> {
   $$TransactionsTableTableManager(_$AppDatabase db, $TransactionsTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$TransactionsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$TransactionsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$TransactionsTableAnnotationComposer($db: db, $table: table),
+          filteringComposer:
+              $$TransactionsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TransactionsTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
@@ -1082,6 +1292,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<String> memo = const Value.absent(),
             Value<int> categoryId = const Value.absent(),
             Value<int> type = const Value.absent(),
+            Value<int> expenseAttribute = const Value.absent(),
           }) =>
               TransactionsCompanion(
             id: id,
@@ -1090,6 +1301,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             memo: memo,
             categoryId: categoryId,
             type: type,
+            expenseAttribute: expenseAttribute,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -1098,6 +1310,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<String> memo = const Value.absent(),
             required int categoryId,
             required int type,
+            Value<int> expenseAttribute = const Value.absent(),
           }) =>
               TransactionsCompanion.insert(
             id: id,
@@ -1106,63 +1319,328 @@ class $$TransactionsTableTableManager extends RootTableManager<
             memo: memo,
             categoryId: categoryId,
             type: type,
+            expenseAttribute: expenseAttribute,
           ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$TransactionsTableReferences(db, table, e)
-                  ))
-              .toList(),
-          prefetchHooksCallback: ({categoryId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (categoryId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.categoryId,
-                    referencedTable:
-                        $$TransactionsTableReferences._categoryIdTable(db),
-                    referencedColumn:
-                        $$TransactionsTableReferences._categoryIdTable(db).id,
-                  ) as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
         ));
 }
 
-typedef $$TransactionsTableProcessedTableManager = ProcessedTableManager<
+class $$TransactionsTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TransactionsTable> {
+  $$TransactionsTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get amount => $state.composableBuilder(
+      column: $state.table.amount,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get memo => $state.composableBuilder(
+      column: $state.table.memo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get type => $state.composableBuilder(
+      column: $state.table.type,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get expenseAttribute => $state.composableBuilder(
+      column: $state.table.expenseAttribute,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$CategoriesTableFilterComposer get categoryId {
+    final $$CategoriesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.categoryId,
+        referencedTable: $state.db.categories,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$CategoriesTableFilterComposer(ComposerState($state.db,
+                $state.db.categories, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$TransactionsTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TransactionsTable> {
+  $$TransactionsTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get amount => $state.composableBuilder(
+      column: $state.table.amount,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get memo => $state.composableBuilder(
+      column: $state.table.memo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get type => $state.composableBuilder(
+      column: $state.table.type,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get expenseAttribute => $state.composableBuilder(
+      column: $state.table.expenseAttribute,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$CategoriesTableOrderingComposer get categoryId {
+    final $$CategoriesTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.categoryId,
+        referencedTable: $state.db.categories,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$CategoriesTableOrderingComposer(ComposerState($state.db,
+                $state.db.categories, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$AnnualSchedulesTableCreateCompanionBuilder = AnnualSchedulesCompanion
+    Function({
+  Value<int> year,
+  required DateTime startDate,
+  required int weekStart,
+});
+typedef $$AnnualSchedulesTableUpdateCompanionBuilder = AnnualSchedulesCompanion
+    Function({
+  Value<int> year,
+  Value<DateTime> startDate,
+  Value<int> weekStart,
+});
+
+class $$AnnualSchedulesTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $TransactionsTable,
-    Transaction,
-    $$TransactionsTableFilterComposer,
-    $$TransactionsTableOrderingComposer,
-    $$TransactionsTableAnnotationComposer,
-    $$TransactionsTableCreateCompanionBuilder,
-    $$TransactionsTableUpdateCompanionBuilder,
-    (Transaction, $$TransactionsTableReferences),
-    Transaction,
-    PrefetchHooks Function({bool categoryId})>;
+    $AnnualSchedulesTable,
+    AnnualSchedule,
+    $$AnnualSchedulesTableFilterComposer,
+    $$AnnualSchedulesTableOrderingComposer,
+    $$AnnualSchedulesTableCreateCompanionBuilder,
+    $$AnnualSchedulesTableUpdateCompanionBuilder> {
+  $$AnnualSchedulesTableTableManager(
+      _$AppDatabase db, $AnnualSchedulesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AnnualSchedulesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AnnualSchedulesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> year = const Value.absent(),
+            Value<DateTime> startDate = const Value.absent(),
+            Value<int> weekStart = const Value.absent(),
+          }) =>
+              AnnualSchedulesCompanion(
+            year: year,
+            startDate: startDate,
+            weekStart: weekStart,
+          ),
+          createCompanionCallback: ({
+            Value<int> year = const Value.absent(),
+            required DateTime startDate,
+            required int weekStart,
+          }) =>
+              AnnualSchedulesCompanion.insert(
+            year: year,
+            startDate: startDate,
+            weekStart: weekStart,
+          ),
+        ));
+}
+
+class $$AnnualSchedulesTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $AnnualSchedulesTable> {
+  $$AnnualSchedulesTableFilterComposer(super.$state);
+  ColumnFilters<int> get year => $state.composableBuilder(
+      column: $state.table.year,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get startDate => $state.composableBuilder(
+      column: $state.table.startDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get weekStart => $state.composableBuilder(
+      column: $state.table.weekStart,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter annualPeriodsRefs(
+      ComposableFilter Function($$AnnualPeriodsTableFilterComposer f) f) {
+    final $$AnnualPeriodsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.year,
+        referencedTable: $state.db.annualPeriods,
+        getReferencedColumn: (t) => t.scheduleYear,
+        builder: (joinBuilder, parentComposers) =>
+            $$AnnualPeriodsTableFilterComposer(ComposerState($state.db,
+                $state.db.annualPeriods, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$AnnualSchedulesTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $AnnualSchedulesTable> {
+  $$AnnualSchedulesTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get year => $state.composableBuilder(
+      column: $state.table.year,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get startDate => $state.composableBuilder(
+      column: $state.table.startDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get weekStart => $state.composableBuilder(
+      column: $state.table.weekStart,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$AnnualPeriodsTableCreateCompanionBuilder = AnnualPeriodsCompanion
+    Function({
+  Value<int> id,
+  required int scheduleYear,
+  required int periodIndex,
+  required int days,
+});
+typedef $$AnnualPeriodsTableUpdateCompanionBuilder = AnnualPeriodsCompanion
+    Function({
+  Value<int> id,
+  Value<int> scheduleYear,
+  Value<int> periodIndex,
+  Value<int> days,
+});
+
+class $$AnnualPeriodsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AnnualPeriodsTable,
+    AnnualPeriod,
+    $$AnnualPeriodsTableFilterComposer,
+    $$AnnualPeriodsTableOrderingComposer,
+    $$AnnualPeriodsTableCreateCompanionBuilder,
+    $$AnnualPeriodsTableUpdateCompanionBuilder> {
+  $$AnnualPeriodsTableTableManager(_$AppDatabase db, $AnnualPeriodsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AnnualPeriodsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AnnualPeriodsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> scheduleYear = const Value.absent(),
+            Value<int> periodIndex = const Value.absent(),
+            Value<int> days = const Value.absent(),
+          }) =>
+              AnnualPeriodsCompanion(
+            id: id,
+            scheduleYear: scheduleYear,
+            periodIndex: periodIndex,
+            days: days,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int scheduleYear,
+            required int periodIndex,
+            required int days,
+          }) =>
+              AnnualPeriodsCompanion.insert(
+            id: id,
+            scheduleYear: scheduleYear,
+            periodIndex: periodIndex,
+            days: days,
+          ),
+        ));
+}
+
+class $$AnnualPeriodsTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $AnnualPeriodsTable> {
+  $$AnnualPeriodsTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get periodIndex => $state.composableBuilder(
+      column: $state.table.periodIndex,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get days => $state.composableBuilder(
+      column: $state.table.days,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$AnnualSchedulesTableFilterComposer get scheduleYear {
+    final $$AnnualSchedulesTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.scheduleYear,
+            referencedTable: $state.db.annualSchedules,
+            getReferencedColumn: (t) => t.year,
+            builder: (joinBuilder, parentComposers) =>
+                $$AnnualSchedulesTableFilterComposer(ComposerState($state.db,
+                    $state.db.annualSchedules, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$AnnualPeriodsTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $AnnualPeriodsTable> {
+  $$AnnualPeriodsTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get periodIndex => $state.composableBuilder(
+      column: $state.table.periodIndex,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get days => $state.composableBuilder(
+      column: $state.table.days,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$AnnualSchedulesTableOrderingComposer get scheduleYear {
+    final $$AnnualSchedulesTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.scheduleYear,
+            referencedTable: $state.db.annualSchedules,
+            getReferencedColumn: (t) => t.year,
+            builder: (joinBuilder, parentComposers) =>
+                $$AnnualSchedulesTableOrderingComposer(ComposerState($state.db,
+                    $state.db.annualSchedules, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1171,4 +1649,8 @@ class $AppDatabaseManager {
       $$CategoriesTableTableManager(_db, _db.categories);
   $$TransactionsTableTableManager get transactions =>
       $$TransactionsTableTableManager(_db, _db.transactions);
+  $$AnnualSchedulesTableTableManager get annualSchedules =>
+      $$AnnualSchedulesTableTableManager(_db, _db.annualSchedules);
+  $$AnnualPeriodsTableTableManager get annualPeriods =>
+      $$AnnualPeriodsTableTableManager(_db, _db.annualPeriods);
 }

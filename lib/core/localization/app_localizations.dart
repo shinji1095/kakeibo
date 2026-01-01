@@ -64,6 +64,33 @@ class AppLocalizations {
       'csvExport': 'CSVエクスポート',
       'categoryManage': 'カテゴリ管理',
       'bonusSettings': 'ボーナス設定',
+      'annualSchedule': '年間スケジュール',
+      'annualScheduleYear': '{year}年の年間スケジュール',
+      'annualScheduleStartDate': '開始日: {date}',
+      'annualSchedulePeriodCount': '期間数: {count}',
+      'annualScheduleTotalDays': '合計日数: {days}日',
+      'annualScheduleRegenerate': '自動生成',
+      'annualScheduleListTitle': '期間一覧',
+      'annualSchedulePeriodLabel': '{index}期: {range}',
+      'annualSchedulePeriodDays': '{days}日',
+      'annualScheduleMissing': '年間スケジュールを取得できません。',
+      'bonusSummaryTitle': 'ボーナス月',
+      'bonusBalanceLabel': 'ボーナス残高',
+      'bonusExpenseTotalLabel': 'ボーナス支出合計',
+      'bonusMonthInactive': '今月はボーナス月ではありません',
+      'categoryTabExpense': '支出カテゴリ',
+      'categoryTabIncome': '収入カテゴリ',
+      'categoryAddTitle': 'カテゴリを追加',
+      'categoryEditTitle': 'カテゴリを編集',
+      'categoryNameLabel': 'カテゴリ名',
+      'categoryColorLabel': 'カラー',
+      'categoryNameRequired': 'カテゴリ名を入力してください',
+      'categoryDeleteTitle': 'カテゴリ削除',
+      'categoryDeleteBody': '{name} を削除しますか？',
+      'categoryDeleteProtected': 'このカテゴリは削除できません',
+      'categoryProtectedLabel': '固定カテゴリ',
+      'dialogCancel': 'キャンセル',
+      'dialogSave': '保存',
       'reminderManage': 'リマインダー管理',
       'reminderOutOfScope': '初期リリース対象外',
       'notImplemented': '{label} は未実装です',
@@ -133,8 +160,35 @@ class AppLocalizations {
       'colorThemeSlate': 'スレート',
       'csvExportTitle': 'CSVエクスポート',
       'csvExportPlaceholder': 'CSVエクスポートは未実装です（プレースホルダー）。',
+      'csvRangeTitle': '出力期間',
+      'csvStartDateLabel': '開始日',
+      'csvEndDateLabel': '終了日',
+      'csvExportButton': 'CSVを保存',
+      'csvExporting': '出力中...',
+      'csvShareButton': 'CSVを共有',
+      'csvShareWarningTitle': 'CSV共有の注意',
+      'csvShareWarningBody': 'CSV共有は外部アプリに渡る可能性があります。続行しますか？',
+      'csvShareConfirm': '共有する',
+      'csvSavedMessage': 'CSVを保存しました: {path}',
+      'csvInvalidRange': '開始日と終了日を確認してください',
+      'csvFilePathLabel': '保存先',
+      'csvExportUnavailable': 'CSV出力が利用できません',
+      'csvColumnDate': '日付',
+      'csvColumnCategory': 'カテゴリ',
+      'csvColumnType': '収支',
+      'csvColumnAmount': '金額',
+      'csvColumnAttribute': '属性',
       'categoryManageTitle': 'カテゴリ管理',
       'categoryManagePlaceholder': 'カテゴリ管理は未実装です（プレースホルダー）。',
+      'annualScheduleTitle': '年間スケジュール',
+      'annualSchedulePlaceholder': '年間スケジュールは未実装です（プレースホルダー）。',
+      'bonusExpenseTitle': 'ボーナス支出',
+      'bonusExpenseAmountLabel': 'ボーナス支出額（円）',
+      'bonusExpenseSave': 'ボーナス支出を保存',
+      'bonusExpenseSaved': 'ボーナス支出を保存しました',
+      'bonusExpenseMissingCategory': 'ボーナス支出カテゴリが見つかりません。',
+      'bonusExpenseCategoryName': 'ボーナス支出',
+      'noBonusMonths': 'ボーナス月はありません',
       'reminderManageTitle': 'リマインダー管理',
       'reminderManagePlaceholder': '初期リリース対象外のため未実装です（プレースホルダー）。',
       'bonusSettingsTitle': 'ボーナス設定',
@@ -178,6 +232,33 @@ class AppLocalizations {
       'csvExport': 'CSV Export',
       'categoryManage': 'Category Management',
       'bonusSettings': 'Bonus Settings',
+      'annualSchedule': 'Annual Schedule',
+      'annualScheduleYear': 'Annual Schedule ({year})',
+      'annualScheduleStartDate': 'Start: {date}',
+      'annualSchedulePeriodCount': 'Periods: {count}',
+      'annualScheduleTotalDays': 'Total Days: {days}',
+      'annualScheduleRegenerate': 'Regenerate',
+      'annualScheduleListTitle': 'Period List',
+      'annualSchedulePeriodLabel': 'Period {index}: {range}',
+      'annualSchedulePeriodDays': '{days} days',
+      'annualScheduleMissing': 'Unable to load annual schedule.',
+      'bonusSummaryTitle': 'Bonus Month',
+      'bonusBalanceLabel': 'Bonus Balance',
+      'bonusExpenseTotalLabel': 'Bonus Expense Total',
+      'bonusMonthInactive': 'Not a bonus month.',
+      'categoryTabExpense': 'Expense Categories',
+      'categoryTabIncome': 'Income Categories',
+      'categoryAddTitle': 'Add Category',
+      'categoryEditTitle': 'Edit Category',
+      'categoryNameLabel': 'Category Name',
+      'categoryColorLabel': 'Color',
+      'categoryNameRequired': 'Enter a category name.',
+      'categoryDeleteTitle': 'Delete Category',
+      'categoryDeleteBody': 'Delete {name}?',
+      'categoryDeleteProtected': 'This category cannot be deleted.',
+      'categoryProtectedLabel': 'Protected category',
+      'dialogCancel': 'Cancel',
+      'dialogSave': 'Save',
       'reminderManage': 'Reminders',
       'reminderOutOfScope': 'Out of scope for v1',
       'notImplemented': '{label} is not implemented.',
@@ -247,8 +328,35 @@ class AppLocalizations {
       'colorThemeSlate': 'Slate',
       'csvExportTitle': 'CSV Export',
       'csvExportPlaceholder': 'CSV export is not implemented (placeholder).',
+      'csvRangeTitle': 'Export Range',
+      'csvStartDateLabel': 'Start Date',
+      'csvEndDateLabel': 'End Date',
+      'csvExportButton': 'Save CSV',
+      'csvExporting': 'Exporting...',
+      'csvShareButton': 'Share CSV',
+      'csvShareWarningTitle': 'Share Warning',
+      'csvShareWarningBody': 'CSV data may be shared with other apps. Continue?',
+      'csvShareConfirm': 'Share',
+      'csvSavedMessage': 'CSV saved: {path}',
+      'csvInvalidRange': 'Check the start and end dates.',
+      'csvFilePathLabel': 'Saved Path',
+      'csvExportUnavailable': 'CSV export is not available.',
+      'csvColumnDate': 'Date',
+      'csvColumnCategory': 'Category',
+      'csvColumnType': 'Type',
+      'csvColumnAmount': 'Amount',
+      'csvColumnAttribute': 'Attribute',
       'categoryManageTitle': 'Category Management',
       'categoryManagePlaceholder': 'Category management is not implemented (placeholder).',
+      'annualScheduleTitle': 'Annual Schedule',
+      'annualSchedulePlaceholder': 'Annual schedule is not implemented (placeholder).',
+      'bonusExpenseTitle': 'Bonus Expense',
+      'bonusExpenseAmountLabel': 'Bonus expense (JPY)',
+      'bonusExpenseSave': 'Save Bonus Expense',
+      'bonusExpenseSaved': 'Bonus expense saved.',
+      'bonusExpenseMissingCategory': 'Bonus category is missing.',
+      'bonusExpenseCategoryName': 'ボーナス支出',
+      'noBonusMonths': 'No bonus months.',
       'reminderManageTitle': 'Reminders',
       'reminderManagePlaceholder': 'Out of scope for v1 (placeholder).',
       'bonusSettingsTitle': 'Bonus Settings',
@@ -304,6 +412,26 @@ class AppLocalizations {
   String get csvExport => _value('csvExport');
   String get categoryManage => _value('categoryManage');
   String get bonusSettings => _value('bonusSettings');
+  String get annualSchedule => _value('annualSchedule');
+  String get annualScheduleRegenerate => _value('annualScheduleRegenerate');
+  String get annualScheduleListTitle => _value('annualScheduleListTitle');
+  String get annualScheduleMissing => _value('annualScheduleMissing');
+  String get bonusSummaryTitle => _value('bonusSummaryTitle');
+  String get bonusBalanceLabel => _value('bonusBalanceLabel');
+  String get bonusExpenseTotalLabel => _value('bonusExpenseTotalLabel');
+  String get bonusMonthInactive => _value('bonusMonthInactive');
+  String get categoryTabExpense => _value('categoryTabExpense');
+  String get categoryTabIncome => _value('categoryTabIncome');
+  String get categoryAddTitle => _value('categoryAddTitle');
+  String get categoryEditTitle => _value('categoryEditTitle');
+  String get categoryNameLabel => _value('categoryNameLabel');
+  String get categoryColorLabel => _value('categoryColorLabel');
+  String get categoryNameRequired => _value('categoryNameRequired');
+  String get categoryDeleteTitle => _value('categoryDeleteTitle');
+  String get categoryDeleteProtected => _value('categoryDeleteProtected');
+  String get categoryProtectedLabel => _value('categoryProtectedLabel');
+  String get dialogCancel => _value('dialogCancel');
+  String get dialogSave => _value('dialogSave');
   String get reminderManage => _value('reminderManage');
   String get reminderOutOfScope => _value('reminderOutOfScope');
   String get noCategories => _value('noCategories');
@@ -358,8 +486,34 @@ class AppLocalizations {
   String get homeBonusPlaceholder => _value('homeBonusPlaceholder');
   String get csvExportTitle => _value('csvExportTitle');
   String get csvExportPlaceholder => _value('csvExportPlaceholder');
+  String get csvRangeTitle => _value('csvRangeTitle');
+  String get csvStartDateLabel => _value('csvStartDateLabel');
+  String get csvEndDateLabel => _value('csvEndDateLabel');
+  String get csvExportButton => _value('csvExportButton');
+  String get csvExporting => _value('csvExporting');
+  String get csvShareButton => _value('csvShareButton');
+  String get csvShareWarningTitle => _value('csvShareWarningTitle');
+  String get csvShareWarningBody => _value('csvShareWarningBody');
+  String get csvShareConfirm => _value('csvShareConfirm');
+  String get csvInvalidRange => _value('csvInvalidRange');
+  String get csvFilePathLabel => _value('csvFilePathLabel');
+  String get csvExportUnavailable => _value('csvExportUnavailable');
+  String get csvColumnDate => _value('csvColumnDate');
+  String get csvColumnCategory => _value('csvColumnCategory');
+  String get csvColumnType => _value('csvColumnType');
+  String get csvColumnAmount => _value('csvColumnAmount');
+  String get csvColumnAttribute => _value('csvColumnAttribute');
   String get categoryManageTitle => _value('categoryManageTitle');
   String get categoryManagePlaceholder => _value('categoryManagePlaceholder');
+  String get annualScheduleTitle => _value('annualScheduleTitle');
+  String get annualSchedulePlaceholder => _value('annualSchedulePlaceholder');
+  String get bonusExpenseTitle => _value('bonusExpenseTitle');
+  String get bonusExpenseAmountLabel => _value('bonusExpenseAmountLabel');
+  String get bonusExpenseSave => _value('bonusExpenseSave');
+  String get bonusExpenseSaved => _value('bonusExpenseSaved');
+  String get bonusExpenseMissingCategory => _value('bonusExpenseMissingCategory');
+  String get bonusExpenseCategoryName => _value('bonusExpenseCategoryName');
+  String get noBonusMonths => _value('noBonusMonths');
   String get reminderManageTitle => _value('reminderManageTitle');
   String get reminderManagePlaceholder => _value('reminderManagePlaceholder');
   String get bonusSettingsTitle => _value('bonusSettingsTitle');
@@ -380,6 +534,29 @@ class AppLocalizations {
       _format('trendTargetPeriod', {'start': start, 'end': end});
 
   String trendCountLabel(int count) => _format('trendCountLabel', {'count': count.toString()});
+
+  String categoryDeleteBody(String name) => _format('categoryDeleteBody', {'name': name});
+
+  String csvSavedMessage(String path) => _format('csvSavedMessage', {'path': path});
+
+  String annualScheduleYear(int year) => _format('annualScheduleYear', {'year': year.toString()});
+
+  String annualScheduleStartDate(String date) =>
+      _format('annualScheduleStartDate', {'date': date});
+
+  String annualSchedulePeriodCount(int count) =>
+      _format('annualSchedulePeriodCount', {'count': count.toString()});
+
+  String annualScheduleTotalDays(int days) =>
+      _format('annualScheduleTotalDays', {'days': days.toString()});
+
+  String annualSchedulePeriodLabel(int index, String range) => _format(
+        'annualSchedulePeriodLabel',
+        {'index': index.toString(), 'range': range},
+      );
+
+  String annualSchedulePeriodDays(int days) =>
+      _format('annualSchedulePeriodDays', {'days': days.toString()});
 
   String homePeriodLengthLabel(int days) =>
       _format('homePeriodLengthLabel', {'days': days.toString()});
