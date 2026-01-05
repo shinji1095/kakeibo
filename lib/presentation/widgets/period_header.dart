@@ -34,7 +34,7 @@ class PeriodHeader extends StatelessWidget {
               onTap: onRangeTap,
               borderRadius: BorderRadius.circular(12),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

@@ -152,7 +152,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
       title: l10n.trendTitle,
       currentIndex: 4,
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.zero,
         children: [
           PeriodHeader(
             title: headerTitle,
@@ -162,217 +162,227 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             onRangeTap: _showRangeBasisDialog,
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: [
-              ChoiceChip(
-                label: Text(l10n.metricBalance),
-                selected: metric == TrendMetric.balance,
-                onSelected: (_) {
-                  ref.read(trendMetricProvider.notifier).state = TrendMetric.balance;
-                },
-              ),
-              ChoiceChip(
-                label: Text(l10n.metricIncome),
-                selected: metric == TrendMetric.income,
-                onSelected: (_) {
-                  ref.read(trendMetricProvider.notifier).state = TrendMetric.income;
-                },
-              ),
-              ChoiceChip(
-                label: Text(l10n.metricExpense),
-                selected: metric == TrendMetric.expense,
-                onSelected: (_) {
-                  ref.read(trendMetricProvider.notifier).state = TrendMetric.expense;
-                },
-              ),
-            ],
-          ),
-          Text(l10n.expenseAttribute),
-          const SizedBox(height: 4),
-          const ExpenseAttributeFilterChips(),
-          const SizedBox(height: 12),
-          totalsAsync.when(
-            data: (list) {
-              if (list.isEmpty) {
-                return Center(child: Text(l10n.noData));
-              }
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    ChoiceChip(
+                      label: Text(l10n.metricBalance),
+                      selected: metric == TrendMetric.balance,
+                      onSelected: (_) {
+                        ref.read(trendMetricProvider.notifier).state = TrendMetric.balance;
+                      },
+                    ),
+                    ChoiceChip(
+                      label: Text(l10n.metricIncome),
+                      selected: metric == TrendMetric.income,
+                      onSelected: (_) {
+                        ref.read(trendMetricProvider.notifier).state = TrendMetric.income;
+                      },
+                    ),
+                    ChoiceChip(
+                      label: Text(l10n.metricExpense),
+                      selected: metric == TrendMetric.expense,
+                      onSelected: (_) {
+                        ref.read(trendMetricProvider.notifier).state = TrendMetric.expense;
+                      },
+                    ),
+                  ],
+                ),
+                Text(l10n.expenseAttribute),
+                const SizedBox(height: 4),
+                const ExpenseAttributeFilterChips(),
+                const SizedBox(height: 12),
+                totalsAsync.when(
+                  data: (list) {
+                    if (list.isEmpty) {
+                      return Center(child: Text(l10n.noData));
+                    }
 
-              final values = list.map((item) => _valueFor(item, metric)).toList();
-              final minValue = values.reduce(min);
-              final maxValue = values.reduce(max);
-              var minY = minValue.toDouble();
-              var maxY = maxValue.toDouble();
-              if (minY == maxY) {
-                if (minY == 0) {
-                  minY = -1;
-                  maxY = 1;
-                } else {
-                  minY *= 0.9;
-                  maxY *= 1.1;
-                }
-              } else {
-                final padding = (maxY - minY) * 0.1;
-                minY -= padding;
-                maxY += padding;
-              }
-              if (metric != TrendMetric.balance) {
-                minY = min(0, minY);
-              }
-              final interval = _axisInterval(minY, maxY);
-              final labels = list
-                  .map((item) => buildRangeLegendLabel(
-                        l10n: l10n,
-                        basis: basis,
-                        rangeStart: item.start,
-                        rangeEndExclusive: item.end,
-                        schedule: scheduleMap[item.start.year],
-                      ))
-                  .toList();
+                    final values = list.map((item) => _valueFor(item, metric)).toList();
+                    final minValue = values.reduce(min);
+                    final maxValue = values.reduce(max);
+                    var minY = minValue.toDouble();
+                    var maxY = maxValue.toDouble();
+                    if (minY == maxY) {
+                      if (minY == 0) {
+                        minY = -1;
+                        maxY = 1;
+                      } else {
+                        minY *= 0.9;
+                        maxY *= 1.1;
+                      }
+                    } else {
+                      final padding = (maxY - minY) * 0.1;
+                      minY -= padding;
+                      maxY += padding;
+                    }
+                    if (metric != TrendMetric.balance) {
+                      minY = min(0, minY);
+                    }
+                    final interval = _axisInterval(minY, maxY);
+                    final labels = list
+                        .map((item) => buildRangeLegendLabel(
+                              l10n: l10n,
+                              basis: basis,
+                              rangeStart: item.start,
+                              rangeEndExclusive: item.end,
+                              schedule: scheduleMap[item.start.year],
+                            ))
+                        .toList();
 
-              return Column(
-                children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SizedBox(
-                        height: 240,
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            final layout = _barLayoutForCount(list.length);
-                            final contentWidth =
-                                _contentWidth(list.length, layout.barWidth, layout.groupSpace);
-                            final scrollEnabled =
-                                contentWidth > constraints.maxWidth && list.length > 1;
-                            final alignment = scrollEnabled
-                                ? BarChartAlignment.start
-                                : (list.length <= 1
-                                    ? BarChartAlignment.center
-                                    : BarChartAlignment.spaceBetween);
-                            final barGroups = List.generate(list.length, (i) {
-                              final value = values[i];
-                              return BarChartGroupData(
-                                x: i,
-                                showingTooltipIndicators: showAmounts ? [0] : const [],
-                                barRods: [
-                                  BarChartRodData(
-                                    toY: value.toDouble(),
-                                    width: layout.barWidth,
-                                    borderRadius: BorderRadius.circular(2),
-                                    color: _colorFor(metric, value),
-                                  ),
-                                ],
-                              );
-                            });
-                            return Scrollbar(
-                              controller: _scrollController,
-                              thumbVisibility: scrollEnabled,
-                              child: SingleChildScrollView(
-                                controller: _scrollController,
-                                scrollDirection: Axis.horizontal,
-                                physics: scrollEnabled
-                                    ? const BouncingScrollPhysics()
-                                    : const NeverScrollableScrollPhysics(),
-                                child: SizedBox(
-                                  width: max(constraints.maxWidth, contentWidth),
-                                  child: BarChart(
-                                    BarChartData(
-                                      alignment: alignment,
-                                      groupsSpace: layout.groupSpace,
-                                      minY: minY,
-                                      maxY: maxY,
-                                      barGroups: barGroups,
-                                      gridData:
-                                          FlGridData(show: true, horizontalInterval: interval),
-                                      borderData: FlBorderData(show: false),
-                                      titlesData: FlTitlesData(
-                                        topTitles: const AxisTitles(
-                                          sideTitles: SideTitles(showTitles: false),
+                    return Column(
+                      children: [
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: SizedBox(
+                              height: 240,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final layout = _barLayoutForCount(list.length);
+                                  final contentWidth = _contentWidth(
+                                      list.length, layout.barWidth, layout.groupSpace);
+                                  final scrollEnabled =
+                                      contentWidth > constraints.maxWidth && list.length > 1;
+                                  final alignment = scrollEnabled
+                                      ? BarChartAlignment.start
+                                      : (list.length <= 1
+                                          ? BarChartAlignment.center
+                                          : BarChartAlignment.spaceBetween);
+                                  final barGroups = List.generate(list.length, (i) {
+                                    final value = values[i];
+                                    return BarChartGroupData(
+                                      x: i,
+                                      showingTooltipIndicators: showAmounts ? [0] : const [],
+                                      barRods: [
+                                        BarChartRodData(
+                                          toY: value.toDouble(),
+                                          width: layout.barWidth,
+                                          borderRadius: BorderRadius.circular(2),
+                                          color: _colorFor(metric, value),
                                         ),
-                                        rightTitles: const AxisTitles(
-                                          sideTitles: SideTitles(showTitles: false),
-                                        ),
-                                        leftTitles: const AxisTitles(
-                                          sideTitles:
-                                              SideTitles(showTitles: false, reservedSize: 0),
-                                        ),
-                                        bottomTitles: AxisTitles(
-                                          sideTitles: SideTitles(
-                                            showTitles: true,
-                                            reservedSize: 32,
-                                            getTitlesWidget: (value, meta) {
-                                              final index = value.toInt();
-                                              if (index < 0 || index >= labels.length) {
-                                                return const SizedBox.shrink();
-                                              }
-                                              return Padding(
-                                                padding: const EdgeInsets.only(top: 4),
-                                                child: Text(
-                                                  labels[index],
-                                                  style: Theme.of(context).textTheme.labelSmall,
+                                      ],
+                                    );
+                                  });
+                                  return Scrollbar(
+                                    controller: _scrollController,
+                                    thumbVisibility: scrollEnabled,
+                                    child: SingleChildScrollView(
+                                      controller: _scrollController,
+                                      scrollDirection: Axis.horizontal,
+                                      physics: scrollEnabled
+                                          ? const BouncingScrollPhysics()
+                                          : const NeverScrollableScrollPhysics(),
+                                      child: SizedBox(
+                                        width: max(constraints.maxWidth, contentWidth),
+                                        child: BarChart(
+                                          BarChartData(
+                                            alignment: alignment,
+                                            groupsSpace: layout.groupSpace,
+                                            minY: minY,
+                                            maxY: maxY,
+                                            barGroups: barGroups,
+                                            gridData: FlGridData(
+                                                show: true, horizontalInterval: interval),
+                                            borderData: FlBorderData(show: false),
+                                            titlesData: FlTitlesData(
+                                              topTitles: const AxisTitles(
+                                                sideTitles: SideTitles(showTitles: false),
+                                              ),
+                                              rightTitles: const AxisTitles(
+                                                sideTitles: SideTitles(showTitles: false),
+                                              ),
+                                              leftTitles: const AxisTitles(
+                                                sideTitles:
+                                                    SideTitles(showTitles: false, reservedSize: 0),
+                                              ),
+                                              bottomTitles: AxisTitles(
+                                                sideTitles: SideTitles(
+                                                  showTitles: true,
+                                                  reservedSize: 32,
+                                                  getTitlesWidget: (value, meta) {
+                                                    final index = value.toInt();
+                                                    if (index < 0 || index >= labels.length) {
+                                                      return const SizedBox.shrink();
+                                                    }
+                                                    return Padding(
+                                                      padding: const EdgeInsets.only(top: 4),
+                                                      child: Text(
+                                                        labels[index],
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .labelSmall,
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
-                                              );
-                                            },
+                                              ),
+                                            ),
+                                            barTouchData: BarTouchData(
+                                              enabled: false,
+                                              touchTooltipData: BarTouchTooltipData(
+                                                tooltipPadding: EdgeInsets.zero,
+                                                tooltipMargin: 6,
+                                                getTooltipColor: (_) => Colors.transparent,
+                                                fitInsideHorizontally: true,
+                                                fitInsideVertically: true,
+                                                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                                                  if (!showAmounts) return null;
+                                                  return BarTooltipItem(
+                                                    l10n.formatCurrency(rod.toY.toInt()),
+                                                    Theme.of(context).textTheme.labelSmall ??
+                                                        const TextStyle(color: Colors.black),
+                                                  );
+                                                },
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      barTouchData: BarTouchData(
-                                        enabled: false,
-                                        touchTooltipData: BarTouchTooltipData(
-                                          tooltipPadding: EdgeInsets.zero,
-                                          tooltipMargin: 6,
-                                          getTooltipColor: (_) => Colors.transparent,
-                                          fitInsideHorizontally: true,
-                                          fitInsideVertically: true,
-                                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                                            if (!showAmounts) return null;
-                                            return BarTooltipItem(
-                                              l10n.formatCurrency(rod.toY.toInt()),
-                                              Theme.of(context).textTheme.labelSmall ??
-                                                  const TextStyle(color: Colors.black),
-                                            );
-                                          },
-                                        ),
-                                      ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(l10n.trendCountLabel(count),
-                      style: Theme.of(context).textTheme.bodyMedium),
-                  Slider(
-                    value: count.toDouble(),
-                    min: 3,
-                    max: 12,
-                    divisions: 9,
-                    label: count.toString(),
-                    onChanged: (v) =>
-                        ref.read(trendCountProvider.notifier).state = v.round().clamp(3, 12),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(l10n.trendShowAmounts),
-                      Switch.adaptive(
-                        value: showAmounts,
-                        onChanged: (value) =>
-                            ref.read(trendShowAmountsProvider.notifier).state = value,
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, st) => Center(child: Text(l10n.errorMessage(e))),
+                        const SizedBox(height: 8),
+                        Text(l10n.trendCountLabel(count),
+                            style: Theme.of(context).textTheme.bodyMedium),
+                        Slider(
+                          value: count.toDouble(),
+                          min: 3,
+                          max: 12,
+                          divisions: 9,
+                          label: count.toString(),
+                          onChanged: (v) => ref.read(trendCountProvider.notifier).state =
+                              v.round().clamp(3, 12),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.trendShowAmounts),
+                            Switch.adaptive(
+                              value: showAmounts,
+                              onChanged: (value) =>
+                                  ref.read(trendShowAmountsProvider.notifier).state = value,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e, st) => Center(child: Text(l10n.errorMessage(e))),
+                ),
+              ],
+            ),
           ),
         ],
       ),

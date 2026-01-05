@@ -159,6 +159,7 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
             onPrev: () => _shiftPeriod(-1),
             onNext: () => _shiftPeriod(1),
             onRangeTap: _showRangeBasisDialog,
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 4),
           ),
           const SizedBox(height: 8),
           Wrap(

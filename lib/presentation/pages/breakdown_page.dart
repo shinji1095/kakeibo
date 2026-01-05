@@ -87,7 +87,7 @@ class BreakdownPage extends ConsumerWidget {
       title: l10n.breakdownTitle,
       currentIndex: 3,
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.zero,
         children: [
           PeriodHeader(
             title: headerTitle,
@@ -96,36 +96,44 @@ class BreakdownPage extends ConsumerWidget {
             onNext: () => _shiftPeriod(ref, 1),
             onRangeTap: () => _showRangeBasisDialog(context, ref),
           ),
-          const SizedBox(height: 4),
-          Text(l10n.expenseAttribute),
-          const SizedBox(height: 4),
-          const ExpenseAttributeFilterChips(),
-          const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.breakdownExpenseCategory),
-                  const SizedBox(height: 8),
-                  const _Pie(type: TransactionType.expense),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.breakdownIncomeCategory),
-                  const SizedBox(height: 8),
-                  const _Pie(type: TransactionType.income),
-                ],
-              ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.expenseAttribute),
+                const SizedBox(height: 4),
+                const ExpenseAttributeFilterChips(),
+                const SizedBox(height: 12),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l10n.breakdownExpenseCategory),
+                        const SizedBox(height: 8),
+                        const _Pie(type: TransactionType.expense),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l10n.breakdownIncomeCategory),
+                        const SizedBox(height: 8),
+                        const _Pie(type: TransactionType.income),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
