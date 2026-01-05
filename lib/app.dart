@@ -6,8 +6,8 @@ import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/pages/breakdown_page.dart';
-import 'package:kakeibo/presentation/pages/bonus_settings_page.dart';
 import 'package:kakeibo/presentation/pages/annual_schedule_page.dart';
+import 'package:kakeibo/presentation/pages/budget_settings_page.dart';
 import 'package:kakeibo/presentation/pages/category_manage_page.dart';
 import 'package:kakeibo/presentation/pages/csv_export_page.dart';
 import 'package:kakeibo/presentation/pages/home_page.dart';
@@ -25,24 +25,13 @@ class KakeiboApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
-
-    final baseLight = AppTheme.themeFor(settings.colorTheme, Brightness.light);
-    final baseDark = AppTheme.themeFor(settings.colorTheme, Brightness.dark);
-
-    final ThemeData lightTheme = baseLight.copyWith(
-      textTheme: baseLight.textTheme.apply(fontSizeFactor: settings.fontScale),
-    );
-
-    final ThemeData darkTheme = baseDark.copyWith(
-      textTheme: baseDark.textTheme.apply(fontSizeFactor: settings.fontScale),
-    );
+    final ThemeData lightTheme = AppTheme.themeFor(settings.colorTheme, Brightness.light);
 
     return MaterialApp.router(
       title: AppLocalizations(settings.language.locale).appTitle,
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: settings.themeMode,
+      themeMode: ThemeMode.light,
       routerConfig: _router,
       locale: settings.language.locale,
       localizationsDelegates: const [
@@ -61,13 +50,20 @@ final _router = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (ctx, st) => const HomePage(), name: 'home'),
     GoRoute(path: '/list', builder: (ctx, st) => const TransactionListPage(), name: 'list'),
-    GoRoute(path: '/input', builder: (ctx, st) => const InputPage(), name: 'input'),
+    GoRoute(
+      path: '/input',
+      builder: (ctx, st) {
+        final date = st.extra is DateTime ? st.extra as DateTime : null;
+        return InputPage(initialDate: date);
+      },
+      name: 'input',
+    ),
     GoRoute(path: '/breakdown', builder: (ctx, st) => const BreakdownPage(), name: 'breakdown'),
     GoRoute(path: '/trend', builder: (ctx, st) => const TrendPage(), name: 'trend'),
     GoRoute(path: '/settings', builder: (ctx, st) => const SettingsPage(), name: 'settings'),
     GoRoute(path: '/settings/csv', builder: (ctx, st) => const CsvExportPage(), name: 'csv_export'),
     GoRoute(path: '/settings/categories', builder: (ctx, st) => const CategoryManagePage(), name: 'category_manage'),
-    GoRoute(path: '/settings/bonus', builder: (ctx, st) => const BonusSettingsPage(), name: 'bonus_settings'),
+    GoRoute(path: '/settings/budget', builder: (ctx, st) => const BudgetSettingsPage(), name: 'budget_settings'),
     GoRoute(path: '/settings/annual', builder: (ctx, st) => const AnnualSchedulePage(), name: 'annual_schedule'),
     GoRoute(path: '/settings/reminder', builder: (ctx, st) => const ReminderManagePage(), name: 'reminder_manage'),
     GoRoute(

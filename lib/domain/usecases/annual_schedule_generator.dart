@@ -65,12 +65,13 @@ class AnnualScheduleGenerator {
     }
 
     final bonusMonths = _bonusMonthsFor(config.year, config.startDate, config.periodDays);
+    final appliedBonusMonths = _applyBonusOverrides(bonusMonths, config.bonusMonthOverrides);
     return AnnualSchedule(
       year: config.year,
       startDate: config.startDate,
       weekStart: config.weekStart,
       periods: periods,
-      bonusMonths: bonusMonths,
+      bonusMonths: appliedBonusMonths,
     );
   }
 
@@ -132,6 +133,20 @@ class AnnualScheduleGenerator {
       for (var month = 1; month <= 12; month++)
         if (!startMonths.contains(month)) month,
     ];
+  }
+
+  List<int> _applyBonusOverrides(List<int> baseMonths, Map<int, bool> overrides) {
+    if (overrides.isEmpty) return baseMonths;
+    final updated = {...baseMonths};
+    overrides.forEach((month, isBonus) {
+      if (isBonus) {
+        updated.add(month);
+      } else {
+        updated.remove(month);
+      }
+    });
+    final list = updated.toList()..sort();
+    return list;
   }
 
   List<_Candidate> _buildCandidates(int targetDays) {
@@ -214,6 +229,7 @@ extension on AnnualScheduleConfig {
       startDate: startDate,
       weekStart: weekStart,
       periodDays: periodDays,
+      bonusMonthOverrides: bonusMonthOverrides,
     );
   }
 }

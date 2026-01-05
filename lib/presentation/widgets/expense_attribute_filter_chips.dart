@@ -12,11 +12,6 @@ class ExpenseAttributeFilterChips extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final selected = ref.watch(expenseAttributeFilterProvider);
     final allAttributes = ExpenseAttribute.values;
-    final allSelected = selected.length == allAttributes.length;
-
-    void setAll() {
-      ref.read(expenseAttributeFilterProvider.notifier).state = allAttributes.toSet();
-    }
 
     void toggleAttribute(ExpenseAttribute attr, bool isSelected) {
       final next = {...selected};
@@ -34,11 +29,6 @@ class ExpenseAttributeFilterChips extends ConsumerWidget {
     return Wrap(
       spacing: 8,
       children: [
-        FilterChip(
-          label: Text(l10n.filterAll),
-          selected: allSelected,
-          onSelected: (_) => setAll(),
-        ),
         ...allAttributes.map(
           (attr) => FilterChip(
             label: Text(l10n.expenseAttributeLabel(attr)),

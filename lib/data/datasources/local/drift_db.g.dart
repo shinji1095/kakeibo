@@ -1115,6 +1115,250 @@ class AnnualPeriodsCompanion extends UpdateCompanion<AnnualPeriod> {
   }
 }
 
+class $AnnualBonusOverridesTable extends AnnualBonusOverrides
+    with TableInfo<$AnnualBonusOverridesTable, AnnualBonusOverride> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AnnualBonusOverridesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _scheduleYearMeta =
+      const VerificationMeta('scheduleYear');
+  @override
+  late final GeneratedColumn<int> scheduleYear = GeneratedColumn<int>(
+      'schedule_year', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES annual_schedules (year)'));
+  static const VerificationMeta _monthMeta = const VerificationMeta('month');
+  @override
+  late final GeneratedColumn<int> month = GeneratedColumn<int>(
+      'month', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _isBonusMeta =
+      const VerificationMeta('isBonus');
+  @override
+  late final GeneratedColumn<bool> isBonus = GeneratedColumn<bool>(
+      'is_bonus', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_bonus" IN (0, 1))'));
+  @override
+  List<GeneratedColumn> get $columns => [scheduleYear, month, isBonus];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'annual_bonus_overrides';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<AnnualBonusOverride> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('schedule_year')) {
+      context.handle(
+          _scheduleYearMeta,
+          scheduleYear.isAcceptableOrUnknown(
+              data['schedule_year']!, _scheduleYearMeta));
+    } else if (isInserting) {
+      context.missing(_scheduleYearMeta);
+    }
+    if (data.containsKey('month')) {
+      context.handle(
+          _monthMeta, month.isAcceptableOrUnknown(data['month']!, _monthMeta));
+    } else if (isInserting) {
+      context.missing(_monthMeta);
+    }
+    if (data.containsKey('is_bonus')) {
+      context.handle(_isBonusMeta,
+          isBonus.isAcceptableOrUnknown(data['is_bonus']!, _isBonusMeta));
+    } else if (isInserting) {
+      context.missing(_isBonusMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {scheduleYear, month};
+  @override
+  AnnualBonusOverride map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AnnualBonusOverride(
+      scheduleYear: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}schedule_year'])!,
+      month: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}month'])!,
+      isBonus: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_bonus'])!,
+    );
+  }
+
+  @override
+  $AnnualBonusOverridesTable createAlias(String alias) {
+    return $AnnualBonusOverridesTable(attachedDatabase, alias);
+  }
+}
+
+class AnnualBonusOverride extends DataClass
+    implements Insertable<AnnualBonusOverride> {
+  final int scheduleYear;
+  final int month;
+  final bool isBonus;
+  const AnnualBonusOverride(
+      {required this.scheduleYear, required this.month, required this.isBonus});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['schedule_year'] = Variable<int>(scheduleYear);
+    map['month'] = Variable<int>(month);
+    map['is_bonus'] = Variable<bool>(isBonus);
+    return map;
+  }
+
+  AnnualBonusOverridesCompanion toCompanion(bool nullToAbsent) {
+    return AnnualBonusOverridesCompanion(
+      scheduleYear: Value(scheduleYear),
+      month: Value(month),
+      isBonus: Value(isBonus),
+    );
+  }
+
+  factory AnnualBonusOverride.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AnnualBonusOverride(
+      scheduleYear: serializer.fromJson<int>(json['scheduleYear']),
+      month: serializer.fromJson<int>(json['month']),
+      isBonus: serializer.fromJson<bool>(json['isBonus']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'scheduleYear': serializer.toJson<int>(scheduleYear),
+      'month': serializer.toJson<int>(month),
+      'isBonus': serializer.toJson<bool>(isBonus),
+    };
+  }
+
+  AnnualBonusOverride copyWith(
+          {int? scheduleYear, int? month, bool? isBonus}) =>
+      AnnualBonusOverride(
+        scheduleYear: scheduleYear ?? this.scheduleYear,
+        month: month ?? this.month,
+        isBonus: isBonus ?? this.isBonus,
+      );
+  AnnualBonusOverride copyWithCompanion(AnnualBonusOverridesCompanion data) {
+    return AnnualBonusOverride(
+      scheduleYear: data.scheduleYear.present
+          ? data.scheduleYear.value
+          : this.scheduleYear,
+      month: data.month.present ? data.month.value : this.month,
+      isBonus: data.isBonus.present ? data.isBonus.value : this.isBonus,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AnnualBonusOverride(')
+          ..write('scheduleYear: $scheduleYear, ')
+          ..write('month: $month, ')
+          ..write('isBonus: $isBonus')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(scheduleYear, month, isBonus);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AnnualBonusOverride &&
+          other.scheduleYear == this.scheduleYear &&
+          other.month == this.month &&
+          other.isBonus == this.isBonus);
+}
+
+class AnnualBonusOverridesCompanion
+    extends UpdateCompanion<AnnualBonusOverride> {
+  final Value<int> scheduleYear;
+  final Value<int> month;
+  final Value<bool> isBonus;
+  final Value<int> rowid;
+  const AnnualBonusOverridesCompanion({
+    this.scheduleYear = const Value.absent(),
+    this.month = const Value.absent(),
+    this.isBonus = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AnnualBonusOverridesCompanion.insert({
+    required int scheduleYear,
+    required int month,
+    required bool isBonus,
+    this.rowid = const Value.absent(),
+  })  : scheduleYear = Value(scheduleYear),
+        month = Value(month),
+        isBonus = Value(isBonus);
+  static Insertable<AnnualBonusOverride> custom({
+    Expression<int>? scheduleYear,
+    Expression<int>? month,
+    Expression<bool>? isBonus,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (scheduleYear != null) 'schedule_year': scheduleYear,
+      if (month != null) 'month': month,
+      if (isBonus != null) 'is_bonus': isBonus,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AnnualBonusOverridesCompanion copyWith(
+      {Value<int>? scheduleYear,
+      Value<int>? month,
+      Value<bool>? isBonus,
+      Value<int>? rowid}) {
+    return AnnualBonusOverridesCompanion(
+      scheduleYear: scheduleYear ?? this.scheduleYear,
+      month: month ?? this.month,
+      isBonus: isBonus ?? this.isBonus,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (scheduleYear.present) {
+      map['schedule_year'] = Variable<int>(scheduleYear.value);
+    }
+    if (month.present) {
+      map['month'] = Variable<int>(month.value);
+    }
+    if (isBonus.present) {
+      map['is_bonus'] = Variable<bool>(isBonus.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AnnualBonusOverridesCompanion(')
+          ..write('scheduleYear: $scheduleYear, ')
+          ..write('month: $month, ')
+          ..write('isBonus: $isBonus, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1123,12 +1367,19 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AnnualSchedulesTable annualSchedules =
       $AnnualSchedulesTable(this);
   late final $AnnualPeriodsTable annualPeriods = $AnnualPeriodsTable(this);
+  late final $AnnualBonusOverridesTable annualBonusOverrides =
+      $AnnualBonusOverridesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [categories, transactions, annualSchedules, annualPeriods];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        categories,
+        transactions,
+        annualSchedules,
+        annualPeriods,
+        annualBonusOverrides
+      ];
 }
 
 typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
@@ -1499,6 +1750,24 @@ class $$AnnualSchedulesTableFilterComposer
                 $state.db.annualPeriods, joinBuilder, parentComposers)));
     return f(composer);
   }
+
+  ComposableFilter annualBonusOverridesRefs(
+      ComposableFilter Function($$AnnualBonusOverridesTableFilterComposer f)
+          f) {
+    final $$AnnualBonusOverridesTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.year,
+            referencedTable: $state.db.annualBonusOverrides,
+            getReferencedColumn: (t) => t.scheduleYear,
+            builder: (joinBuilder, parentComposers) =>
+                $$AnnualBonusOverridesTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.annualBonusOverrides,
+                    joinBuilder,
+                    parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$AnnualSchedulesTableOrderingComposer
@@ -1642,6 +1911,119 @@ class $$AnnualPeriodsTableOrderingComposer
   }
 }
 
+typedef $$AnnualBonusOverridesTableCreateCompanionBuilder
+    = AnnualBonusOverridesCompanion Function({
+  required int scheduleYear,
+  required int month,
+  required bool isBonus,
+  Value<int> rowid,
+});
+typedef $$AnnualBonusOverridesTableUpdateCompanionBuilder
+    = AnnualBonusOverridesCompanion Function({
+  Value<int> scheduleYear,
+  Value<int> month,
+  Value<bool> isBonus,
+  Value<int> rowid,
+});
+
+class $$AnnualBonusOverridesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AnnualBonusOverridesTable,
+    AnnualBonusOverride,
+    $$AnnualBonusOverridesTableFilterComposer,
+    $$AnnualBonusOverridesTableOrderingComposer,
+    $$AnnualBonusOverridesTableCreateCompanionBuilder,
+    $$AnnualBonusOverridesTableUpdateCompanionBuilder> {
+  $$AnnualBonusOverridesTableTableManager(
+      _$AppDatabase db, $AnnualBonusOverridesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $$AnnualBonusOverridesTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$AnnualBonusOverridesTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> scheduleYear = const Value.absent(),
+            Value<int> month = const Value.absent(),
+            Value<bool> isBonus = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AnnualBonusOverridesCompanion(
+            scheduleYear: scheduleYear,
+            month: month,
+            isBonus: isBonus,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int scheduleYear,
+            required int month,
+            required bool isBonus,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AnnualBonusOverridesCompanion.insert(
+            scheduleYear: scheduleYear,
+            month: month,
+            isBonus: isBonus,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$AnnualBonusOverridesTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $AnnualBonusOverridesTable> {
+  $$AnnualBonusOverridesTableFilterComposer(super.$state);
+  ColumnFilters<int> get month => $state.composableBuilder(
+      column: $state.table.month,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get isBonus => $state.composableBuilder(
+      column: $state.table.isBonus,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$AnnualSchedulesTableFilterComposer get scheduleYear {
+    final $$AnnualSchedulesTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.scheduleYear,
+            referencedTable: $state.db.annualSchedules,
+            getReferencedColumn: (t) => t.year,
+            builder: (joinBuilder, parentComposers) =>
+                $$AnnualSchedulesTableFilterComposer(ComposerState($state.db,
+                    $state.db.annualSchedules, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$AnnualBonusOverridesTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $AnnualBonusOverridesTable> {
+  $$AnnualBonusOverridesTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get month => $state.composableBuilder(
+      column: $state.table.month,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get isBonus => $state.composableBuilder(
+      column: $state.table.isBonus,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$AnnualSchedulesTableOrderingComposer get scheduleYear {
+    final $$AnnualSchedulesTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.scheduleYear,
+            referencedTable: $state.db.annualSchedules,
+            getReferencedColumn: (t) => t.year,
+            builder: (joinBuilder, parentComposers) =>
+                $$AnnualSchedulesTableOrderingComposer(ComposerState($state.db,
+                    $state.db.annualSchedules, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
@@ -1653,4 +2035,6 @@ class $AppDatabaseManager {
       $$AnnualSchedulesTableTableManager(_db, _db.annualSchedules);
   $$AnnualPeriodsTableTableManager get annualPeriods =>
       $$AnnualPeriodsTableTableManager(_db, _db.annualPeriods);
+  $$AnnualBonusOverridesTableTableManager get annualBonusOverrides =>
+      $$AnnualBonusOverridesTableTableManager(_db, _db.annualBonusOverrides);
 }

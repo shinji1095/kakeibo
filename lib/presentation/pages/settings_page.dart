@@ -34,21 +34,6 @@ class SettingsPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(child: Text(l10n.fontSize)),
-                      Text('${settings.fontScale.toStringAsFixed(2)}x'),
-                    ],
-                  ),
-                  Slider(
-                    value: settings.fontScale,
-                    min: 0.8,
-                    max: 1.4,
-                    divisions: 6,
-                    label: settings.fontScale.toStringAsFixed(2),
-                    onChanged: notifier.setFontScale,
-                  ),
-                  const SizedBox(height: 8),
                   DropdownButtonFormField<AppColorTheme>(
                     value: settings.colorTheme,
                     decoration: InputDecoration(labelText: l10n.colorTheme),
@@ -80,72 +65,8 @@ class SettingsPage extends ConsumerWidget {
                       notifier.setLanguage(v);
                     },
                   ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<ThemeMode>(
-                    value: settings.themeMode,
-                    decoration: InputDecoration(labelText: l10n.displayMode),
-                    items: [
-                      DropdownMenuItem(value: ThemeMode.system, child: Text(l10n.themeSystem)),
-                      DropdownMenuItem(value: ThemeMode.light, child: Text(l10n.themeLight)),
-                      DropdownMenuItem(value: ThemeMode.dark, child: Text(l10n.themeDark)),
-                    ],
-                    onChanged: (v) {
-                      if (v == null) return;
-                      notifier.setThemeMode(v);
-                    },
-                  ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          Text(l10n.kakeiboSection, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  title: Text(l10n.startDate),
-                  subtitle: Text(l10n.formatLongDate(settings.kakeiboStartDate)),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                      initialDate: settings.kakeiboStartDate,
-                      locale: l10n.locale,
-                    );
-                    if (picked != null) {
-                      notifier.setKakeiboStartDate(picked);
-                    }
-                  },
-                ),
-                const Divider(height: 1),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: DropdownButtonFormField<int>(
-                    value: settings.periodLengthDays,
-                    decoration: InputDecoration(labelText: l10n.periodLength),
-                    items: [
-                      DropdownMenuItem(value: 35, child: Text(l10n.periodLength35)),
-                      DropdownMenuItem(value: 42, child: Text(l10n.periodLength42)),
-                    ],
-                    onChanged: (v) {
-                      if (v == null) return;
-                      notifier.setPeriodLengthDays(v);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(l10n.periodChangeNote),
-                  ),
-                ),
-              ],
             ),
           ),
           const SizedBox(height: 16),
@@ -189,9 +110,9 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  title: Text(l10n.bonusSettings),
+                  title: Text(l10n.budgetSettings),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/settings/bonus'),
+                  onTap: () => context.push('/settings/budget'),
                 ),
                 const Divider(height: 1),
                 ListTile(

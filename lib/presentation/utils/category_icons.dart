@@ -15,6 +15,7 @@ const Map<String, IconData> _expenseIcons = {
   '交通': Icons.directions_bus,
   '通信費': Icons.wifi,
   '住居費': Icons.home,
+  '趣味・娯楽': Icons.local_activity,
   'ボーナス支出': Icons.card_giftcard,
 };
 

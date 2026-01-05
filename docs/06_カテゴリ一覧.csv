@@ -11,6 +11,7 @@ E008,expense,光熱費,80,True,True,
 E009,expense,交通費,90,True,True,
 E010,expense,通信費,100,True,True,
 E011,expense,住居費,110,True,True,
+E012,expense,趣味・娯楽,120,True,True,
 E900,expense,ボーナス支出,1000,True,False,ボーナス月の支出、およびボーナス残高からの支出を記録する専用カテゴリ。
 I000,income,未分類,0,True,False,カテゴリ削除時の置換先
 I001,income,給料,10,True,True,

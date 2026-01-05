@@ -18,6 +18,11 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Icon(Icons.account_balance_wallet_outlined),
+        ),
         title: Text(title),
         actions: [
           IconButton(

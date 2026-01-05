@@ -43,6 +43,15 @@ class AnnualPeriods extends Table {
   IntColumn get days => integer()(); // 35 or 42
 }
 
+class AnnualBonusOverrides extends Table {
+  IntColumn get scheduleYear => integer().references(AnnualSchedules, #year)();
+  IntColumn get month => integer()();
+  BoolColumn get isBonus => boolean()();
+
+  @override
+  Set<Column> get primaryKey => {scheduleYear, month};
+}
+
 class _SeedCategory {
   final String name;
   final int color;
@@ -69,6 +78,7 @@ const List<_SeedCategory> _defaultCategories = [
   _SeedCategory(name: '交通費', color: 0xFF2196F3, type: 0),
   _SeedCategory(name: '通信費', color: 0xFF03A9F4, type: 0),
   _SeedCategory(name: '住居費', color: 0xFF795548, type: 0),
+  _SeedCategory(name: '趣味・娯楽', color: 0xFF8BC34A, type: 0),
   _SeedCategory(name: 'ボーナス支出', color: 0xFFFFB300, type: 0),
   _SeedCategory(name: '未分類', color: 0xFF9E9E9E, type: 1),
   _SeedCategory(name: '給料', color: 0xFF4CAF50, type: 1),
@@ -82,12 +92,12 @@ const List<_SeedCategory> _defaultCategories = [
 String _seedKey(int type, String name) => '$type:$name';
 
 
-@DriftDatabase(tables: [Categories, Transactions, AnnualSchedules, AnnualPeriods])
+@DriftDatabase(tables: [Categories, Transactions, AnnualSchedules, AnnualPeriods, AnnualBonusOverrides])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -101,6 +111,9 @@ class AppDatabase extends _$AppDatabase {
           if (from < 3) {
             await m.createTable(annualSchedules);
             await m.createTable(annualPeriods);
+          }
+          if (from < 4) {
+            await m.createTable(annualBonusOverrides);
           }
         },
       );

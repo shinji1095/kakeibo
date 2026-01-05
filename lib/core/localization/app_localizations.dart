@@ -63,12 +63,19 @@ class AppLocalizations {
       'managementSection': '管理',
       'csvExport': 'CSVエクスポート',
       'categoryManage': 'カテゴリ管理',
+      'budgetSettings': 'やりくり費設定',
+      'budgetSettingsTitle': 'やりくり費設定',
+      'budgetBackButton': '戻る',
+      'budgetSaveButton': 'やりくり費保存',
+      'budgetSavedMessage': 'やりくり費を保存しました',
       'bonusSettings': 'ボーナス設定',
       'annualSchedule': '年間スケジュール',
       'annualScheduleYear': '{year}年の年間スケジュール',
       'annualScheduleStartDate': '開始日: {date}',
       'annualSchedulePeriodCount': '期間数: {count}',
       'annualScheduleTotalDays': '合計日数: {days}日',
+      'annualSchedulePeriodSelectionCount': '{days}日 {current} / {expected}',
+      'annualScheduleCountMismatchWarning': '35日/42日の選択数が不足しています。年間スケジュールを確認してください。',
       'annualScheduleRegenerate': '自動生成',
       'annualScheduleListTitle': '期間一覧',
       'annualSchedulePeriodLabel': '{index}期: {range}',
@@ -134,15 +141,27 @@ class AppLocalizations {
       'breakdownIncomeCategory': '収入内訳',
       'noData': 'データがありません',
       'trendTitle': '推移',
-      'trendTargetPeriod': '対象期間: {start} ～ {end}',
+      'trendTargetPeriod': '期間: {start} ～ {end}',
       'rangeTypePeriod': '期間',
       'rangeTypeWeek': '週別',
       'metricBalance': '収支',
       'metricIncome': '収入',
       'metricExpense': '支出',
       'trendCountLabel': '表示期間: {count}',
+      'trendVisibleStart': '表示開始',
+      'trendVisibleEnd': '表示終了',
+      'trendShowAmounts': '金額表示',
+      'rangeBasisTitle': '表示期間',
+      'rangeBasisPeriod': '期間ごと',
+      'rangeBasisMonth': '月ごと',
+      'dialogOk': 'OK',
       'homeTitle': 'ホーム',
+      'homeDescription': '固定費・特別費は暦月で管理し、やりくり費のみ35日/42日の期間で管理する家計簿です。やりくり費期間がない月はボーナス月として扱います。',
       'homeCurrentPeriod': '現在の期間',
+      'homeIncomeLabel': '収入',
+      'homeFixedSpecialLabel': '固定費・特別費',
+      'homeBudgetLabel': 'やりくり費',
+      'homePeriodLabel': '{index}期',
       'homeStartDate': '開始日',
       'homeEndDate': '終了日',
       'homePeriodLengthLabel': '期間長: {days}日',
@@ -199,6 +218,9 @@ class AppLocalizations {
       'bonusBudgetApplyNote': '設定変更は以後の期間から適用されます',
       'bonusMonthTitle': 'ボーナス月',
       'bonusMonthLabel': 'ボーナス月',
+      'bonusMonthToggleTitle': 'ボーナス月の切替',
+      'bonusMonthToggleOn': 'ボーナス月にする',
+      'bonusMonthToggleOff': 'ボーナス月にしない',
     },
     'en': {
       'appTitle': '35-Day Kakeibo ~Futokoro~',
@@ -231,12 +253,19 @@ class AppLocalizations {
       'managementSection': 'Management',
       'csvExport': 'CSV Export',
       'categoryManage': 'Category Management',
+      'budgetSettings': 'Budget Settings',
+      'budgetSettingsTitle': 'Budget Settings',
+      'budgetBackButton': 'Back',
+      'budgetSaveButton': 'Save Budget',
+      'budgetSavedMessage': 'Budget saved.',
       'bonusSettings': 'Bonus Settings',
       'annualSchedule': 'Annual Schedule',
       'annualScheduleYear': 'Annual Schedule ({year})',
       'annualScheduleStartDate': 'Start: {date}',
       'annualSchedulePeriodCount': 'Periods: {count}',
       'annualScheduleTotalDays': 'Total Days: {days}',
+      'annualSchedulePeriodSelectionCount': '{days} days {current} / {expected}',
+      'annualScheduleCountMismatchWarning': 'Update the 35/42-day counts before returning home.',
       'annualScheduleRegenerate': 'Regenerate',
       'annualScheduleListTitle': 'Period List',
       'annualSchedulePeriodLabel': 'Period {index}: {range}',
@@ -309,8 +338,21 @@ class AppLocalizations {
       'metricIncome': 'Income',
       'metricExpense': 'Expense',
       'trendCountLabel': 'Periods: {count}',
+      'trendVisibleStart': 'Display Start',
+      'trendVisibleEnd': 'Display End',
+      'trendShowAmounts': 'Show amounts',
+      'rangeBasisTitle': 'Range Basis',
+      'rangeBasisPeriod': 'By Period',
+      'rangeBasisMonth': 'By Month',
+      'dialogOk': 'OK',
       'homeTitle': 'Home',
+      'homeDescription':
+          'Fixed/special expenses are managed monthly, and the discretionary budget is managed in 35/42-day periods. Months without a period are treated as bonus months.',
       'homeCurrentPeriod': 'Current Period',
+      'homeIncomeLabel': 'Income',
+      'homeFixedSpecialLabel': 'Fixed/Special',
+      'homeBudgetLabel': 'Budget',
+      'homePeriodLabel': 'Period {index}',
       'homeStartDate': 'Start',
       'homeEndDate': 'End',
       'homePeriodLengthLabel': 'Length: {days} days',
@@ -367,6 +409,9 @@ class AppLocalizations {
       'bonusBudgetApplyNote': 'Changes apply from the next period.',
       'bonusMonthTitle': 'Bonus Month',
       'bonusMonthLabel': 'Bonus Month',
+      'bonusMonthToggleTitle': 'Bonus Month',
+      'bonusMonthToggleOn': 'Set as bonus month',
+      'bonusMonthToggleOff': 'Remove bonus month',
     },
   };
 
@@ -411,9 +456,15 @@ class AppLocalizations {
   String get managementSection => _value('managementSection');
   String get csvExport => _value('csvExport');
   String get categoryManage => _value('categoryManage');
+  String get budgetSettings => _value('budgetSettings');
+  String get budgetSettingsTitle => _value('budgetSettingsTitle');
+  String get budgetBackButton => _value('budgetBackButton');
+  String get budgetSaveButton => _value('budgetSaveButton');
+  String get budgetSavedMessage => _value('budgetSavedMessage');
   String get bonusSettings => _value('bonusSettings');
   String get annualSchedule => _value('annualSchedule');
   String get annualScheduleRegenerate => _value('annualScheduleRegenerate');
+  String get annualScheduleCountMismatchWarning => _value('annualScheduleCountMismatchWarning');
   String get annualScheduleListTitle => _value('annualScheduleListTitle');
   String get annualScheduleMissing => _value('annualScheduleMissing');
   String get bonusSummaryTitle => _value('bonusSummaryTitle');
@@ -477,8 +528,19 @@ class AppLocalizations {
   String get metricBalance => _value('metricBalance');
   String get metricIncome => _value('metricIncome');
   String get metricExpense => _value('metricExpense');
+  String get trendShowAmounts => _value('trendShowAmounts');
+  String get trendVisibleStart => _value('trendVisibleStart');
+  String get trendVisibleEnd => _value('trendVisibleEnd');
+  String get rangeBasisTitle => _value('rangeBasisTitle');
+  String get rangeBasisPeriod => _value('rangeBasisPeriod');
+  String get rangeBasisMonth => _value('rangeBasisMonth');
+  String get dialogOk => _value('dialogOk');
   String get homeTitle => _value('homeTitle');
+  String get homeDescription => _value('homeDescription');
   String get homeCurrentPeriod => _value('homeCurrentPeriod');
+  String get homeIncomeLabel => _value('homeIncomeLabel');
+  String get homeFixedSpecialLabel => _value('homeFixedSpecialLabel');
+  String get homeBudgetLabel => _value('homeBudgetLabel');
   String get homeStartDate => _value('homeStartDate');
   String get homeEndDate => _value('homeEndDate');
   String get homeCalendarTitle => _value('homeCalendarTitle');
@@ -524,6 +586,9 @@ class AppLocalizations {
   String get bonusBudgetApplyNote => _value('bonusBudgetApplyNote');
   String get bonusMonthTitle => _value('bonusMonthTitle');
   String get bonusMonthLabel => _value('bonusMonthLabel');
+  String get bonusMonthToggleTitle => _value('bonusMonthToggleTitle');
+  String get bonusMonthToggleOn => _value('bonusMonthToggleOn');
+  String get bonusMonthToggleOff => _value('bonusMonthToggleOff');
 
   String notImplemented(String label) => _format('notImplemented', {'label': label});
   String errorMessage(Object error) => _format('errorMessage', {'error': error.toString()});
@@ -550,6 +615,15 @@ class AppLocalizations {
   String annualScheduleTotalDays(int days) =>
       _format('annualScheduleTotalDays', {'days': days.toString()});
 
+  String annualSchedulePeriodSelectionCount(int days, int current, int expected) => _format(
+        'annualSchedulePeriodSelectionCount',
+        {
+          'days': days.toString(),
+          'current': current.toString(),
+          'expected': expected.toString(),
+        },
+      );
+
   String annualSchedulePeriodLabel(int index, String range) => _format(
         'annualSchedulePeriodLabel',
         {'index': index.toString(), 'range': range},
@@ -563,6 +637,9 @@ class AppLocalizations {
 
   String homeDaysRemaining(int days) =>
       _format('homeDaysRemaining', {'days': days.toString()});
+
+  String homePeriodLabel(int index) =>
+      _format('homePeriodLabel', {'index': index.toString()});
 
   String languageLabel(AppLanguage language) {
     switch (language) {

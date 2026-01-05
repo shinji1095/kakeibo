@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
+import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/utils/category_icons.dart';
+import 'package:kakeibo/presentation/utils/period_header_utils.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 import 'package:kakeibo/presentation/widgets/expense_attribute_filter_chips.dart';
+import 'package:kakeibo/presentation/widgets/period_header.dart';
 
 class BreakdownPage extends ConsumerWidget {
   const BreakdownPage({super.key});
@@ -17,33 +20,81 @@ class BreakdownPage extends ConsumerWidget {
     ref.read(periodOffsetProvider.notifier).state += delta;
   }
 
+  Future<void> _showRangeBasisDialog(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    var selection = ref.read(rangeBasisProvider);
+    final result = await showDialog<RangeBasis>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.rangeBasisTitle),
+        content: StatefulBuilder(
+          builder: (context, setState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<RangeBasis>(
+                title: Text(l10n.rangeBasisPeriod),
+                value: RangeBasis.period,
+                groupValue: selection,
+                onChanged: (value) => setState(() => selection = value ?? selection),
+              ),
+              RadioListTile<RangeBasis>(
+                title: Text(l10n.rangeBasisMonth),
+                value: RangeBasis.month,
+                groupValue: selection,
+                onChanged: (value) => setState(() => selection = value ?? selection),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.dialogCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(selection),
+            child: Text(l10n.dialogOk),
+          ),
+        ],
+      ),
+    );
+    if (result != null) {
+      ref.read(rangeBasisProvider.notifier).state = result;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final range = ref.watch(periodRangeProvider);
+    final basis = ref.watch(rangeBasisProvider);
+    final scheduleMap = ref.watch(annualSchedulesAroundNowProvider);
+    final schedule = scheduleMap[range.start.year];
     final endInclusive = range.end.subtract(const Duration(days: 1));
+    final headerTitle = buildPeriodHeaderTitle(
+      l10n: l10n,
+      basis: basis,
+      rangeStart: range.start,
+      rangeEndExclusive: range.end,
+      schedule: schedule,
+    );
+    final headerSubtitle = buildPeriodHeaderSubtitle(
+      l10n: l10n,
+      rangeStart: range.start,
+      rangeEndInclusive: endInclusive,
+    );
     return AppScaffold(
       title: l10n.breakdownTitle,
       currentIndex: 3,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left),
-                onPressed: () => _shiftPeriod(ref, -1),
-              ),
-              Text(
-                '${l10n.formatDate(range.start)}${l10n.rangeSeparator}${l10n.formatDate(endInclusive)}',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              IconButton(
-                icon: const Icon(Icons.chevron_right),
-                onPressed: () => _shiftPeriod(ref, 1),
-              ),
-            ],
+          PeriodHeader(
+            title: headerTitle,
+            subtitle: headerSubtitle,
+            onPrev: () => _shiftPeriod(ref, -1),
+            onNext: () => _shiftPeriod(ref, 1),
+            onRangeTap: () => _showRangeBasisDialog(context, ref),
           ),
           const SizedBox(height: 4),
           Text(l10n.expenseAttribute),

@@ -32,6 +32,22 @@ List<({DateTime start, DateTime end})> buildPeriodRanges(
   });
 }
 
+List<({DateTime start, DateTime end})> buildMonthRanges(
+  DateTime currentMonthStart,
+  int count,
+) {
+  final safeCount = count <= 0 ? 0 : count;
+  if (safeCount == 0) return const [];
+  final normalizedStart = DateTime(currentMonthStart.year, currentMonthStart.month, 1);
+
+  return List.generate(safeCount, (i) {
+    final stepsFromCurrent = safeCount - 1 - i;
+    final start = DateTime(normalizedStart.year, normalizedStart.month - stepsFromCurrent, 1);
+    final end = DateTime(start.year, start.month + 1, 1);
+    return (start: start, end: end);
+  });
+}
+
 List<({DateTime start, DateTime end})> buildWeekRanges(
   DateTime baseStart,
   DateTime anchorDate,

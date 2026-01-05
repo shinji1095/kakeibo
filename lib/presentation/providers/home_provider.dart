@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/core/di/injector.dart';
 import 'package:kakeibo/core/utils/period_utils.dart';
@@ -5,47 +6,69 @@ import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/domain/usecases/get_transactions_by_range.dart';
 import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
+import 'package:kakeibo/presentation/utils/annual_schedule_colors.dart';
 
 class HomeStats {
+  final int periodIndex;
   final DateTime periodStart;
   final DateTime periodEndExclusive;
   final int daysUntilPeriodEnd;
   final int periodLengthDays;
+  final DateTime calendarStart;
+  final Color periodColor;
 
   const HomeStats({
+    required this.periodIndex,
     required this.periodStart,
     required this.periodEndExclusive,
     required this.daysUntilPeriodEnd,
     required this.periodLengthDays,
+    required this.calendarStart,
+    required this.periodColor,
   });
 }
 
 final homeStatsProvider = Provider<HomeStats>((ref) {
-  final settings = ref.watch(settingsProvider);
+  final now = DateTime.now();
   final schedule = ref.watch(currentAnnualScheduleProvider).valueOrNull;
   if (schedule != null && schedule.periods.isNotEmpty) {
-    final period = resolveSchedulePeriod(schedule.periods, DateTime.now());
+    final period = resolveSchedulePeriod(schedule.periods, now);
     final start = period.startDate;
     final periodEndExclusive = period.endDate.add(const Duration(days: 1));
-    final remaining = periodEndExclusive.difference(truncateDate(DateTime.now())).inDays;
+    final remaining = periodEndExclusive.difference(truncateDate(now)).inDays;
+    final colors = buildAnnualScheduleColors(schedule.periods.length);
+    final periodColor = colors.isNotEmpty
+        ? colors[period.index % colors.length]
+        : Colors.transparent;
     return HomeStats(
+      periodIndex: period.index,
       periodStart: start,
       periodEndExclusive: periodEndExclusive,
       daysUntilPeriodEnd: remaining < 0 ? 0 : remaining,
       periodLengthDays: period.days,
+      calendarStart: schedule.startDate,
+      periodColor: periodColor,
     );
   }
 
-  final length = settings.periodLengthDays <= 0 ? 35 : settings.periodLengthDays;
-  final start = currentPeriodStart(settings.kakeiboStartDate, length, DateTime.now());
+  final length = 35;
+  final startBase = DateTime(now.year, 1, 1);
+  final start = currentPeriodStart(startBase, length, now);
   final periodEndExclusive = start.add(Duration(days: length));
-  final remaining = periodEndExclusive.difference(truncateDate(DateTime.now())).inDays;
+  final remaining = periodEndExclusive.difference(truncateDate(now)).inDays;
+  final diffDays = truncateDate(now).difference(startBase).inDays;
+  final periodIndex = diffDays < 0 ? 0 : diffDays ~/ length;
+  final fallbackColors = buildAnnualScheduleColors(1);
+  final periodColor = fallbackColors.isNotEmpty ? fallbackColors.first : Colors.transparent;
 
   return HomeStats(
+    periodIndex: periodIndex,
     periodStart: start,
     periodEndExclusive: periodEndExclusive,
     daysUntilPeriodEnd: remaining < 0 ? 0 : remaining,
     periodLengthDays: length,
+    calendarStart: startBase,
+    periodColor: periodColor,
   );
 });
 

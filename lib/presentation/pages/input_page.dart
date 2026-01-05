@@ -9,7 +9,12 @@ import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
 import 'package:kakeibo/presentation/widgets/expense_attribute_icon_selector.dart';
 
 class InputPage extends ConsumerStatefulWidget {
-  const InputPage({super.key});
+  final DateTime? initialDate;
+
+  const InputPage({
+    super.key,
+    this.initialDate,
+  });
 
   @override
   ConsumerState<InputPage> createState() => _InputPageState();
@@ -20,7 +25,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
 
   final _amountCtrl = TextEditingController();
   final _memoCtrl = TextEditingController();
-  DateTime _date = DateTime.now();
+  late DateTime _date;
   int? _expenseCategoryId;
   int? _incomeCategoryId;
   ExpenseAttribute _expenseAttribute = kDefaultExpenseAttribute;
@@ -28,6 +33,7 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
+    _date = widget.initialDate ?? DateTime.now();
     _tab = TabController(length: 2, vsync: this);
   }
 
