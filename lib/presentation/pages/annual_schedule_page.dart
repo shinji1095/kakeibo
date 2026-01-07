@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
@@ -13,60 +15,55 @@ class AnnualSchedulePage extends ConsumerStatefulWidget {
 }
 
 class _AnnualSchedulePageState extends ConsumerState<AnnualSchedulePage> {
+  int? _bonusPeriod1Index;
+  int? _bonusPeriod2Index;
+  int? _selectedBonusYear;
+  bool _selectionDirty = false;
+
   void _shiftYear(int delta) {
     ref.read(annualSchedulePageYearProvider.notifier).state += delta;
   }
 
-  Future<void> _updatePeriod(AnnualSchedulePeriod period, int days) async {
-    final usecase = ref.read(updateAnnualSchedulePeriodProvider);
+  bool get _canApply {
+    if (_bonusPeriod1Index == null || _bonusPeriod2Index == null) return false;
+    return _bonusPeriod1Index != _bonusPeriod2Index;
+  }
+
+  Future<void> _applyBonusPeriods() async {
+    if (!_canApply) return;
+    final usecase = ref.read(setAnnualScheduleBonusPeriodsProvider);
     await usecase(
       year: ref.read(annualSchedulePageYearProvider),
-      periodIndex: period.index,
-      days: days,
+      bonusPeriodIndices: <int>[_bonusPeriod1Index!, _bonusPeriod2Index!],
     );
+    if (!mounted) return;
+    setState(() => _selectionDirty = false);
     final year = ref.read(annualSchedulePageYearProvider);
     ref.invalidate(annualScheduleForYearProvider(year));
   }
 
-  Future<void> _toggleBonusMonth(int month, bool currentValue) async {
-    final l10n = AppLocalizations.of(context);
-    final selection = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.bonusMonthToggleTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(l10n.bonusMonthToggleOn),
-              trailing: currentValue ? const Icon(Icons.check) : null,
-              onTap: () => Navigator.of(context).pop(true),
-            ),
-            ListTile(
-              title: Text(l10n.bonusMonthToggleOff),
-              trailing: !currentValue ? const Icon(Icons.check) : null,
-              onTap: () => Navigator.of(context).pop(false),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.dialogCancel),
-          ),
-        ],
-      ),
-    );
-    if (selection == null) return;
+  void _syncBonusSelection(AnnualSchedule schedule, int year) {
+    final bonusPeriods = [...schedule.bonusPeriods]..sort();
+    final shouldSync = _selectedBonusYear != year || !_selectionDirty;
+    if (!shouldSync) return;
+    _bonusPeriod1Index = bonusPeriods.isNotEmpty ? bonusPeriods[0] : null;
+    _bonusPeriod2Index = bonusPeriods.length > 1 ? bonusPeriods[1] : null;
+    _selectedBonusYear = year;
+    _selectionDirty = false;
+  }
 
-    final usecase = ref.read(setBonusMonthOverrideProvider);
-    await usecase(
-      year: ref.read(annualSchedulePageYearProvider),
-      month: month,
-      isBonus: selection,
-    );
-    final year = ref.read(annualSchedulePageYearProvider);
-    ref.invalidate(annualScheduleForYearProvider(year));
+  void _setBonusPeriod1(int? index) {
+    setState(() {
+      _selectionDirty = true;
+      _bonusPeriod1Index = index;
+    });
+  }
+
+  void _setBonusPeriod2(int? index) {
+    setState(() {
+      _selectionDirty = true;
+      _bonusPeriod2Index = index;
+    });
   }
 
   @override
@@ -79,14 +76,12 @@ class _AnnualSchedulePageState extends ConsumerState<AnnualSchedulePage> {
       appBar: AppBar(title: Text(l10n.annualScheduleTitle)),
       body: scheduleAsync.when(
         data: (schedule) {
-          if (schedule == null) {
+          if (schedule == null || schedule.periods.isEmpty) {
             return Center(child: Text(l10n.annualScheduleMissing));
           }
-          final totalDays = schedule.periods.fold<int>(0, (sum, p) => sum + p.days);
-          final bonusMonths = schedule.bonusMonths;
+          _syncBonusSelection(schedule, year);
           final periodColors = buildAnnualScheduleColors(schedule.periods.length);
-          final monthSegments = _buildMonthSegments(schedule.periods, periodColors);
-          final countStatus = AnnualScheduleCountStatus.fromSchedule(schedule);
+          final monthColors = buildAnnualScheduleColors(12);
 
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -107,110 +102,93 @@ class _AnnualSchedulePageState extends ConsumerState<AnnualSchedulePage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.annualScheduleStartDate(l10n.formatLongDate(schedule.startDate))),
-                      Text(l10n.annualSchedulePeriodCount(schedule.periods.length)),
-                      Text(l10n.annualScheduleTotalDays(totalDays)),
-                      const SizedBox(height: 8),
-                      Text(l10n.annualSchedulePeriodSelectionCount(
-                        35,
-                        countStatus.count35,
-                        countStatus.expected35,
-                      )),
-                      Text(l10n.annualSchedulePeriodSelectionCount(
-                        42,
-                        countStatus.count42,
-                        countStatus.expected42,
-                      )),
-                      if (!countStatus.isValid) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          l10n.annualScheduleCountMismatchWarning,
-                          style: TextStyle(color: Theme.of(context).colorScheme.error),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      ],
+                        clipBehavior: Clip.hardEdge,
+                        child: _AnnualScheduleChart(
+                          schedule: schedule,
+                          periodColors: periodColors,
+                          monthColors: monthColors,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.bonusMonthSwapTitle,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<int>(
+                              key: const Key('bonus-period-1'),
+                              value: _bonusPeriod1Index,
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                labelText: l10n.bonusMonthPrimary,
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                              items: [
+                                for (var i = 0; i < schedule.periods.length; i++)
+                                  DropdownMenuItem<int>(
+                                    value: i,
+                                    key: ValueKey('bonus-period-1-$i'),
+                                    child: Text(l10n.annualSchedulePeriodIndex(i + 1)),
+                                  ),
+                              ],
+                              onChanged: _setBonusPeriod1,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: DropdownButtonFormField<int>(
+                              key: const Key('bonus-period-2'),
+                              value: _bonusPeriod2Index,
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                labelText: l10n.bonusMonthSecondary,
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                              items: [
+                                for (var i = 0; i < schedule.periods.length; i++)
+                                  DropdownMenuItem<int>(
+                                    value: i,
+                                    key: ValueKey('bonus-period-2-$i'),
+                                    child: Text(l10n.annualSchedulePeriodIndex(i + 1)),
+                                  ),
+                              ],
+                              onChanged: _setBonusPeriod2,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: _canApply ? _applyBonusPeriods : null,
+                          child: Text(l10n.dialogApply),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.bonusMonthTitle, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  const columns = 4;
-                  const spacing = 12.0;
-                  final baseWidth =
-                      (constraints.maxWidth - spacing * (columns - 1)) / columns;
-                  final normalizedBase = baseWidth > 0 ? baseWidth : constraints.maxWidth / columns;
-
-                  return Wrap(
-                    spacing: spacing,
-                    runSpacing: spacing,
-                    alignment: WrapAlignment.spaceBetween,
-                    children: [
-                      for (var month = 1; month <= 12; month++)
-                        _BonusMonthChip(
-                          containerKey: Key('bonus-month-chip-$month'),
-                          month: month,
-                          baseWidth: normalizedBase,
-                          label: l10n.formatMonth(month),
-                          isBonus: bonusMonths.contains(month),
-                          segments: monthSegments[month] ?? const <_MonthSegment>[],
-                          onTap: () => _toggleBonusMonth(month, bonusMonths.contains(month)),
-                        ),
-                    ],
-                  );
-                },
-              ),
-              if (bonusMonths.isEmpty) ...[
-                const SizedBox(height: 8),
-                Text(l10n.noBonusMonths),
-              ],
-              const SizedBox(height: 16),
-              Text(l10n.annualScheduleListTitle, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Card(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: schedule.periods.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    final period = schedule.periods[index];
-                    final label = '${l10n.formatDate(period.startDate)}'
-                        '${l10n.rangeSeparator}${l10n.formatDate(period.endDate)}';
-                    return ListTile(
-                      leading: Container(
-                        key: Key('annual-period-color-$index'),
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: periodColors[index],
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      title: Text(l10n.annualSchedulePeriodLabel(period.index + 1, label)),
-                      subtitle: Text(l10n.annualSchedulePeriodDays(period.days)),
-                      trailing: DropdownButton<int>(
-                        value: period.days,
-                        items: [
-                          DropdownMenuItem(value: 35, child: Text(l10n.periodLength35)),
-                          DropdownMenuItem(value: 42, child: Text(l10n.periodLength42)),
-                        ],
-                        onChanged: (value) {
-                          if (value == null) return;
-                          _updatePeriod(period, value);
-                        },
-                      ),
-                    );
-                  },
                 ),
               ),
             ],
@@ -235,147 +213,129 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleMedium),
+        Expanded(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
         trailing,
       ],
     );
   }
 }
 
-class _BonusMonthChip extends StatelessWidget {
-  final Key? containerKey;
-  final int month;
-  final double baseWidth;
-  final String label;
-  final bool isBonus;
-  final List<_MonthSegment> segments;
-  final VoidCallback onTap;
+class _AnnualScheduleChart extends StatelessWidget {
+  final AnnualSchedule schedule;
+  final List<Color> periodColors;
+  final List<Color> monthColors;
 
-  const _BonusMonthChip({
-    this.containerKey,
-    required this.month,
-    required this.baseWidth,
-    required this.label,
-    required this.isBonus,
-    required this.segments,
-    required this.onTap,
+  const _AnnualScheduleChart({
+    required this.schedule,
+    required this.periodColors,
+    required this.monthColors,
   });
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final gradient = _buildSegmentGradient(segments);
-    final background = segments.isNotEmpty ? segments.first.color : scheme.surfaceVariant;
-    final textColor = scheme.onSurface;
-    final borderColor = scheme.outlineVariant;
-    const borderWidth = 1.0;
-    final width = baseWidth;
-    final starIcon = _buildStarIcon(textColor);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final size = min(constraints.maxWidth, 640.0);
+        const outerInset = 60.0;
+        final outerRadius = max(0.0, size / 2 - outerInset);
+        final innerRadius = outerRadius * 0.82;
+        final innerSectionRadius = max(0.0, innerRadius - 6);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: width,
-        child: Container(
-          key: containerKey,
-          constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: gradient == null ? background : null,
-            gradient: gradient,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: borderColor, width: borderWidth),
-          ),
-          child: starIcon == null
-              ? Text(label, style: TextStyle(color: textColor))
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    starIcon,
-                    const SizedBox(width: 4),
-                    Text(label, style: TextStyle(color: textColor)),
-                  ],
+        return Center(
+          child: SizedBox(
+            key: const Key('annual-schedule-chart'),
+            width: size,
+            height: size,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                PieChart(
+                  PieChartData(
+                    sections: _buildPeriodSections(context, outerRadius),
+                    centerSpaceRadius: innerRadius,
+                    sectionsSpace: 1,
+                    startDegreeOffset: -90,
+                  ),
                 ),
-        ),
-      ),
+                IgnorePointer(
+                  child: PieChart(
+                    PieChartData(
+                      sections: _buildMonthSections(context, innerSectionRadius),
+                      centerSpaceRadius: 0,
+                      sectionsSpace: 1,
+                      startDegreeOffset: -90,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget? _buildStarIcon(Color textColor) {
-    if (isBonus) {
-      return const Icon(Icons.star, size: 16, color: Colors.amber);
-    }
-    if (month == 1 || month == 2) {
-      return Icon(Icons.star_border, size: 16, color: textColor);
-    }
-    return null;
-  }
-}
-
-class _MonthSegment {
-  final Color color;
-  final double ratio;
-
-  const _MonthSegment({
-    required this.color,
-    required this.ratio,
-  });
-}
-
-Map<int, List<_MonthSegment>> _buildMonthSegments(
-  List<AnnualSchedulePeriod> periods,
-  List<Color> colors,
-) {
-  final daysByMonth = <int, Map<int, int>>{};
-
-  for (final period in periods) {
-    var cursor = period.startDate;
-    while (!cursor.isAfter(period.endDate)) {
-      final monthEnd = DateTime(cursor.year, cursor.month + 1, 0);
-      final segmentEnd = period.endDate.isBefore(monthEnd) ? period.endDate : monthEnd;
-      final days = segmentEnd.difference(cursor).inDays + 1;
-      final month = cursor.month;
-      final map = daysByMonth.putIfAbsent(month, () => <int, int>{});
-      map[period.index] = (map[period.index] ?? 0) + days;
-      cursor = segmentEnd.add(const Duration(days: 1));
-    }
-  }
-
-  final result = <int, List<_MonthSegment>>{};
-  for (final entry in daysByMonth.entries) {
-    final total = entry.value.values.fold<int>(0, (sum, days) => sum + days);
-    if (total <= 0) continue;
-    final segments = entry.value.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-    result[entry.key] = [
-      for (final segment in segments)
-        _MonthSegment(
-          color: colors[segment.key % colors.length],
-          ratio: segment.value / total,
+  List<PieChartSectionData> _buildPeriodSections(BuildContext context, double radius) {
+    final l10n = AppLocalizations.of(context);
+    final sections = <PieChartSectionData>[];
+    for (var i = 0; i < schedule.periods.length; i++) {
+      final period = schedule.periods[i];
+      final color = periodColors[i % periodColors.length];
+      sections.add(PieChartSectionData(
+        value: period.days.toDouble(),
+        color: color,
+        radius: radius,
+        title: l10n.annualSchedulePeriodIndex(i + 1),
+        titlePositionPercentageOffset: 0.86,
+        titleStyle: TextStyle(
+          color: _labelColor(color),
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
         ),
-    ];
-  }
-  return result;
-}
-
-LinearGradient? _buildSegmentGradient(List<_MonthSegment> segments) {
-  if (segments.length <= 1) return null;
-
-  final colors = <Color>[];
-  final stops = <double>[];
-  var cursor = 0.0;
-  for (final segment in segments) {
-    final ratio = segment.ratio;
-    colors.add(segment.color);
-    stops.add(cursor.clamp(0.0, 1.0));
-    cursor = (cursor + ratio).clamp(0.0, 1.0);
-    colors.add(segment.color);
-    stops.add(cursor);
+      ));
+    }
+    return sections;
   }
 
-  return LinearGradient(colors: colors, stops: stops);
+  List<PieChartSectionData> _buildMonthSections(BuildContext context, double radius) {
+    final l10n = AppLocalizations.of(context);
+    final sections = <PieChartSectionData>[];
+    for (var i = 0; i < 12; i++) {
+      final month = i + 1;
+      final days = _daysInMonth(schedule.year, month);
+      final color = monthColors[i % monthColors.length];
+      sections.add(PieChartSectionData(
+        value: days.toDouble(),
+        color: color,
+        radius: radius,
+        title: l10n.formatMonth(month),
+        titlePositionPercentageOffset: 0.62,
+        titleStyle: TextStyle(
+          color: _labelColor(color),
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+        ),
+      ));
+    }
+    return sections;
+  }
+
+  int _daysInMonth(int year, int month) {
+    final start = DateTime(year, month, 1);
+    final end = DateTime(year, month + 1, 1);
+    return end.difference(start).inDays;
+  }
+
+  Color _labelColor(Color color) {
+    final brightness = ThemeData.estimateBrightnessForColor(color);
+    return brightness == Brightness.dark ? Colors.white : Colors.black;
+  }
 }

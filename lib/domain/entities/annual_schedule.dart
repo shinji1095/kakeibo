@@ -3,14 +3,12 @@ class AnnualScheduleConfig {
   final DateTime startDate;
   final int weekStart;
   final List<int> periodDays;
-  final Map<int, bool> bonusMonthOverrides;
 
   const AnnualScheduleConfig({
     required this.year,
     required this.startDate,
     required this.weekStart,
     required this.periodDays,
-    this.bonusMonthOverrides = const {},
   });
 }
 
@@ -33,13 +31,13 @@ class AnnualSchedule {
   final DateTime startDate;
   final int weekStart;
   final List<AnnualSchedulePeriod> periods;
-  final List<int> bonusMonths;
+  final List<int> bonusPeriods;
 
   const AnnualSchedule({
     required this.year,
     required this.startDate,
     required this.weekStart,
     required this.periods,
-    required this.bonusMonths,
+    required this.bonusPeriods,
   });
 }

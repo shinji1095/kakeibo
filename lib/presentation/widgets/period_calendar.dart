@@ -1,25 +1,29 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:kakeibo/core/utils/period_utils.dart';
 
 class PeriodCalendar extends StatelessWidget {
   final Map<DateTime, ({int income, int expense})> totalsByDay;
   final ValueChanged<DateTime>? onDateTap;
+  final int periodLengthDays;
 
   const PeriodCalendar({
     super.key,
     required this.totalsByDay,
     this.onDateTap,
+    this.periodLengthDays = 35,
   });
 
   @override
   Widget build(BuildContext context) {
     final now = truncateDate(DateTime.now());
     final weekStart = now.subtract(Duration(days: now.weekday % 7));
-    final weeks = List.generate(5, (i) => weekStart.add(Duration(days: 7 * i)));
+    final weekCount = max(1, (periodLengthDays / 7).ceil());
+    final weeks = List.generate(weekCount, (i) => weekStart.add(Duration(days: 7 * i)));
     final days = [
       for (final start in weeks) ...List.generate(7, (i) => start.add(Duration(days: i))),
     ];
-    const totalCells = 35;
+    final totalCells = weekCount * 7;
     final weekdayLabels = MaterialLocalizations.of(context).narrowWeekdays;
     final scheme = Theme.of(context).colorScheme;
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);

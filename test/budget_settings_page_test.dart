@@ -67,10 +67,10 @@ void main() {
   testWidgets('budget save navigates home when counts are valid', (WidgetTester tester) async {
     final notifier = SettingsNotifier();
     final status = AnnualScheduleCountStatus(
-      count35: 8,
-      count42: 2,
-      expected35: 8,
-      expected42: 2,
+      count35: 10,
+      count7: 2,
+      expected35: 10,
+      expected7: 2,
     );
 
     await _pumpBudgetSettingsPage(tester, notifier: notifier, countStatus: status);
@@ -90,10 +90,10 @@ void main() {
   testWidgets('budget save stays when counts are invalid', (WidgetTester tester) async {
     final notifier = SettingsNotifier();
     final status = AnnualScheduleCountStatus(
-      count35: 7,
-      count42: 2,
-      expected35: 8,
-      expected42: 2,
+      count35: 9,
+      count7: 2,
+      expected35: 10,
+      expected7: 2,
     );
 
     await _pumpBudgetSettingsPage(tester, notifier: notifier, countStatus: status);

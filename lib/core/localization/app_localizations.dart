@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 
@@ -52,9 +52,9 @@ class AppLocalizations {
       'languageEnglish': '英語',
       'kakeiboSection': '家計簿',
       'startDate': '家計簿の開始日',
-      'periodLength': '期間の長さ（35/42日）',
+      'periodLength': '期間の長さ（35/7日）',
       'periodLength35': '35日',
-      'periodLength42': '42日',
+      'periodLength42': '7日',
       'periodChangeNote': '設定変更は以後の期間から適用されます',
       'accountSection': 'アカウント',
       'profileSetting': 'プロフィール設定',
@@ -75,10 +75,11 @@ class AppLocalizations {
       'annualSchedulePeriodCount': '期間数: {count}',
       'annualScheduleTotalDays': '合計日数: {days}日',
       'annualSchedulePeriodSelectionCount': '{days}日 {current} / {expected}',
-      'annualScheduleCountMismatchWarning': '35日/42日の選択数が不足しています。年間スケジュールを確認してください。',
+      'annualScheduleCountMismatchWarning': '35日/7日の選択数が不足しています。年間スケジュールを確認してください。',
       'annualScheduleRegenerate': '自動生成',
       'annualScheduleListTitle': '期間一覧',
       'annualSchedulePeriodLabel': '{index}期: {range}',
+      'annualSchedulePeriodIndex': '{index}期',
       'annualSchedulePeriodDays': '{days}日',
       'annualScheduleMissing': '年間スケジュールを取得できません。',
       'bonusSummaryTitle': 'ボーナス月',
@@ -97,6 +98,7 @@ class AppLocalizations {
       'categoryDeleteProtected': 'このカテゴリは削除できません',
       'categoryProtectedLabel': '固定カテゴリ',
       'dialogCancel': 'キャンセル',
+      'dialogApply': '設定',
       'dialogSave': '保存',
       'reminderManage': 'リマインダー管理',
       'reminderOutOfScope': '初期リリース対象外',
@@ -156,7 +158,7 @@ class AppLocalizations {
       'rangeBasisMonth': '月ごと',
       'dialogOk': 'OK',
       'homeTitle': 'ホーム',
-      'homeDescription': '固定費・特別費は暦月で管理し、やりくり費のみ35日/42日の期間で管理する家計簿です。やりくり費期間がない月はボーナス月として扱います。',
+      'homeDescription': '固定費・特別費は暦月で管理し、やりくり費は35日/7日の期間で管理する家計簿です。7日の期間はボーナス月として扱います。',
       'homeCurrentPeriod': '現在の期間',
       'homeIncomeLabel': '収入',
       'homeFixedSpecialLabel': '固定費・特別費',
@@ -221,6 +223,10 @@ class AppLocalizations {
       'bonusMonthToggleTitle': 'ボーナス月の切替',
       'bonusMonthToggleOn': 'ボーナス月にする',
       'bonusMonthToggleOff': 'ボーナス月にしない',
+      'bonusMonthSwapTitle': 'ボーナス月の設定',
+      'bonusMonthPrimary': 'ボーナス月1',
+      'bonusMonthSecondary': 'ボーナス月2',
+      'bonusMonthSwapOption': '{from}をボーナス月から外す',
     },
     'en': {
       'appTitle': '35-Day Kakeibo ~Futokoro~',
@@ -242,9 +248,9 @@ class AppLocalizations {
       'languageEnglish': 'English',
       'kakeiboSection': 'Kakeibo',
       'startDate': 'Start Date',
-      'periodLength': 'Period Length (35/42 days)',
+      'periodLength': 'Period Length (35/7 days)',
       'periodLength35': '35 days',
-      'periodLength42': '42 days',
+      'periodLength42': '7 days',
       'periodChangeNote': 'Changes apply from the next period.',
       'accountSection': 'Account',
       'profileSetting': 'Profile',
@@ -265,10 +271,11 @@ class AppLocalizations {
       'annualSchedulePeriodCount': 'Periods: {count}',
       'annualScheduleTotalDays': 'Total Days: {days}',
       'annualSchedulePeriodSelectionCount': '{days} days {current} / {expected}',
-      'annualScheduleCountMismatchWarning': 'Update the 35/42-day counts before returning home.',
+      'annualScheduleCountMismatchWarning': 'Update the 35/7-day counts before returning home.',
       'annualScheduleRegenerate': 'Regenerate',
       'annualScheduleListTitle': 'Period List',
       'annualSchedulePeriodLabel': 'Period {index}: {range}',
+      'annualSchedulePeriodIndex': 'P{index}',
       'annualSchedulePeriodDays': '{days} days',
       'annualScheduleMissing': 'Unable to load annual schedule.',
       'bonusSummaryTitle': 'Bonus Month',
@@ -287,6 +294,7 @@ class AppLocalizations {
       'categoryDeleteProtected': 'This category cannot be deleted.',
       'categoryProtectedLabel': 'Protected category',
       'dialogCancel': 'Cancel',
+      'dialogApply': 'Apply',
       'dialogSave': 'Save',
       'reminderManage': 'Reminders',
       'reminderOutOfScope': 'Out of scope for v1',
@@ -347,7 +355,7 @@ class AppLocalizations {
       'dialogOk': 'OK',
       'homeTitle': 'Home',
       'homeDescription':
-          'Fixed/special expenses are managed monthly, and the discretionary budget is managed in 35/42-day periods. Months without a period are treated as bonus months.',
+          'Fixed/special expenses are managed monthly, and the discretionary budget is managed in 35/7-day periods. The 7-day periods are treated as bonus months.',
       'homeCurrentPeriod': 'Current Period',
       'homeIncomeLabel': 'Income',
       'homeFixedSpecialLabel': 'Fixed/Special',
@@ -412,6 +420,10 @@ class AppLocalizations {
       'bonusMonthToggleTitle': 'Bonus Month',
       'bonusMonthToggleOn': 'Set as bonus month',
       'bonusMonthToggleOff': 'Remove bonus month',
+      'bonusMonthSwapTitle': 'Set Bonus Months',
+      'bonusMonthPrimary': 'Bonus Month 1',
+      'bonusMonthSecondary': 'Bonus Month 2',
+      'bonusMonthSwapOption': 'Remove {from} from bonus months',
     },
   };
 
@@ -482,6 +494,7 @@ class AppLocalizations {
   String get categoryDeleteProtected => _value('categoryDeleteProtected');
   String get categoryProtectedLabel => _value('categoryProtectedLabel');
   String get dialogCancel => _value('dialogCancel');
+  String get dialogApply => _value('dialogApply');
   String get dialogSave => _value('dialogSave');
   String get reminderManage => _value('reminderManage');
   String get reminderOutOfScope => _value('reminderOutOfScope');
@@ -589,6 +602,9 @@ class AppLocalizations {
   String get bonusMonthToggleTitle => _value('bonusMonthToggleTitle');
   String get bonusMonthToggleOn => _value('bonusMonthToggleOn');
   String get bonusMonthToggleOff => _value('bonusMonthToggleOff');
+  String get bonusMonthSwapTitle => _value('bonusMonthSwapTitle');
+  String get bonusMonthPrimary => _value('bonusMonthPrimary');
+  String get bonusMonthSecondary => _value('bonusMonthSecondary');
 
   String notImplemented(String label) => _format('notImplemented', {'label': label});
   String errorMessage(Object error) => _format('errorMessage', {'error': error.toString()});
@@ -628,6 +644,12 @@ class AppLocalizations {
         'annualSchedulePeriodLabel',
         {'index': index.toString(), 'range': range},
       );
+
+  String annualSchedulePeriodIndex(int index) =>
+      _format('annualSchedulePeriodIndex', {'index': index.toString()});
+
+  String bonusMonthSwapOption(String from) =>
+      _format('bonusMonthSwapOption', {'from': from});
 
   String annualSchedulePeriodDays(int days) =>
       _format('annualSchedulePeriodDays', {'days': days.toString()});

@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/core/di/injector.dart';
 import 'package:kakeibo/domain/entities/annual_schedule.dart';
 import 'package:kakeibo/domain/usecases/get_annual_schedule.dart';
-import 'package:kakeibo/domain/usecases/set_bonus_month_override.dart';
-import 'package:kakeibo/domain/usecases/update_annual_schedule_period.dart';
+import 'package:kakeibo/domain/usecases/set_annual_schedule_bonus_periods.dart';
 
 final annualSchedulePageYearProvider = StateProvider<int>((ref) => DateTime.now().year);
 
@@ -47,40 +46,36 @@ final currentAnnualScheduleProvider = FutureProvider<AnnualSchedule?>((ref) asyn
   return ref.watch(annualScheduleForYearProvider(year).future);
 });
 
-final updateAnnualSchedulePeriodProvider = Provider<UpdateAnnualSchedulePeriod>(
-  (ref) => sl<UpdateAnnualSchedulePeriod>(),
-);
-
-final setBonusMonthOverrideProvider = Provider<SetBonusMonthOverride>(
-  (ref) => sl<SetBonusMonthOverride>(),
+final setAnnualScheduleBonusPeriodsProvider = Provider<SetAnnualScheduleBonusPeriods>(
+  (ref) => sl<SetAnnualScheduleBonusPeriods>(),
 );
 
 class AnnualScheduleCountStatus {
-  static const int expected35Default = 8;
-  static const int expected42Default = 2;
+  static const int expected35Default = 10;
+  static const int expected7Default = 2;
 
   final int count35;
-  final int count42;
+  final int count7;
   final int expected35;
-  final int expected42;
+  final int expected7;
 
   const AnnualScheduleCountStatus({
     required this.count35,
-    required this.count42,
+    required this.count7,
     required this.expected35,
-    required this.expected42,
+    required this.expected7,
   });
 
-  bool get isValid => count35 == expected35 && count42 == expected42;
+  bool get isValid => count35 == expected35 && count7 == expected7;
 
   factory AnnualScheduleCountStatus.fromSchedule(AnnualSchedule schedule) {
     final count35 = schedule.periods.where((period) => period.days == 35).length;
-    final count42 = schedule.periods.where((period) => period.days == 42).length;
+    final count7 = schedule.periods.where((period) => period.days == 7).length;
     return AnnualScheduleCountStatus(
       count35: count35,
-      count42: count42,
+      count7: count7,
       expected35: expected35Default,
-      expected42: expected42Default,
+      expected7: expected7Default,
     );
   }
 }

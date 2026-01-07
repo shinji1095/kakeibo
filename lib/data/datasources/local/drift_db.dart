@@ -40,7 +40,7 @@ class AnnualPeriods extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get scheduleYear => integer().references(AnnualSchedules, #year)();
   IntColumn get periodIndex => integer()();
-  IntColumn get days => integer()(); // 35 or 42
+  IntColumn get days => integer()(); // 35 or 7
 }
 
 class AnnualBonusOverrides extends Table {

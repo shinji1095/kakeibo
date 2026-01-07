@@ -60,6 +60,7 @@ class HomePage extends ConsumerWidget {
                       const SizedBox(height: 12),
                       PeriodCalendar(
                         totalsByDay: summary.totalsByDay,
+                        periodLengthDays: stats.periodLengthDays,
                         onDateTap: (date) => context.go('/input', extra: date),
                       ),
                       const SizedBox(height: 12),
@@ -92,6 +93,7 @@ class HomePage extends ConsumerWidget {
                     const SizedBox(height: 12),
                     PeriodCalendar(
                       totalsByDay: const <DateTime, ({int income, int expense})>{},
+                      periodLengthDays: stats.periodLengthDays,
                       onDateTap: (date) => context.go('/input', extra: date),
                     ),
                     const SizedBox(height: 12),

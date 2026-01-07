@@ -16,21 +16,12 @@ class AnnualScheduleRepositoryImpl implements AnnualScheduleRepository {
           ..where((t) => t.scheduleYear.equals(year))
           ..orderBy([(t) => d.OrderingTerm.asc(t.periodIndex)]))
         .get();
-    final overrides = await (db.select(db.annualBonusOverrides)
-          ..where((t) => t.scheduleYear.equals(year))
-          ..orderBy([(t) => d.OrderingTerm.asc(t.month)]))
-        .get();
-
     final periodDays = periods.map((p) => p.days).toList();
-    final bonusMonthOverrides = {
-      for (final row in overrides) row.month: row.isBonus,
-    };
     return AnnualScheduleConfig(
       year: year,
       startDate: schedule.startDate,
       weekStart: schedule.weekStart,
       periodDays: periodDays,
-      bonusMonthOverrides: bonusMonthOverrides,
     );
   }
 
@@ -62,22 +53,6 @@ class AnnualScheduleRepositoryImpl implements AnnualScheduleRepository {
         });
       }
 
-      await (db.delete(db.annualBonusOverrides)..where((t) => t.scheduleYear.equals(config.year))).go();
-      if (config.bonusMonthOverrides.isEmpty) return;
-
-      await db.batch((b) {
-        b.insertAll(
-          db.annualBonusOverrides,
-          [
-            for (final entry in config.bonusMonthOverrides.entries)
-              AnnualBonusOverridesCompanion.insert(
-                scheduleYear: config.year,
-                month: entry.key,
-                isBonus: entry.value,
-              ),
-          ],
-        );
-      });
     });
   }
 }

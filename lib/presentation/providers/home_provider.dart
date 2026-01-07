@@ -126,16 +126,16 @@ final homeCalendarSummaryProvider = FutureProvider<HomeCalendarSummary>((ref) as
 });
 
 class BonusSummary {
-  final bool isBonusMonth;
+  final bool isBonusPeriod;
   final int bonusBalance;
   final int bonusExpenseTotal;
-  final List<int> bonusMonths;
+  final List<int> bonusPeriods;
 
   const BonusSummary({
-    required this.isBonusMonth,
+    required this.isBonusPeriod,
     required this.bonusBalance,
     required this.bonusExpenseTotal,
-    required this.bonusMonths,
+    required this.bonusPeriods,
   });
 }
 
@@ -144,10 +144,10 @@ final bonusSummaryProvider = FutureProvider<BonusSummary>((ref) async {
   final settings = ref.watch(settingsProvider);
   if (schedule == null || schedule.periods.isEmpty || !sl.isRegistered<GetTransactionsByRange>()) {
     return const BonusSummary(
-      isBonusMonth: false,
+      isBonusPeriod: false,
       bonusBalance: 0,
       bonusExpenseTotal: 0,
-      bonusMonths: <int>[],
+      bonusPeriods: <int>[],
     );
   }
 
@@ -171,12 +171,13 @@ final bonusSummaryProvider = FutureProvider<BonusSummary>((ref) async {
 
   final periodBudgetTotal = settings.periodBudget * schedule.periods.length;
   final bonusBalance = periodBudgetTotal - variableTotal - bonusExpenseTotal;
-  final bonusMonths = schedule.bonusMonths;
+  final bonusPeriods = schedule.bonusPeriods;
+  final currentPeriod = resolveSchedulePeriod(schedule.periods, now);
 
   return BonusSummary(
-    isBonusMonth: bonusMonths.contains(now.month),
+    isBonusPeriod: currentPeriod.days == 7,
     bonusBalance: bonusBalance,
     bonusExpenseTotal: bonusExpenseTotal,
-    bonusMonths: bonusMonths,
+    bonusPeriods: bonusPeriods,
   );
 });

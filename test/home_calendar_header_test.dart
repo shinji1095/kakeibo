@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/annual_schedule.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
+import 'package:kakeibo/core/utils/period_utils.dart';
 import 'package:kakeibo/presentation/pages/home_page.dart';
 import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
@@ -26,26 +27,29 @@ void main() {
 
   AnnualSchedule _buildSchedule(DateTime now) {
     final startDate = DateTime(now.year, now.month, 1);
-    final periods = [
-      AnnualSchedulePeriod(
-        index: 0,
-        days: 35,
-        startDate: startDate,
-        endDate: startDate.add(const Duration(days: 34)),
-      ),
-      AnnualSchedulePeriod(
-        index: 1,
-        days: 42,
-        startDate: startDate.add(const Duration(days: 35)),
-        endDate: startDate.add(const Duration(days: 76)),
-      ),
-    ];
+    final periodDays = List<int>.filled(12, 35);
+    periodDays[7] = 7;
+    periodDays[11] = 7;
+    final periods = <AnnualSchedulePeriod>[];
+    var cursor = startDate;
+    for (var i = 0; i < periodDays.length; i++) {
+      final days = periodDays[i];
+      final start = cursor;
+      final end = cursor.add(Duration(days: days - 1));
+      periods.add(AnnualSchedulePeriod(
+        index: i,
+        days: days,
+        startDate: start,
+        endDate: end,
+      ));
+      cursor = cursor.add(Duration(days: days));
+    }
     return AnnualSchedule(
       year: now.year,
       startDate: startDate,
       weekStart: 0,
       periods: periods,
-      bonusMonths: const [],
+      bonusPeriods: const [7, 11],
     );
   }
 
@@ -60,10 +64,10 @@ void main() {
                 remainingBudget: 0,
               )),
           bonusSummaryProvider.overrideWith((ref) async => const BonusSummary(
-                isBonusMonth: false,
+                isBonusPeriod: false,
                 bonusBalance: 0,
                 bonusExpenseTotal: 0,
-                bonusMonths: <int>[],
+                bonusPeriods: <int>[],
               )),
         ],
         child: MaterialApp(
@@ -88,6 +92,8 @@ void main() {
     final now = DateTime.now();
     final schedule = _buildSchedule(now);
     await _pumpHomePage(tester, schedule);
+    final period = resolveSchedulePeriod(schedule.periods, now);
+    final weekCount = (period.days / 7).ceil();
 
     final l10n = AppLocalizations.of(tester.element(find.byType(HomePage)));
 
@@ -141,26 +147,30 @@ void main() {
       }
       return false;
     });
-    expect(dayCells, findsNWidgets(35));
+    expect(dayCells, findsNWidgets(weekCount * 7));
 
     final weekStart = now.subtract(Duration(days: now.weekday % 7));
-    final currentWeekKey = Key(_calendarKey(weekStart));
-    final nextWeekKey = Key(_calendarKey(weekStart.add(const Duration(days: 7))));
-    final currentWeekTop = tester.getTopLeft(find.byKey(currentWeekKey)).dy;
-    final nextWeekTop = tester.getTopLeft(find.byKey(nextWeekKey)).dy;
-    expect(currentWeekTop, lessThan(nextWeekTop));
+    if (weekCount > 1) {
+      final currentWeekKey = Key(_calendarKey(weekStart));
+      final nextWeekKey = Key(_calendarKey(weekStart.add(const Duration(days: 7))));
+      final currentWeekTop = tester.getTopLeft(find.byKey(currentWeekKey)).dy;
+      final nextWeekTop = tester.getTopLeft(find.byKey(nextWeekKey)).dy;
+      expect(currentWeekTop, lessThan(nextWeekTop));
+    }
   });
 
-  testWidgets('home calendar shows the current week and next 4 weeks', (WidgetTester tester) async {
+  testWidgets('home calendar shows the current week and period weeks', (WidgetTester tester) async {
     final now = DateTime.now();
     final schedule = _buildSchedule(now);
     await _pumpHomePage(tester, schedule);
 
+    final period = resolveSchedulePeriod(schedule.periods, now);
+    final weekCount = (period.days / 7).ceil();
     final weekStart = now.subtract(Duration(days: now.weekday % 7));
     final firstKey = Key(_calendarKey(weekStart));
-    final lastKey = Key(_calendarKey(weekStart.add(const Duration(days: 34))));
+    final lastKey = Key(_calendarKey(weekStart.add(Duration(days: weekCount * 7 - 1))));
     final beforeKey = Key(_calendarKey(weekStart.subtract(const Duration(days: 1))));
-    final afterKey = Key(_calendarKey(weekStart.add(const Duration(days: 35))));
+    final afterKey = Key(_calendarKey(weekStart.add(Duration(days: weekCount * 7))));
 
     expect(find.byKey(firstKey), findsOneWidget);
     expect(find.byKey(lastKey), findsOneWidget);
