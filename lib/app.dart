@@ -48,18 +48,49 @@ class KakeiboApp extends ConsumerWidget {
 final _router = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: (ctx, st) => const HomePage(), name: 'home'),
-    GoRoute(path: '/list', builder: (ctx, st) => const TransactionListPage(), name: 'list'),
+    GoRoute(
+      path: '/',
+      pageBuilder: (ctx, st) => NoTransitionPage<void>(
+        key: st.pageKey,
+        child: const HomePage(),
+      ),
+      name: 'home',
+    ),
+    GoRoute(
+      path: '/list',
+      pageBuilder: (ctx, st) => NoTransitionPage<void>(
+        key: st.pageKey,
+        child: const TransactionListPage(),
+      ),
+      name: 'list',
+    ),
     GoRoute(
       path: '/input',
-      builder: (ctx, st) {
+      pageBuilder: (ctx, st) {
         final date = st.extra is DateTime ? st.extra as DateTime : null;
-        return InputPage(initialDate: date);
+        return NoTransitionPage<void>(
+          key: st.pageKey,
+          child: InputPage(initialDate: date),
+        );
       },
       name: 'input',
     ),
-    GoRoute(path: '/breakdown', builder: (ctx, st) => const BreakdownPage(), name: 'breakdown'),
-    GoRoute(path: '/trend', builder: (ctx, st) => const TrendPage(), name: 'trend'),
+    GoRoute(
+      path: '/breakdown',
+      pageBuilder: (ctx, st) => NoTransitionPage<void>(
+        key: st.pageKey,
+        child: const BreakdownPage(),
+      ),
+      name: 'breakdown',
+    ),
+    GoRoute(
+      path: '/trend',
+      pageBuilder: (ctx, st) => NoTransitionPage<void>(
+        key: st.pageKey,
+        child: const TrendPage(),
+      ),
+      name: 'trend',
+    ),
     GoRoute(path: '/settings', builder: (ctx, st) => const SettingsPage(), name: 'settings'),
     GoRoute(path: '/settings/csv', builder: (ctx, st) => const CsvExportPage(), name: 'csv_export'),
     GoRoute(path: '/settings/categories', builder: (ctx, st) => const CategoryManagePage(), name: 'category_manage'),
