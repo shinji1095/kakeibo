@@ -64,7 +64,7 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         color: surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
