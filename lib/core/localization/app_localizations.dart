@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 
@@ -24,7 +24,8 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   static const supportedLocales = <Locale>[
     Locale('ja', 'JP'),
@@ -75,7 +76,8 @@ class AppLocalizations {
       'annualSchedulePeriodCount': '期間数: {count}',
       'annualScheduleTotalDays': '合計日数: {days}日',
       'annualSchedulePeriodSelectionCount': '{days}日 {current} / {expected}',
-      'annualScheduleCountMismatchWarning': '35日/7日の選択数が不足しています。年間スケジュールを確認してください。',
+      'annualScheduleCountMismatchWarning':
+          '35日/7日の選択数が不足しています。年間スケジュールを確認してください。',
       'annualScheduleRegenerate': '自動生成',
       'annualScheduleListTitle': '期間一覧',
       'annualSchedulePeriodLabel': '{index}期: {range}',
@@ -158,7 +160,8 @@ class AppLocalizations {
       'rangeBasisMonth': '月ごと',
       'dialogOk': 'OK',
       'homeTitle': 'ホーム',
-      'homeDescription': '固定費・特別費は暦月で管理し、やりくり費は35日/7日の期間で管理する家計簿です。7日の期間はボーナス月として扱います。',
+      'homeDescription':
+          '固定費・特別費は暦月で管理し、やりくり費は35日/7日の期間で管理する家計簿です。7日の期間はボーナス月として扱います。',
       'homeCurrentPeriod': '現在の期間',
       'homeSelectedPeriod': '選択中の期間',
       'homePeriodsTitle': 'やりくり期間',
@@ -173,13 +176,21 @@ class AppLocalizations {
       'homeFixedSpecialLabel': '固定費・特別費',
       'homeBudgetLabel': 'やりくり費',
       'homePeriodLabel': '{index}期',
+      'homeTimelinePeriodLabel': '期間{index}',
       'homeStartDate': '開始日',
       'homeEndDate': '終了日',
       'homePeriodLengthLabel': '期間長: {days}日',
       'homeDaysRemaining': '終了日まであと{days}日',
       'homeCalendarTitle': 'カレンダー',
+      'homePeriodColorsLabel': '期間の色分け',
       'homePeriodColorsOn': '期間の色分け：ON',
       'homePeriodColorsOff': '期間の色分け：OFF',
+      'homeDailyExpenseTotal': '支出',
+      'homeDailyIncome': 'この日の収入',
+      'homeDailyBudgetRatioLabel': 'やりくり費（支出 / 日割り目安）',
+      'homeDailyBudgetRatio': '{spent} / {target}円',
+      'homeDailyBudgetOver': '目安を{amount}超過',
+      'homeDailyInput': 'この日に入力',
       'homeBudgetRemainingLabel': 'やりくり費 残額',
       'homeBonusPlaceholder': 'ボーナス表示は未実装です（プレースホルダー）',
       'expenseAttrFixed': '固定費',
@@ -281,8 +292,10 @@ class AppLocalizations {
       'annualScheduleStartDate': 'Start: {date}',
       'annualSchedulePeriodCount': 'Periods: {count}',
       'annualScheduleTotalDays': 'Total Days: {days}',
-      'annualSchedulePeriodSelectionCount': '{days} days {current} / {expected}',
-      'annualScheduleCountMismatchWarning': 'Update the 35/7-day counts before returning home.',
+      'annualSchedulePeriodSelectionCount':
+          '{days} days {current} / {expected}',
+      'annualScheduleCountMismatchWarning':
+          'Update the 35/7-day counts before returning home.',
       'annualScheduleRegenerate': 'Regenerate',
       'annualScheduleListTitle': 'Period List',
       'annualSchedulePeriodLabel': 'Period {index}: {range}',
@@ -381,13 +394,21 @@ class AppLocalizations {
       'homeFixedSpecialLabel': 'Fixed/Special',
       'homeBudgetLabel': 'Budget',
       'homePeriodLabel': 'Period {index}',
+      'homeTimelinePeriodLabel': 'Period {index}',
       'homeStartDate': 'Start',
       'homeEndDate': 'End',
       'homePeriodLengthLabel': 'Length: {days} days',
       'homeDaysRemaining': '{days} days remaining',
       'homeCalendarTitle': 'Calendar',
+      'homePeriodColorsLabel': 'Period colors',
       'homePeriodColorsOn': 'Period colors: ON',
       'homePeriodColorsOff': 'Period colors: OFF',
+      'homeDailyExpenseTotal': 'Expenses',
+      'homeDailyIncome': 'Income for this day',
+      'homeDailyBudgetRatioLabel': 'Discretionary spending / daily target',
+      'homeDailyBudgetRatio': '{spent} / {target} JPY',
+      'homeDailyBudgetOver': '{amount} over daily target',
+      'homeDailyInput': 'Add for this day',
       'homeBudgetRemainingLabel': 'Remaining Budget',
       'homeBonusPlaceholder': 'Bonus view is not implemented (placeholder).',
       'expenseAttrFixed': 'Fixed',
@@ -407,7 +428,8 @@ class AppLocalizations {
       'csvExporting': 'Exporting...',
       'csvShareButton': 'Share CSV',
       'csvShareWarningTitle': 'Share Warning',
-      'csvShareWarningBody': 'CSV data may be shared with other apps. Continue?',
+      'csvShareWarningBody':
+          'CSV data may be shared with other apps. Continue?',
       'csvShareConfirm': 'Share',
       'csvSavedMessage': 'CSV saved: {path}',
       'csvInvalidRange': 'Check the start and end dates.',
@@ -419,9 +441,11 @@ class AppLocalizations {
       'csvColumnAmount': 'Amount',
       'csvColumnAttribute': 'Attribute',
       'categoryManageTitle': 'Category Management',
-      'categoryManagePlaceholder': 'Category management is not implemented (placeholder).',
+      'categoryManagePlaceholder':
+          'Category management is not implemented (placeholder).',
       'annualScheduleTitle': 'Annual Schedule',
-      'annualSchedulePlaceholder': 'Annual schedule is not implemented (placeholder).',
+      'annualSchedulePlaceholder':
+          'Annual schedule is not implemented (placeholder).',
       'bonusExpenseTitle': 'Bonus Expense',
       'bonusExpenseAmountLabel': 'Bonus expense (JPY)',
       'bonusExpenseSave': 'Save Bonus Expense',
@@ -451,7 +475,9 @@ class AppLocalizations {
 
   String _value(String key) {
     final lang = locale.languageCode;
-    return _localizedStrings[lang]?[key] ?? _localizedStrings['ja']?[key] ?? key;
+    return _localizedStrings[lang]?[key] ??
+        _localizedStrings['ja']?[key] ??
+        key;
   }
 
   String _format(String key, Map<String, String> params) {
@@ -498,7 +524,8 @@ class AppLocalizations {
   String get bonusSettings => _value('bonusSettings');
   String get annualSchedule => _value('annualSchedule');
   String get annualScheduleRegenerate => _value('annualScheduleRegenerate');
-  String get annualScheduleCountMismatchWarning => _value('annualScheduleCountMismatchWarning');
+  String get annualScheduleCountMismatchWarning =>
+      _value('annualScheduleCountMismatchWarning');
   String get annualScheduleListTitle => _value('annualScheduleListTitle');
   String get annualScheduleMissing => _value('annualScheduleMissing');
   String get bonusSummaryTitle => _value('bonusSummaryTitle');
@@ -538,7 +565,8 @@ class AppLocalizations {
   String get typeLabel => _value('typeLabel');
   String get updateButton => _value('updateButton');
   String get updatedMessage => _value('updatedMessage');
-  String get validationSelectExpenseAttribute => _value('validationSelectExpenseAttribute');
+  String get validationSelectExpenseAttribute =>
+      _value('validationSelectExpenseAttribute');
   String get listTitle => _value('listTitle');
   String get filterAll => _value('filterAll');
   String get filterExpense => _value('filterExpense');
@@ -586,8 +614,13 @@ class AppLocalizations {
   String get homeStartDate => _value('homeStartDate');
   String get homeEndDate => _value('homeEndDate');
   String get homeCalendarTitle => _value('homeCalendarTitle');
+  String get homePeriodColorsLabel => _value('homePeriodColorsLabel');
   String get homePeriodColorsOn => _value('homePeriodColorsOn');
   String get homePeriodColorsOff => _value('homePeriodColorsOff');
+  String get homeDailyExpenseTotal => _value('homeDailyExpenseTotal');
+  String get homeDailyIncome => _value('homeDailyIncome');
+  String get homeDailyBudgetRatioLabel => _value('homeDailyBudgetRatioLabel');
+  String get homeDailyInput => _value('homeDailyInput');
   String get homeBudgetRemainingLabel => _value('homeBudgetRemainingLabel');
   String get homeBonusPlaceholder => _value('homeBonusPlaceholder');
   String get csvExportTitle => _value('csvExportTitle');
@@ -617,7 +650,8 @@ class AppLocalizations {
   String get bonusExpenseAmountLabel => _value('bonusExpenseAmountLabel');
   String get bonusExpenseSave => _value('bonusExpenseSave');
   String get bonusExpenseSaved => _value('bonusExpenseSaved');
-  String get bonusExpenseMissingCategory => _value('bonusExpenseMissingCategory');
+  String get bonusExpenseMissingCategory =>
+      _value('bonusExpenseMissingCategory');
   String get bonusExpenseCategoryName => _value('bonusExpenseCategoryName');
   String get noBonusMonths => _value('noBonusMonths');
   String get reminderManageTitle => _value('reminderManageTitle');
@@ -637,21 +671,28 @@ class AppLocalizations {
   String get bonusMonthPrimary => _value('bonusMonthPrimary');
   String get bonusMonthSecondary => _value('bonusMonthSecondary');
 
-  String notImplemented(String label) => _format('notImplemented', {'label': label});
-  String errorMessage(Object error) => _format('errorMessage', {'error': error.toString()});
+  String notImplemented(String label) =>
+      _format('notImplemented', {'label': label});
+  String errorMessage(Object error) =>
+      _format('errorMessage', {'error': error.toString()});
 
-  String categoryFallback(int id) => _format('categoryFallback', {'id': id.toString()});
+  String categoryFallback(int id) =>
+      _format('categoryFallback', {'id': id.toString()});
 
   String trendTargetPeriod(String start, String end) =>
       _format('trendTargetPeriod', {'start': start, 'end': end});
 
-  String trendCountLabel(int count) => _format('trendCountLabel', {'count': count.toString()});
+  String trendCountLabel(int count) =>
+      _format('trendCountLabel', {'count': count.toString()});
 
-  String categoryDeleteBody(String name) => _format('categoryDeleteBody', {'name': name});
+  String categoryDeleteBody(String name) =>
+      _format('categoryDeleteBody', {'name': name});
 
-  String csvSavedMessage(String path) => _format('csvSavedMessage', {'path': path});
+  String csvSavedMessage(String path) =>
+      _format('csvSavedMessage', {'path': path});
 
-  String annualScheduleYear(int year) => _format('annualScheduleYear', {'year': year.toString()});
+  String annualScheduleYear(int year) =>
+      _format('annualScheduleYear', {'year': year.toString()});
 
   String annualScheduleStartDate(String date) =>
       _format('annualScheduleStartDate', {'date': date});
@@ -662,7 +703,9 @@ class AppLocalizations {
   String annualScheduleTotalDays(int days) =>
       _format('annualScheduleTotalDays', {'days': days.toString()});
 
-  String annualSchedulePeriodSelectionCount(int days, int current, int expected) => _format(
+  String annualSchedulePeriodSelectionCount(
+          int days, int current, int expected) =>
+      _format(
         'annualSchedulePeriodSelectionCount',
         {
           'days': days.toString(),
@@ -694,11 +737,27 @@ class AppLocalizations {
   String homePeriodLabel(int index) =>
       _format('homePeriodLabel', {'index': index.toString()});
 
+  String homeTimelinePeriodLabel(int index) => _format(
+        'homeTimelinePeriodLabel',
+        {'index': index.toString().padLeft(2, '0')},
+      );
+
   String homePeriodRemaining(int amount) =>
       _format('homePeriodRemaining', {'amount': formatCurrency(amount)});
 
-  String homeSelectedPeriodRemaining(int amount) =>
-      _format('homeSelectedPeriodRemaining', {'amount': formatCurrency(amount)});
+  String homeSelectedPeriodRemaining(int amount) => _format(
+      'homeSelectedPeriodRemaining', {'amount': formatCurrency(amount)});
+
+  String homeDailyBudgetOver(int amount) =>
+      _format('homeDailyBudgetOver', {'amount': formatCurrency(amount)});
+
+  String homeDailyBudgetRatio(int? spent, int? target) {
+    if (spent == null || target == null) return '—';
+    return _format('homeDailyBudgetRatio', {
+      'spent': spent.toString(),
+      'target': target.toString(),
+    });
+  }
 
   String languageLabel(AppLanguage language) {
     switch (language) {
@@ -737,9 +796,13 @@ class AppLocalizations {
 
   String get rangeSeparator => locale.languageCode == 'ja' ? ' ～ ' : ' - ';
 
-  String formatDate(DateTime d) => '${d.year}/${d.month}/${d.day}';
+  String formatDate(DateTime d) =>
+      '${d.year}/${_twoDigits(d.month)}/${_twoDigits(d.day)}';
 
-  String formatShortDate(DateTime d) => '${d.month}/${d.day}';
+  String formatShortDate(DateTime d) =>
+      '${_twoDigits(d.month)}/${_twoDigits(d.day)}';
+
+  String _twoDigits(int value) => value.toString().padLeft(2, '0');
 
   String formatLongDate(DateTime d) {
     if (locale.languageCode == 'ja') {
@@ -763,11 +826,13 @@ class AppLocalizations {
   }
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) => locale.languageCode == 'ja' || locale.languageCode == 'en';
+  bool isSupported(Locale locale) =>
+      locale.languageCode == 'ja' || locale.languageCode == 'en';
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
@@ -775,5 +840,6 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool shouldReload(covariant LocalizationsDelegate<AppLocalizations> old) => false;
+  bool shouldReload(covariant LocalizationsDelegate<AppLocalizations> old) =>
+      false;
 }

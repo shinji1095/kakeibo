@@ -12,6 +12,7 @@ class PeriodCalendar extends StatelessWidget {
   final Map<DateTime, ({int income, int expense})> totalsByDay;
   final ValueChanged<DateTime>? onDateTap;
   final DateTime displayedMonth;
+  final DateTime? selectedDate;
   final ValueChanged<int>? onMonthChanged;
   final List<AnnualSchedule> annualSchedules;
   final bool showPeriodColors;
@@ -20,6 +21,7 @@ class PeriodCalendar extends StatelessWidget {
     super.key,
     required this.totalsByDay,
     required this.displayedMonth,
+    this.selectedDate,
     this.onDateTap,
     this.onMonthChanged,
     this.annualSchedules = const [],
@@ -28,7 +30,7 @@ class PeriodCalendar extends StatelessWidget {
 
   static double heightForWidth(BuildContext context, double width) {
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final cellAspectRatio = (0.8 / textScale).clamp(0.5, 0.9);
+    final cellAspectRatio = (1.0 / textScale).clamp(0.5, 1.1);
     final cellWidth = (width - 6 * 4) / 7;
     final gridHeight =
         rowCount * cellWidth / cellAspectRatio + (rowCount - 1) * 4;
@@ -49,8 +51,7 @@ class PeriodCalendar extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    // Keep room for 3 text lines at larger text scales to avoid overflow.
-    final cellAspectRatio = (0.8 / textScale).clamp(0.5, 0.9);
+    final cellAspectRatio = (1.0 / textScale).clamp(0.5, 1.1);
     final periodRanges = <({DateTime start, DateTime end, Color color})>[];
     if (showPeriodColors) {
       for (final schedule in annualSchedules) {
@@ -70,6 +71,8 @@ class PeriodCalendar extends StatelessWidget {
       final income = totals?.income ?? 0;
       final expense = totals?.expense ?? 0;
       final isToday = date == now;
+      final isSelected =
+          selectedDate != null && date == truncateDate(selectedDate!);
       final isCurrentMonth = date.month == displayedMonth.month &&
           date.year == displayedMonth.year;
       Color? periodColor;
@@ -90,10 +93,12 @@ class PeriodCalendar extends StatelessWidget {
                 : Color.alphaBlend(periodColor.withAlpha(110), scheme.surface),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: isToday
+              color: isSelected
                   ? scheme.primary
-                  : periodColor ?? scheme.outlineVariant,
-              width: isToday ? 2 : 1,
+                  : isToday
+                      ? scheme.primary
+                      : periodColor ?? scheme.outlineVariant,
+              width: isSelected ? 3 : (isToday ? 2 : 1),
             ),
           ),
           child: Padding(
@@ -103,31 +108,40 @@ class PeriodCalendar extends StatelessWidget {
               children: [
                 Text(
                   '${date.day}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight:
-                            isToday ? FontWeight.bold : FontWeight.normal,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: isToday || isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         color: isCurrentMonth ? null : scheme.onSurfaceVariant,
                       ),
                 ),
-                if (income > 0)
-                  Text(
-                    '+$income',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Colors.blue,
-                          height: 1.0,
-                        ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                if (expense > 0)
-                  Text(
-                    '-$expense',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Colors.red,
-                          height: 1.0,
-                        ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                if (income > 0 || expense > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Row(
+                      children: [
+                        if (expense > 0)
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: BoxDecoration(
+                              color: scheme.error,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        if (income > 0) ...[
+                          if (expense > 0) const SizedBox(width: 3),
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
               ],
             ),

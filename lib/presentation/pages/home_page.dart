@@ -28,12 +28,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   late final PageController _calendarPageController;
   final ScrollController _periodScrollController = ScrollController();
   late DateTime _displayedMonth;
+  late DateTime _selectedDate;
   var _currentPage = _initialPage;
   _PeriodId? _selectedPeriod;
   _PeriodId? _lastCenteredPeriod;
   String? _lastTimelineSignature;
   _PeriodId? _pendingPeriod;
   int? _pendingPage;
+  DateTime? _pendingDate;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final now = DateTime.now();
     _initialMonth = DateTime(now.year, now.month, 1);
     _displayedMonth = _initialMonth;
+    _selectedDate = DateTime(now.year, now.month, now.day);
     _calendarPageController = PageController(initialPage: _initialPage);
   }
 
@@ -60,6 +63,24 @@ class _HomePageState extends ConsumerState<HomePage> {
       month.month -
       _initialMonth.month;
 
+  DateTime _defaultDateForMonth(DateTime month) {
+    final now = DateTime.now();
+    return now.year == month.year && now.month == month.month
+        ? DateTime(now.year, now.month, now.day)
+        : DateTime(month.year, month.month, 1);
+  }
+
+  _PeriodId? _periodIdForDate(List<AnnualSchedule> schedules, DateTime date) {
+    for (final schedule in schedules) {
+      for (final period in schedule.periods) {
+        if (!date.isBefore(period.startDate) && !date.isAfter(period.endDate)) {
+          return (year: schedule.year, index: period.index);
+        }
+      }
+    }
+    return null;
+  }
+
   void _shiftMonth(int offset) {
     _calendarPageController.animateToPage(
       _currentPage + offset,
@@ -72,22 +93,45 @@ class _HomePageState extends ConsumerState<HomePage> {
     final selected = (year: schedule.year, index: period.index);
     final page = _pageForMonth(period.startDate);
     if (page == _currentPage) {
-      setState(() => _selectedPeriod = selected);
+      setState(() {
+        _selectedPeriod = selected;
+        _selectedDate = period.startDate;
+      });
       return;
     }
     _pendingPeriod = selected;
     _pendingPage = page;
+    _pendingDate = period.startDate;
+    _calendarPageController.jumpToPage(page);
+  }
+
+  void _selectDate(DateTime date, List<AnnualSchedule> schedules) {
+    final selected = _periodIdForDate(schedules, date);
+    final page = _pageForMonth(date);
+    if (page == _currentPage) {
+      setState(() {
+        _selectedDate = date;
+        _selectedPeriod = selected;
+      });
+      return;
+    }
+    _pendingPeriod = selected;
+    _pendingPage = page;
+    _pendingDate = date;
     _calendarPageController.jumpToPage(page);
   }
 
   void _onCalendarPageChanged(int page) {
     final selected = page == _pendingPage ? _pendingPeriod : null;
+    final selectedDate = page == _pendingPage ? _pendingDate : null;
     _pendingPeriod = null;
     _pendingPage = null;
+    _pendingDate = null;
     setState(() {
       _currentPage = page;
       _displayedMonth = _monthForPage(page);
       _selectedPeriod = selected;
+      _selectedDate = selectedDate ?? _defaultDateForMonth(_displayedMonth);
     });
   }
 
@@ -100,12 +144,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       return selected;
     }
 
-    final now = DateTime.now();
-    final isCurrentMonth =
-        now.year == _displayedMonth.year && now.month == _displayedMonth.month;
-    final anchor = isCurrentMonth
-        ? DateTime(now.year, now.month, now.day)
-        : DateTime(_displayedMonth.year, _displayedMonth.month, 15);
+    final anchor = _selectedDate;
     _PeriodId? previous;
     for (final schedule in schedules) {
       for (final period in schedule.periods) {
@@ -224,7 +263,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                l10n.homePeriodLabel(period.index + 1),
+                                l10n.homeTimelinePeriodLabel(period.index + 1),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context)
@@ -304,6 +343,24 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
     final periodTotalAsync =
         ref.watch(homePeriodVariableTotalProvider(periodRange));
+    final dailyPeriod = selectedSchedulePeriod != null &&
+            !_selectedDate.isBefore(selectedSchedulePeriod.startDate) &&
+            !_selectedDate.isAfter(selectedSchedulePeriod.endDate)
+        ? selectedSchedulePeriod
+        : null;
+    final monthSummary = monthSummaryAsync.valueOrNull;
+    final dailyIncome = monthSummary == null
+        ? null
+        : monthSummary.totalsByDay[_selectedDate]?.income ?? 0;
+    final dailyExpenses = monthSummary == null
+        ? null
+        : monthSummary.totalsByDay[_selectedDate]?.expense ?? 0;
+    final dailyVariableExpenses = monthSummary == null
+        ? null
+        : monthSummary.variableExpensesByDay[_selectedDate] ?? 0;
+    final dailyTarget = dailyPeriod == null || dailyPeriod.days <= 0
+        ? null
+        : (periodBudget / dailyPeriod.days).ceil();
     final spentThisPeriod = periodTotalAsync.valueOrNull;
     final remainingBudget =
         spentThisPeriod == null ? null : periodBudget - spentThisPeriod;
@@ -360,6 +417,24 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: 12),
           _HomeSection(
             title: l10n.homeCalendarTitle,
+            trailing: Tooltip(
+              message: showPeriodColors
+                  ? l10n.homePeriodColorsOn
+                  : l10n.homePeriodColorsOff,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(l10n.homePeriodColorsLabel),
+                  Switch.adaptive(
+                    key: const Key('home-period-colors-toggle'),
+                    value: showPeriodColors,
+                    onChanged: (value) => ref
+                        .read(homePeriodColorsEnabledProvider.notifier)
+                        .state = value,
+                  ),
+                ],
+              ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -387,20 +462,22 @@ class _HomePageState extends ConsumerState<HomePage> {
                               .watch(
                                   annualScheduleForYearProvider(month.year + 1))
                               .valueOrNull;
+                          final pageSchedules = [
+                            if (previousSchedule != null) previousSchedule,
+                            if (schedule != null) schedule,
+                            if (nextSchedule != null) nextSchedule,
+                          ];
                           return PeriodCalendar(
                             displayedMonth: month,
+                            selectedDate: _selectedDate,
                             totalsByDay: summary.valueOrNull?.totalsByDay ??
                                 const <DateTime, ({int income, int expense})>{},
-                            annualSchedules: [
-                              if (previousSchedule != null) previousSchedule,
-                              if (schedule != null) schedule,
-                              if (nextSchedule != null) nextSchedule,
-                            ],
+                            annualSchedules: pageSchedules,
                             showPeriodColors:
                                 ref.watch(homePeriodColorsEnabledProvider),
                             onMonthChanged: _shiftMonth,
                             onDateTap: (date) =>
-                                context.go('/input', extra: date),
+                                _selectDate(date, pageSchedules),
                           );
                         });
                       },
@@ -412,22 +489,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                   Text(l10n.errorMessage(monthSummaryAsync.error!)),
                 ],
                 const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    key: const Key('home-period-colors-toggle'),
-                    onPressed: () {
-                      final notifier =
-                          ref.read(homePeriodColorsEnabledProvider.notifier);
-                      notifier.state = !notifier.state;
-                    },
-                    icon: Icon(showPeriodColors
-                        ? Icons.palette
-                        : Icons.palette_outlined),
-                    label: Text(showPeriodColors
-                        ? l10n.homePeriodColorsOn
-                        : l10n.homePeriodColorsOff),
-                  ),
+                _DailyExpenseSummary(
+                  date: _selectedDate,
+                  income: dailyIncome,
+                  expenseTotal: dailyExpenses,
+                  variableExpense: dailyVariableExpenses,
+                  dailyTarget: dailyTarget,
+                  onInput: () => context.go('/input', extra: _selectedDate),
                 ),
               ],
             ),
@@ -530,9 +598,14 @@ class _HomePageState extends ConsumerState<HomePage> {
 
 class _HomeSection extends StatelessWidget {
   final String title;
+  final Widget? trailing;
   final Widget child;
 
-  const _HomeSection({required this.title, required this.child});
+  const _HomeSection({
+    required this.title,
+    this.trailing,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -542,11 +615,125 @@ class _HomeSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                if (trailing != null) trailing!,
+              ],
+            ),
             const SizedBox(height: 12),
             child,
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _DailyExpenseSummary extends StatelessWidget {
+  final DateTime date;
+  final int? income;
+  final int? expenseTotal;
+  final int? variableExpense;
+  final int? dailyTarget;
+  final VoidCallback onInput;
+
+  const _DailyExpenseSummary({
+    required this.date,
+    required this.income,
+    required this.expenseTotal,
+    required this.variableExpense,
+    required this.dailyTarget,
+    required this.onInput,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final isOverTarget = variableExpense != null &&
+        dailyTarget != null &&
+        variableExpense! > dailyTarget!;
+    final progress = variableExpense == null || dailyTarget == null
+        ? 0.0
+        : dailyTarget == 0
+            ? (variableExpense! > 0 ? 1.0 : 0.0)
+            : (variableExpense! / dailyTarget!).clamp(0.0, 1.0);
+
+    return Container(
+      key: const Key('home-daily-expense-summary'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.formatDate(date),
+                  key: const Key('home-selected-date'),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              TextButton.icon(
+                onPressed: onInput,
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.homeDailyInput),
+              ),
+            ],
+          ),
+          Text(
+            l10n.homeDailyExpenseTotal,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          Text(
+            expenseTotal == null ? '—' : l10n.formatCurrency(expenseTotal!),
+            key: const Key('home-selected-day-total'),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          if (income != null && income! > 0)
+            _AmountRow(
+              label: l10n.homeDailyIncome,
+              amount: income,
+            ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.homeDailyBudgetRatioLabel,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          Text(
+            l10n.homeDailyBudgetRatio(variableExpense, dailyTarget),
+            key: const Key('home-daily-budget-ratio'),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              key: const Key('home-daily-target-progress'),
+              value: progress,
+              minHeight: 12,
+              color: isOverTarget ? scheme.error : scheme.primary,
+            ),
+          ),
+          if (isOverTarget) ...[
+            const SizedBox(height: 6),
+            Text(
+              l10n.homeDailyBudgetOver(variableExpense! - dailyTarget!),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: scheme.error,
+                  ),
+            ),
+          ],
+        ],
       ),
     );
   }

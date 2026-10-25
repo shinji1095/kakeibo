@@ -100,7 +100,7 @@ void main() {
     expect(find.text(l10n.homePeriodsTitle), findsOneWidget);
     expect(find.text(l10n.homeCalendarTitle), findsOneWidget);
     expect(find.text(l10n.homeBudgetTitle), findsOneWidget);
-    expect(find.text(l10n.homePeriodLabel(1)), findsOneWidget);
+    expect(find.text(l10n.homeTimelinePeriodLabel(1)), findsOneWidget);
     expect(find.text('${now.year}'), findsOneWidget);
     expect(find.text(l10n.homeMonthlyIncomeLabel), findsOneWidget);
     expect(find.text(l10n.homeVariableTotalLabel), findsOneWidget);

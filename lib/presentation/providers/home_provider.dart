@@ -77,12 +77,14 @@ final homeStatsProvider = Provider<HomeStats>((ref) {
 
 class HomeMonthSummary {
   final Map<DateTime, ({int income, int expense})> totalsByDay;
+  final Map<DateTime, int> variableExpensesByDay;
   final int income;
   final int fixedExpenses;
   final int specialExpenses;
 
   const HomeMonthSummary({
     required this.totalsByDay,
+    required this.variableExpensesByDay,
     required this.income,
     required this.fixedExpenses,
     required this.specialExpenses,
@@ -94,6 +96,7 @@ final homeMonthSummaryProvider =
   if (!sl.isRegistered<GetTransactionsByRange>()) {
     return const HomeMonthSummary(
       totalsByDay: <DateTime, ({int income, int expense})>{},
+      variableExpensesByDay: <DateTime, int>{},
       income: 0,
       fixedExpenses: 0,
       specialExpenses: 0,
@@ -108,6 +111,7 @@ final homeMonthSummaryProvider =
   final transactions =
       await sl<GetTransactionsByRange>()(gridStart, gridEndExclusive);
   final totalsByDay = <DateTime, ({int income, int expense})>{};
+  final variableExpensesByDay = <DateTime, int>{};
   var income = 0;
   var fixedExpenses = 0;
   var specialExpenses = 0;
@@ -119,6 +123,13 @@ final homeMonthSummaryProvider =
     totalsByDay[day] = isIncome
         ? (income: current.income + tx.amount.value, expense: current.expense)
         : (income: current.income, expense: current.expense + tx.amount.value);
+
+    if (!isIncome &&
+        (tx.expenseAttribute ?? kDefaultExpenseAttribute) ==
+            ExpenseAttribute.variable) {
+      variableExpensesByDay[day] =
+          (variableExpensesByDay[day] ?? 0) + tx.amount.value;
+    }
 
     if (day.year != month.year || day.month != month.month) continue;
     if (isIncome) {
@@ -139,6 +150,7 @@ final homeMonthSummaryProvider =
 
   return HomeMonthSummary(
     totalsByDay: totalsByDay,
+    variableExpensesByDay: variableExpensesByDay,
     income: income,
     fixedExpenses: fixedExpenses,
     specialExpenses: specialExpenses,
