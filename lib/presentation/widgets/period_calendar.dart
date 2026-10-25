@@ -1,38 +1,76 @@
-﻿import 'dart:math';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/core/utils/period_utils.dart';
 
 class PeriodCalendar extends StatelessWidget {
   final Map<DateTime, ({int income, int expense})> totalsByDay;
   final ValueChanged<DateTime>? onDateTap;
-  final int periodLengthDays;
+  final DateTime displayedMonth;
+  final ValueChanged<int>? onMonthChanged;
 
   const PeriodCalendar({
     super.key,
     required this.totalsByDay,
+    required this.displayedMonth,
     this.onDateTap,
-    this.periodLengthDays = 35,
+    this.onMonthChanged,
   });
+
+  static double maxHeightForWidth(BuildContext context, double width) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final cellAspectRatio = (0.8 / textScale).clamp(0.5, 0.9);
+    final cellWidth = (width - 6 * 4) / 7;
+    final gridHeight = 6 * cellWidth / cellAspectRatio + 5 * 4;
+    return math.max(48, 24 * textScale) +
+        math.max(24, 16 * textScale) +
+        8 +
+        gridHeight +
+        2;
+  }
 
   @override
   Widget build(BuildContext context) {
     final now = truncateDate(DateTime.now());
-    final weekStart = now.subtract(Duration(days: now.weekday % 7));
-    final weekCount = max(1, (periodLengthDays / 7).ceil());
-    final weeks = List.generate(weekCount, (i) => weekStart.add(Duration(days: 7 * i)));
-    final days = [
-      for (final start in weeks) ...List.generate(7, (i) => start.add(Duration(days: i))),
-    ];
-    final totalCells = weekCount * 7;
+    final firstDay = DateTime(displayedMonth.year, displayedMonth.month, 1);
+    final lastDay = DateTime(displayedMonth.year, displayedMonth.month + 1, 0);
+    final gridStart =
+        DateTime(firstDay.year, firstDay.month, 1 - firstDay.weekday % 7);
+    final totalCells =
+        firstDay.weekday % 7 + lastDay.day + 6 - lastDay.weekday % 7;
     final weekdayLabels = MaterialLocalizations.of(context).narrowWeekdays;
     final scheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     // Keep room for 3 text lines at larger text scales to avoid overflow.
-    final cellAspectRatio = (0.8 / textScale).clamp(0.5, 0.9) as double;
+    final cellAspectRatio = (0.8 / textScale).clamp(0.5, 0.9);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              key: const Key('home-previous-month'),
+              icon: const Icon(Icons.chevron_left),
+              onPressed: () => onMonthChanged?.call(-1),
+            ),
+            Text(
+              l10n.locale.languageCode == 'ja'
+                  ? '${displayedMonth.year}年${displayedMonth.month}月'
+                  : '${displayedMonth.year}/${displayedMonth.month}',
+              key: const Key('home-displayed-month'),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            IconButton(
+              key: const Key('home-next-month'),
+              icon: const Icon(Icons.chevron_right),
+              onPressed: () => onMonthChanged?.call(1),
+            ),
+          ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: weekdayLabels
@@ -58,14 +96,19 @@ class PeriodCalendar extends StatelessWidget {
           ),
           itemCount: totalCells,
           itemBuilder: (context, index) {
-            final date = days[index];
+            final date = DateTime(
+                gridStart.year, gridStart.month, gridStart.day + index);
             final totals = totalsByDay[truncateDate(date)];
             final income = totals?.income ?? 0;
             final expense = totals?.expense ?? 0;
             final isToday = date == now;
+            final isCurrentMonth = date.month == displayedMonth.month &&
+                date.year == displayedMonth.year;
             final key = Key(_calendarKey(date));
             return GestureDetector(
-              onTap: onDateTap == null ? null : () => onDateTap!(truncateDate(date)),
+              onTap: onDateTap == null
+                  ? null
+                  : () => onDateTap!(truncateDate(date)),
               child: Container(
                 key: key,
                 decoration: BoxDecoration(
@@ -77,33 +120,40 @@ class PeriodCalendar extends StatelessWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '${date.day}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                              fontWeight:
+                                  isToday ? FontWeight.bold : FontWeight.normal,
+                              color: isCurrentMonth
+                                  ? null
+                                  : scheme.onSurfaceVariant,
                             ),
                       ),
                       if (income > 0)
                         Text(
                           '+$income',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Colors.blue,
-                                height: 1.0,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: Colors.blue,
+                                    height: 1.0,
+                                  ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       if (expense > 0)
                         Text(
                           '-$expense',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Colors.red,
-                                height: 1.0,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: Colors.red,
+                                    height: 1.0,
+                                  ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

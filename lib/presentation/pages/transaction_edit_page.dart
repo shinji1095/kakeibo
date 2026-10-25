@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
+import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
 import 'package:kakeibo/presentation/widgets/expense_attribute_icon_selector.dart';
@@ -92,6 +93,8 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
 
     await ref.read(updateTransactionProvider).call(updated);
     ref.invalidate(transactionsProvider);
+    ref.invalidate(homeCalendarSummaryProvider);
+    ref.invalidate(homeMonthTotalsProvider);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.updatedMessage)));

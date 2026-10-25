@@ -7,15 +7,56 @@ import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 import 'package:kakeibo/presentation/widgets/period_calendar.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  static const _initialPage = 12000;
+
+  late final DateTime _initialMonth;
+  late final PageController _calendarPageController;
+  late DateTime _displayedMonth;
+  var _currentPage = _initialPage;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _initialMonth = DateTime(now.year, now.month, 1);
+    _displayedMonth = _initialMonth;
+    _calendarPageController = PageController(initialPage: _initialPage);
+  }
+
+  @override
+  void dispose() {
+    _calendarPageController.dispose();
+    super.dispose();
+  }
+
+  DateTime _monthForPage(int page) => DateTime(
+      _initialMonth.year, _initialMonth.month + page - _initialPage, 1);
+
+  void _shiftMonth(int offset) {
+    _calendarPageController.animateToPage(
+      _currentPage + offset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(preloadAnnualSchedulesProvider);
     final l10n = AppLocalizations.of(context);
     final stats = ref.watch(homeStatsProvider);
     final calendarSummaryAsync = ref.watch(homeCalendarSummaryProvider);
+    final monthTotalsAsync =
+        ref.watch(homeMonthTotalsProvider(_displayedMonth));
+    final remainingBudget = calendarSummaryAsync.valueOrNull?.remainingBudget;
     final now = DateTime.now();
     final incomeRange = _formatRange(
       l10n,
@@ -38,92 +79,84 @@ class HomePage extends ConsumerWidget {
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: calendarSummaryAsync.when(
-                data: (summary) {
-                  final remaining = summary.remainingBudget;
-                  final remainingStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: remaining < 0 ? Colors.red : Colors.green,
-                      );
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _CalendarHeader(
-                        periodLabel: periodLabel,
-                        periodColor: stats.periodColor,
-                        incomeRange: incomeRange,
-                        fixedRange: fixedRange,
-                        budgetLabel: l10n.homeBudgetLabel,
-                        budgetValue: l10n.formatCurrency(remaining),
-                        budgetValueStyle: remainingStyle,
-                        onBudgetTap: () => context.push('/settings/budget'),
-                      ),
-                      const SizedBox(height: 12),
-                      PeriodCalendar(
-                        totalsByDay: summary.totalsByDay,
-                        periodLengthDays: stats.periodLengthDays,
-                        onDateTap: (date) => context.go('/input', extra: date),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => context.push('/settings/annual'),
-                          icon: const Icon(Icons.calendar_month),
-                          label: Text(l10n.annualSchedule),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-                loading: () => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _CalendarHeader(
-                      periodLabel: periodLabel,
-                      periodColor: stats.periodColor,
-                      incomeRange: incomeRange,
-                      fixedRange: fixedRange,
-                      budgetLabel: l10n.homeBudgetLabel,
-                      budgetValue: l10n.formatCurrency(0),
-                      budgetValueStyle: Theme.of(context).textTheme.titleMedium,
-                      onBudgetTap: () => context.push('/settings/budget'),
-                    ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _CalendarHeader(
+                    periodLabel: periodLabel,
+                    periodColor: stats.periodColor,
+                    incomeRange: incomeRange,
+                    fixedRange: fixedRange,
+                    budgetLabel: l10n.homeBudgetLabel,
+                    budgetValue: l10n.formatCurrency(remainingBudget ?? 0),
+                    budgetValueStyle:
+                        Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: remainingBudget == null
+                                  ? null
+                                  : remainingBudget < 0
+                                      ? Colors.red
+                                      : Colors.green,
+                            ),
+                    onBudgetTap: () => context.push('/settings/budget'),
+                  ),
+                  if (calendarSummaryAsync.isLoading ||
+                      monthTotalsAsync.isLoading) ...[
                     const SizedBox(height: 12),
                     const LinearProgressIndicator(),
+                  ],
+                  if (calendarSummaryAsync.hasError) ...[
                     const SizedBox(height: 12),
-                    PeriodCalendar(
-                      totalsByDay: const <DateTime, ({int income, int expense})>{},
-                      periodLengthDays: stats.periodLengthDays,
-                      onDateTap: (date) => context.go('/input', extra: date),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () => context.push('/settings/annual'),
-                        icon: const Icon(Icons.calendar_month),
-                        label: Text(l10n.annualSchedule),
+                    Text(l10n.errorMessage(calendarSummaryAsync.error!)),
+                  ],
+                  const SizedBox(height: 12),
+                  LayoutBuilder(
+                    builder: (context, constraints) => SizedBox(
+                      height: PeriodCalendar.maxHeightForWidth(
+                        context,
+                        constraints.maxWidth,
+                      ),
+                      child: PageView.builder(
+                        key: const Key('home-month-calendar'),
+                        controller: _calendarPageController,
+                        onPageChanged: (page) {
+                          setState(() {
+                            _currentPage = page;
+                            _displayedMonth = _monthForPage(page);
+                          });
+                        },
+                        itemBuilder: (context, page) {
+                          final month = _monthForPage(page);
+                          return Consumer(builder: (context, ref, _) {
+                            final totals =
+                                ref.watch(homeMonthTotalsProvider(month));
+                            return PeriodCalendar(
+                              displayedMonth: month,
+                              totalsByDay: totals.valueOrNull ??
+                                  const <DateTime,
+                                      ({int income, int expense})>{},
+                              onMonthChanged: _shiftMonth,
+                              onDateTap: (date) =>
+                                  context.go('/input', extra: date),
+                            );
+                          });
+                        },
                       ),
                     ),
-                  ],
-                ),
-                error: (e, st) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _CalendarHeader(
-                      periodLabel: periodLabel,
-                      periodColor: stats.periodColor,
-                      incomeRange: incomeRange,
-                      fixedRange: fixedRange,
-                      budgetLabel: l10n.homeBudgetLabel,
-                      budgetValue: l10n.formatCurrency(0),
-                      budgetValueStyle: Theme.of(context).textTheme.titleMedium,
-                      onBudgetTap: () => context.push('/settings/budget'),
-                    ),
+                  ),
+                  if (monthTotalsAsync.hasError) ...[
                     const SizedBox(height: 12),
-                    Text(l10n.errorMessage(e)),
+                    Text(l10n.errorMessage(monthTotalsAsync.error!)),
                   ],
-                ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push('/settings/annual'),
+                      icon: const Icon(Icons.calendar_month),
+                      label: Text(l10n.annualSchedule),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -180,9 +213,13 @@ class _CalendarHeader extends StatelessWidget {
         Expanded(
           child: Column(
             children: [
-              _PeriodRangeRow(label: AppLocalizations.of(context).homeIncomeLabel, range: incomeRange),
+              _PeriodRangeRow(
+                  label: AppLocalizations.of(context).homeIncomeLabel,
+                  range: incomeRange),
               const SizedBox(height: 6),
-              _PeriodRangeRow(label: AppLocalizations.of(context).homeFixedSpecialLabel, range: fixedRange),
+              _PeriodRangeRow(
+                  label: AppLocalizations.of(context).homeFixedSpecialLabel,
+                  range: fixedRange),
               const SizedBox(height: 6),
               InkWell(
                 key: const Key('home-budget-link'),

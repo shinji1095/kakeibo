@@ -5,6 +5,7 @@ import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
+import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/utils/category_icons.dart';
 import 'package:kakeibo/presentation/utils/period_header_utils.dart';
@@ -109,6 +110,8 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
     if (ok == true) {
       await ref.read(deleteTransactionProvider).call(tx.id!);
       ref.invalidate(transactionsProvider);
+    ref.invalidate(homeCalendarSummaryProvider);
+    ref.invalidate(homeMonthTotalsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.deletedMessage)));
       }

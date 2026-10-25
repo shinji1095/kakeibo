@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
+import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
 import 'package:kakeibo/presentation/widgets/app_scaffold.dart';
 import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
@@ -98,6 +99,8 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
       );
     }
     ref.invalidate(transactionsProvider);
+    ref.invalidate(homeCalendarSummaryProvider);
+    ref.invalidate(homeMonthTotalsProvider);
   }
 
   @override

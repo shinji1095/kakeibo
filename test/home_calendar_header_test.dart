@@ -4,13 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/annual_schedule.dart';
-import 'package:kakeibo/domain/entities/transaction.dart';
-import 'package:kakeibo/core/utils/period_utils.dart';
 import 'package:kakeibo/presentation/pages/home_page.dart';
 import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
 import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
 import 'package:kakeibo/presentation/utils/annual_schedule_colors.dart';
+import 'package:kakeibo/presentation/widgets/period_calendar.dart';
 
 void main() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
@@ -53,16 +52,18 @@ void main() {
     );
   }
 
-  Future<void> _pumpHomePage(WidgetTester tester, AnnualSchedule schedule) async {
+  Future<void> _pumpHomePage(
+      WidgetTester tester, AnnualSchedule schedule) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           settingsProvider.overrideWith((ref) => SettingsNotifier()),
           currentAnnualScheduleProvider.overrideWith((ref) async => schedule),
-          homeCalendarSummaryProvider.overrideWith((ref) async => const HomeCalendarSummary(
-                totalsByDay: <DateTime, ({int income, int expense})>{},
-                remainingBudget: 0,
-              )),
+          homeCalendarSummaryProvider
+              .overrideWith((ref) async => const HomeCalendarSummary(
+                    totalsByDay: <DateTime, ({int income, int expense})>{},
+                    remainingBudget: 0,
+                  )),
           bonusSummaryProvider.overrideWith((ref) async => const BonusSummary(
                 isBonusPeriod: false,
                 bonusBalance: 0,
@@ -88,12 +89,11 @@ void main() {
     expect(find.byType(HomePage), findsOneWidget);
   }
 
-  testWidgets('home calendar shows labels, ranges, and matching colors', (WidgetTester tester) async {
+  testWidgets('home calendar shows labels, ranges, and matching colors',
+      (WidgetTester tester) async {
     final now = DateTime.now();
     final schedule = _buildSchedule(now);
     await _pumpHomePage(tester, schedule);
-    final period = resolveSchedulePeriod(schedule.periods, now);
-    final weekCount = (period.days / 7).ceil();
 
     final l10n = AppLocalizations.of(tester.element(find.byType(HomePage)));
 
@@ -122,8 +122,10 @@ void main() {
     expect(find.text(incomeRange), findsOneWidget);
     expect(find.text(fixedRange), findsOneWidget);
 
-    final expectedColor = buildAnnualScheduleColors(schedule.periods.length).first;
-    final periodContainer = tester.widget<Container>(find.byKey(const Key('home-period-label')));
+    final expectedColor =
+        buildAnnualScheduleColors(schedule.periods.length).first;
+    final periodContainer =
+        tester.widget<Container>(find.byKey(const Key('home-period-label')));
     final periodDecoration = periodContainer.decoration as BoxDecoration?;
     expect(periodDecoration?.color, expectedColor);
     final colorMatches = find.byWidgetPredicate((widget) {
@@ -135,7 +137,8 @@ void main() {
     });
     expect(colorMatches, findsOneWidget);
 
-    final todayCell = tester.widget<Container>(find.byKey(Key(_calendarKey(now))));
+    final todayCell =
+        tester.widget<Container>(find.byKey(Key(_calendarKey(now))));
     final todayDecoration = todayCell.decoration as BoxDecoration?;
     final todayBorder = todayDecoration?.border as Border?;
     expect(todayBorder?.top.width, greaterThan(0));
@@ -147,35 +150,90 @@ void main() {
       }
       return false;
     });
-    expect(dayCells, findsNWidgets(weekCount * 7));
+    final firstDay = DateTime(now.year, now.month, 1);
+    final lastDay = DateTime(now.year, now.month + 1, 0);
+    final gridStart = firstDay.subtract(Duration(days: firstDay.weekday % 7));
+    final gridEnd = lastDay.add(Duration(days: 6 - lastDay.weekday % 7));
+    expect(dayCells, findsNWidgets(gridEnd.difference(gridStart).inDays + 1));
 
-    final weekStart = now.subtract(Duration(days: now.weekday % 7));
-    if (weekCount > 1) {
-      final currentWeekKey = Key(_calendarKey(weekStart));
-      final nextWeekKey = Key(_calendarKey(weekStart.add(const Duration(days: 7))));
-      final currentWeekTop = tester.getTopLeft(find.byKey(currentWeekKey)).dy;
-      final nextWeekTop = tester.getTopLeft(find.byKey(nextWeekKey)).dy;
-      expect(currentWeekTop, lessThan(nextWeekTop));
-    }
+    expect(find.text('${now.year}年${now.month}月'), findsOneWidget);
+    expect(find.byKey(Key(_calendarKey(firstDay))), findsOneWidget);
+    expect(find.byKey(Key(_calendarKey(lastDay))), findsOneWidget);
   });
 
-  testWidgets('home calendar shows the current week and period weeks', (WidgetTester tester) async {
+  testWidgets('home calendar shows the whole current month',
+      (WidgetTester tester) async {
     final now = DateTime.now();
     final schedule = _buildSchedule(now);
     await _pumpHomePage(tester, schedule);
 
-    final period = resolveSchedulePeriod(schedule.periods, now);
-    final weekCount = (period.days / 7).ceil();
-    final weekStart = now.subtract(Duration(days: now.weekday % 7));
-    final firstKey = Key(_calendarKey(weekStart));
-    final lastKey = Key(_calendarKey(weekStart.add(Duration(days: weekCount * 7 - 1))));
-    final beforeKey = Key(_calendarKey(weekStart.subtract(const Duration(days: 1))));
-    final afterKey = Key(_calendarKey(weekStart.add(Duration(days: weekCount * 7))));
+    final firstDay = DateTime(now.year, now.month, 1);
+    final lastDay = DateTime(now.year, now.month + 1, 0);
+    final gridStart = firstDay.subtract(Duration(days: firstDay.weekday % 7));
+    final gridEnd = lastDay.add(Duration(days: 6 - lastDay.weekday % 7));
 
-    expect(find.byKey(firstKey), findsOneWidget);
-    expect(find.byKey(lastKey), findsOneWidget);
-    expect(find.byKey(beforeKey), findsNothing);
-    expect(find.byKey(afterKey), findsNothing);
+    expect(find.byKey(Key(_calendarKey(gridStart))), findsOneWidget);
+    expect(find.byKey(Key(_calendarKey(gridEnd))), findsOneWidget);
+    expect(
+        find.byKey(
+            Key(_calendarKey(gridStart.subtract(const Duration(days: 1))))),
+        findsNothing);
+    expect(find.byKey(Key(_calendarKey(gridEnd.add(const Duration(days: 1))))),
+        findsNothing);
+  });
+
+  testWidgets('horizontal swipes move between months in both directions',
+      (WidgetTester tester) async {
+    final now = DateTime.now();
+    await _pumpHomePage(tester, _buildSchedule(now));
+
+    final nextMonth = DateTime(now.year, now.month + 1, 1);
+    await tester.fling(find.byKey(const Key('home-month-calendar')),
+        const Offset(-300, 0), 1000);
+    await tester.pumpAndSettle();
+    expect(find.text('${nextMonth.year}年${nextMonth.month}月'), findsOneWidget);
+    expect(
+        find.byKey(
+            Key(_calendarKey(DateTime(nextMonth.year, nextMonth.month, 1)))),
+        findsOneWidget);
+
+    await tester.fling(find.byKey(const Key('home-month-calendar')),
+        const Offset(300, 0), 1000);
+    await tester.pumpAndSettle();
+    expect(find.text('${now.year}年${now.month}月'), findsOneWidget);
+  });
+
+  testWidgets('month navigation crosses the year boundary',
+      (WidgetTester tester) async {
+    var month = DateTime(2026, 12);
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('ja', 'JP'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: Scaffold(
+        body: StatefulBuilder(
+          builder: (context, setState) => PeriodCalendar(
+            displayedMonth: month,
+            totalsByDay: const {},
+            onMonthChanged: (offset) => setState(() {
+              month = DateTime(month.year, month.month + offset);
+            }),
+          ),
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('home-next-month')));
+    await tester.pumpAndSettle();
+    expect(find.text('2027年1月'), findsOneWidget);
+    expect(
+        find.byKey(Key(_calendarKey(DateTime(2027, 1, 31)))), findsOneWidget);
   });
 }
 

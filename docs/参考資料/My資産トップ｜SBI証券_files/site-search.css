@@ -1,0 +1,3507 @@
+/** Copyright 2005 Google Inc. All rights reserved. */
+
+/* the GSearchControl CSS Classes
+ * .gsc-control: the primary class of the control
+ */
+[data-design^='seeds-layout'].slc-modal .gsc-control {
+  width: 300px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-bidi-start-align {
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control div {
+  position: static !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse,
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gsc-table-result {
+  font-size: 14px !important;
+  line-height: 22px !important;
+  width: auto !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse {
+  padding: 16px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-wrapper-cse {
+  width: 100% !important;
+}
+
+/* control inputs
+ * .gsc-search-box: the container that hosts the text input area
+ * .gsc-input: the text input area
+ * .gsc-keeper: the save link below savable results
+ */
+[data-design^='seeds-layout'].slc-modal form.gsc-search-box {
+  max-width: 668px !important;
+  font-size: 14px !important;
+  margin: 0 16px !important;
+}
+
+/*
+ * This table contains the input element as well as the search button
+ * Note that the search button column is fixed width, designed to hold the
+ * button div's background image
+ */
+[data-design^='seeds-layout'].slc-modal table.gsc-search-box {
+  border-style: none !important;
+  border-width: 0 !important;
+  border-spacing: 0 0 !important;
+  width: 100% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal table.gsc-search-box td {
+  vertical-align: middle !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-search-button {
+  width: 1% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-search-button-v2 svg {
+  fill: #fff !important;
+}
+
+/* Firefox button fix */
+[data-design^='seeds-layout'].slc-modal button::-moz-focus-inner {
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-clear-button {
+  width: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding {
+  display: -ms-flexbox !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding-text,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-text {
+  vertical-align: top !important;
+  padding-bottom: 2px !important;
+  text-align: right !important;
+  font-size: 11px !important;
+  margin-right: 2px !important;
+  color: #666 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding-text:first-child,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-text:first-child {
+  flex-grow: 1 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding-img-noclear,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-img-noclear {
+  width: 51px !important;
+  vertical-align: bottom !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding-img,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-img {
+  width: 65px !important;
+  vertical-align: bottom !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-branding-youtube
+  .gsc-branding-img-noclear {
+  width: 55px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-branding-youtube
+  .gsc-branding-img {
+  width: 69px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-branding-vertical
+  .gsc-branding-text
+  .gsc-branding-text {
+  margin-right: 0 !important;
+  text-align: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-branding-vertical
+  .gsc-branding-img-noclear {
+  text-align: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding-img,
+[data-design^='seeds-layout'].slc-modal .gsc-branding-img-noclear,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-img,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-img-noclear {
+  position: relative !important;
+  top: -1px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding-img,
+[data-design^='seeds-layout'].slc-modal .gsc-branding-img-noclear,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-img,
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-img-noclear {
+  margin: 0 0 0 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border: none !important;
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-text {
+  white-space: nowrap !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-text {
+  margin: 0 2px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-branding-img-noclear {
+  width: auto !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-branding-clickable {
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-search-button {
+  margin-left: 2px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-clear-button {
+  display: inline !important;
+  text-align: right !important;
+  margin-left: 4px !important;
+  margin-right: 4px !important;
+  padding-left: 10px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-image: url('//www.google.com/cse/static/css/v2/clear.png') !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-clear-button:hover {
+  background-image: url('//www.google.com/cse/static/css/v2/clear-hover.png') !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-search-box-tools
+  .gsc-clear-button {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results-close-btn {
+  background-image: url('//www.google.com/images/nav_logo114.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: -140px -230px !important;
+  float: right !important;
+  display: none !important;
+  opacity: 0 !important;
+  height: 12px !important;
+  width: 12px !important;
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results-close-btn-visible {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results-wrapper-overlay {
+  border: none !important;
+  margin: auto !important;
+  border-radius: 1px !important;
+  overflow: auto !important;
+  height: 80% !important;
+  -webkit-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -moz-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -ms-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -o-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  border-collapse: separate !important;
+  background: white !important;
+  padding: 30px !important;
+  width: 70% !important;
+  position: fixed !important;
+  top: 5% !important;
+  left: 12% !important;
+  opacity: 0 !important;
+  z-index: 100002 !important;
+  visibility: hidden !important;
+  -webkit-transition: all 0.25s linear !important;
+  -moz-transition: all 0.25s linear !important;
+  -ms-transition: all 0.25s linear !important;
+  -o-transition: all 0.25s linear !important;
+  transition: all 0.25s linear !important;
+  /* For IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=7, Direction=135, Color='#888888')" !important;
+  /* For IE 5.5 - 7 */
+  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=7, Direction=135, Color='#888888') !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results-wrapper-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-modal-background-image {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 130% !important;
+  width: 100% !important;
+  z-index: 100001 !important;
+  background-color: white !important;
+  opacity: 0 !important;
+  -ms-filter: 'alpha(opacity=0)' !important;
+  filter: alpha(opacity=0) !important;
+  display: none !important;
+  -webkit-transition: all 0.25s linear !important;
+  -moz-transition: all 0.25s linear !important;
+  -ms-transition: all 0.25s linear !important;
+  -o-transition: all 0.25s linear !important;
+  transition: all 0.25s linear !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-modal-background-image-visible {
+  opacity: 0.8 !important;
+  -ms-filter: 'alpha(opacity=80)' !important;
+  filter: alpha(opacity=80) !important;
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-overflow-hidden {
+  overflow: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal table.gsc-input {
+  table-layout: fixed !important;
+}
+
+/*
+ * Given that this is sitting in a variable width table cell, the idea is
+ * for it to consume the entire cell. The adjacent cell contains the search
+ * button and that is a fixed width cell.
+ */
+[data-design^='seeds-layout'].slc-modal input.gsc-input {
+  border: 1px solid #ddd !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-search-box
+  .gsc-input
+  > input:hover,
+[data-design^='seeds-layout'].slc-modal .gsc-input-box-hover {
+  border: 1px solid #b9b9b9 !important;
+  border-top-color: #a0a0a0 !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  outline: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-keeper {
+  color: #36c !important;
+  text-decoration: underline !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  font-weight: normal !important;
+
+  padding-left: 16px !important;
+  background-repeat: no-repeat !important;
+  background-position: 1px 3px !important;
+  background-image: url('//www.google.com/cse/static/css/blue_check.gif') !important;
+}
+
+/* tabbed mode of search control
+ * .gsc-positioningWrapper: wrapper for absolute positioning of gradient
+ * .gsc-tabsArea: the box containing all of the tabs
+ * .gsc-tabsAreaInvisible: same as above, but this is the state when search has been cleared
+ * .gsc-tabHeader: an individual tab
+ * .gsc-tabHeader.gsc-tabhActive: the active tab
+ * .gsc-tabHeader.gsc-tabhInactive: an inactive tab
+ * .gsc-tabData: the data area/box containing results and header data for each tab
+ * .gsc-tabData.gsc-tabdActive: the data area for the active tab
+ * .gsc-tabData.gsc-tabdInactive: the data area for inactive tabs
+ */
+[data-design^='seeds-layout'].slc-modal .gsc-positioningWrapper {
+  position: relative !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-tabsArea {
+  clear: both !important;
+  border-bottom: 1px solid #dfe1e5 !important;
+  margin-top: 16px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-tabsArea .gs-spacer,
+[data-design^='seeds-layout'].slc-modal .gsc-refinementsArea .gs-spacer {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-tabsAreaInvisible,
+[data-design^='seeds-layout'].slc-modal .gsc-refinementsAreaInvisible,
+[data-design^='seeds-layout'].slc-modal .gsc-refinementBlockInvisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-tabHeader {
+  border: none !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
+  padding: 14px 0 !important;
+  margin: 0 24px !important;
+  text-align: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-tabHeader.gsc-tabhInactive {
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-tabData.gsc-tabdActive {
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-tabData.gsc-tabdInactive {
+  display: none !important;
+}
+
+/* gsc-resultsbox-invisible is preferred over gsc-tabdActive */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-tabData.gsc-tabdActive.gsc-resultsbox-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-refinementsArea {
+  border-bottom: 1px solid #dfe1e5 !important;
+  clear: both !important;
+  margin-top: 16px !important;
+  padding-left: 16px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-refinementHeader {
+  position: static !important;
+  margin: 0 8px !important;
+  padding: 14px 0 !important;
+  line-height: 20px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-refinementHeader.gsc-refinementhInactive {
+  cursor: pointer !important;
+}
+
+/* tab specific results header suppression
+ * - no twiddle, tabbed mode runs in full expand mode
+ * - no title
+ * - no stats
+ */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-tabData
+  .gsc-resultsHeader
+  .gsc-title {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-tabData
+  .gsc-resultsHeader
+  .gsc-stats {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-tabData
+  .gsc-resultsHeader
+  .gsc-results-selector {
+  display: none !important;
+}
+
+/* style for auto-completion table
+ * .gsc-completion-selected: highlighted completions.
+ * .gsc-completion-container: styling for the table which contains the completions
+ * .gsc-completion-promotion-selected: highlighted promotions
+ */
+[data-design^='seeds-layout'].slc-modal .gsc-completion-selected {
+  background: #1f1f1f14 !important;
+  cursor: default !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-completion-selected
+  .gsc-completion-promotion-table {
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-completion-container {
+  font-family: Arial, sans-serif !important;
+  font-size: 16px !important;
+  color: #444746 !important;
+  background: #f3f5f6 !important;
+  border-bottom-left-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  margin: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-completion-container
+  .gssb_a
+  .gsq_a
+  span
+  * {
+  font-weight: normal !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-completion-title {
+  color: #1558d6 !important;
+  line-height: normal !important;
+  white-space: normal !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-completion-snippet {
+  line-height: normal !important;
+  white-space: normal !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-completion-container
+  .gsc-completion-icon-cell {
+  width: 42px !important;
+  height: 42px !important;
+  padding-right: 10px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-completion-icon {
+  /* place image in the middle */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: block !important;
+  border: 1px solid #ddd !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-completion-container
+  .gsc-completion-promotion-table {
+  font-size: inherit !important;
+  background: inherit !important;
+  margin: 5px 0 !important;
+  width: 100% !important;
+}
+
+/* the results for each section
+ * .gsc-resultsbox-{visible,invisible}: a complete-collection of results including headers
+ * .gsc-results: the collection of results for a given searcher
+ * .gsc-result: a generic result within the control. each result has this class, as well as .gsc-xxxResult where xxx is web, image, local, blog, etc.
+ */
+[data-design^='seeds-layout'].slc-modal .gsc-resultsbox-visible {
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-resultsbox-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results {
+  padding-bottom: 2px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-result .gs-title {
+  height: auto !important;
+  margin: 3px 0 2px 0 !important;
+  overflow: hidden !important;
+  line-height: 26px !important;
+}
+
+/* Ads */
+[data-design^='seeds-layout'].slc-modal .gsc-results .gsc-result .gs-ad-marker {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-wrapper {
+  position: relative !important;
+  display: block !important;
+  max-width: 716px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlock {
+  position: relative !important;
+  display: block !important;
+  padding-top: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlock h2 {
+  float: right !important;
+  margin: 3px 5px 0 !important;
+  font-weight: normal !important;
+  font-size: 0.9em !important;
+  color: #676767 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlock .gsc-ad {
+  padding-left: 8px !important;
+  padding-top: 5px !important;
+  padding-right: 3px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlock .gsc-ad a {
+  font-weight: bolder !important;
+  color: #1558d6 !important;
+  line-height: 1.4em !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlock .gsc-ad cite {
+  font-style: normal !important;
+  color: green !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlock .gsc-ad span {
+  padding-left: 8px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockNoHeight {
+  height: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockInvisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockVertical {
+  position: relative !important;
+  display: block !important;
+  float: right !important;
+  clear: right !important;
+  width: 30% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockBottom {
+  position: relative !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-thinWrapper {
+  width: 69% !important;
+  float: left !important;
+  overflow: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-wrapper.gsc-thinWrapper {
+  border-right: 1px solid #e9e9e9 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockVertical h2 {
+  text-align: center !important;
+  font-weight: normal !important;
+  font-size: 0.9em !important;
+  color: #676767 !important;
+  margin-top: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockVertical .gsc-ad {
+  padding-left: 8px !important;
+  padding-top: 5px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockVertical .gsc-ad a {
+  font-weight: bolder !important;
+  color: #1558d6 !important;
+  line-height: 1.4em !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-adBlockVertical .gsc-ad cite {
+  font-style: normal !important;
+  color: green !important;
+  display: block !important;
+}
+
+/* Standard configuration div/form */
+[data-design^='seeds-layout'].slc-modal .gsc-config {
+  border: 1px solid #e9e9e9 !important;
+  margin-top: 0 !important;
+  margin-bottom: 10px !important;
+  padding-top: 2px !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-config {
+  margin-bottom: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-configSetting {
+  margin-top: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-configSetting_Label {
+  color: #676767 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-configSettingInput {
+  color: #676767 !important;
+  border: 1px solid #e9e9e9 !important;
+  width: 75% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-configSettingCheckbox {
+  color: #676767 !important;
+  margin-right: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-configSettingCheckboxLabel {
+  display: inline !important;
+  color: #676767 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-configSettingSubmit {
+  margin-top: 8px !important;
+  text-align: right !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-configSettingSubmit {
+  display: inline !important;
+  font-size: 11px !important;
+  cursor: pointer !important;
+}
+
+/* Added so elements inside a result are properly cleared by the container. */
+[data-design^='seeds-layout'].slc-modal .gsc-webResult:after {
+  content: '.' !important;
+  display: block !important;
+  height: 0 !important;
+  clear: both !important;
+  visibility: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-webResult {
+  zoom: 1 !important; /* IE-specific hack to get the layout clearing right. */
+}
+
+/* Wrapper for a result. */
+[data-design^='seeds-layout'].slc-modal .gsc-webResult.gsc-result {
+  padding: 10px 16px 15px 16px !important;
+  border: 1px solid #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-webResult-divider {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-webResult .gs-visibleUrl {
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-above-wrapper-area {
+  max-width: 716px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-above-wrapper-area-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal table.gsc-above-wrapper-area-container {
+  display: table !important;
+  width: 100% !important;
+  margin: 16px 0 12px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-result-info {
+  color: #80868b !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+  padding: 4px 24px 0 24px !important;
+  text-align: left !important;
+  line-height: normal !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-result-info-container {
+  text-align: left !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-result-info-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-orderby-container {
+  padding-right: 24px !important;
+  text-align: right !important;
+  background: transparent !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-orderby-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-orderby-label {
+  color: #80868b !important;
+  font-family: Arial !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
+  margin-right: 2px !important;
+  vertical-align: bottom !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-selected-option-container {
+  vertical-align: bottom !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-selected-option {
+  position: relative !important;
+  width: 100% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gsc-option-selector {
+  border: none !important;
+  height: 18px !important;
+  width: 18px !important;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18' fill='none'><path d='M5.25 7.5L9 11.25L12.75 7.5H5.25Z' fill='%23636363'/></svg>")
+    center no-repeat !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-option-menu-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-control-cse
+  .gsc-option-menu-container {
+  cursor: pointer !important;
+  color: #000 !important;
+  position: relative !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gsc-option-menu {
+  background: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 6px 0 rgba(60, 64, 67, 0.16) !important;
+  cursor: default !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+  max-height: 360px !important;
+  outline: none !important;
+  padding: 8px 0 10px 0 !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 22px !important;
+  z-index: 7 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-option-menu-item {
+  box-sizing: content-box !important;
+  color: #777 !important;
+  height: 20px !important;
+  cursor: pointer !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 10px 16px !important;
+  white-space: nowrap !important;
+  text-align: left !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-option-menu-item:hover {
+  background-color: #eee !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-option-menu-item-highlighted {
+  background-color: #eee !important;
+  border-color: #eee !important;
+  border-width: 1px 0 !important;
+  color: #3c4043 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-option {
+  color: #80868b !important;
+  cursor: pointer !important;
+  list-style: none !important;
+  white-space: nowrap !important;
+  line-height: 20px !important;
+  text-align: left !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-option-checkbox {
+  height: 18px !important;
+  width: 18px !important;
+  margin-right: 5px !important;
+  position: relative !important;
+  top: 3px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-option-checkbox-checked {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18' fill='none'><path d='M6.75012 12.1274L3.62262 8.99988L2.55762 10.0574L6.75012 14.2499L15.7501 5.24988L14.6926 4.19238L6.75012 12.1274Z' fill='%23636363'/></svg>")
+    center no-repeat !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-web-image-box,
+[data-design^='seeds-layout'].slc-modal .gs-promotion-image-box {
+  float: right !important;
+  margin: 2px 0 2px 16px !important;
+  text-align: center !important;
+  position: relative !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-web-image-box::after,
+[data-design^='seeds-layout'].slc-modal .gs-promotion-image-box::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-radius: 8px !important;
+  pointer-events: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-web-image-box .gs-image,
+[data-design^='seeds-layout'].slc-modal
+  .gs-promotion-image-box
+  .gs-promotion-image {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-radius: 8px !important;
+  height: 104px !important;
+  object-fit: cover !important;
+  width: 104px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action {
+  display: inline !important;
+  margin-right: 0.6em !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action .gs-action {
+  color: #77c !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.cart .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.star .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.rss .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.download .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.email .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.mobile .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.share .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.fullscreen .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.generic .gs-action,
+[data-design^='seeds-layout'].slc-modal .gs-action.link .gs-action {
+  padding-left: 18px !important;
+  background: transparent
+    url('//www.google.com/cse/static/images/action_icons_sprite.gif') no-repeat !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.cart .gs-action {
+  background-position: 0 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.star .gs-action {
+  background-position: -16px -34px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.rss .gs-action {
+  background-position: -48px -98px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.download .gs-action {
+  background-position: -64px -128px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.email .gs-action {
+  background-position: -112px -224px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.mobile .gs-action {
+  background-position: -131px -257px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.share .gs-action {
+  background-position: -32px -64px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.fullscreen .gs-action {
+  background-position: -79px -162px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.generic .gs-action {
+  background-position: -144px -290px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-action.link .gs-action {
+  background-position: -159px -321px !important;
+}
+
+/* Image Search */
+[data-design^='seeds-layout'].slc-modal .gs-ellipsis {
+  overflow: hidden !important;
+  text-align: left !important;
+  text-overflow: ellipsis !important;
+  -o-text-overflow: ellipsis !important;
+  -ms-text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-imageResult-column {
+  margin-right: 70px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imageResult {
+  break-inside: avoid !important;
+  overflow: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-image-box {
+  position: relative !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-text-box {
+  color: #999 !important;
+  height: 4em !important;
+}
+
+/* No padding for image result */
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-title,
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-snippet,
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-visibleUrl,
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-visibleUrl-short,
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-spelling {
+  padding: 0 !important;
+}
+
+/* Color hover text, but not no results text */
+[data-design^='seeds-layout'].slc-modal
+  .gs-imageResult:not(.gs-no-results-result)
+  .gs-snippet {
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  color: #eee !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-size {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imageResult .gs-image-box {
+  text-align: center !important; /* center align image in image box */
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-imageResult
+  .gs-image-box
+  .gs-image {
+  border: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-image-scalable {
+  height: 180px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-selectedImageResult {
+  /* 180px (gs-image-scalable height) + 2*5px (gs-image-thumbnail-box padding) +
+   * 350px (gs-imagePreviewArea height)
+   */
+  height: 540px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imagePreview {
+  display: block !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Avoid auto dimensions for SVGs, lest they be hidden */
+[data-design^='seeds-layout'].slc-modal .gs-imagePreview:not([src$='.svg']) {
+  height: auto !important;
+  width: auto !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imagePreviewArea {
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -ms-flex-pack: distribute !important;
+  justify-content: center !important;
+  -ms-flex-align: center !important;
+  align-items: center !important;
+  position: absolute !important;
+  background: #222 !important;
+  width: 100% !important;
+  height: 350px !important;
+  left: 0 !important;
+  z-index: 100000 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imagePreviewArea-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-previewSnippet {
+  margin: 30px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-previewLink {
+  color: #eee !important;
+  font-size: 18px !important;
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imagePreviewArea > .gs-previewLink {
+  -ms-flex-align: center !important;
+  align-items: center !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  height: 100% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-previewTitle,
+[data-design^='seeds-layout'].slc-modal .gs-previewUrl,
+[data-design^='seeds-layout'].slc-modal .gs-previewSize {
+  margin: 10px 0 !important;
+  color: #eee !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-previewDescription {
+  margin: 20px 0 !important;
+  color: #ccc !important;
+}
+
+/* Popup layout related styles */
+
+[data-design^='seeds-layout'].slc-modal .gsc-imageResult .gs-imageResult-popup {
+  border: 0 !important;
+  margin: 0 !important;
+  width: auto !important; /* Override the default image result width */
+  overflow: visible !important; /* popup box may overflow and should be visible */
+  position: relative !important;
+}
+
+/* Instead put margin bottom and right on searcher image thumbnail. */
+[data-design^='seeds-layout'].slc-modal
+  .gs-imageResult-popup
+  .gs-image-thumbnail-box {
+  padding: 5px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-imageResult-popup .gs-image-box {
+  width: auto !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-imageResult-popup
+  .gs-image-popup-box {
+  width: calc(100% - 20px) !important;
+  position: absolute !important;
+  padding: 5px !important;
+  margin: 5px !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  background: rgba(51, 51, 51, 0.8) !important;
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-imageResult-popup
+  .gs-image-popup-box
+  .gs-image-box {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-imageResult-popup
+  .gs-image-popup-box
+  .gs-text-box {
+  height: auto !important;
+  width: auto !important;
+}
+
+/* Do not show title for compact layout such as classic and popup */
+[data-design^='seeds-layout'].slc-modal
+  .gs-imageResult-popup
+  .gs-text-box
+  .gs-title {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-container {
+  position: relative !important;
+  border-bottom: 1px solid #ddd !important;
+  margin: 10px 0 !important;
+  display: flex !important;
+  padding: 16px 0 16px 24px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  color: #333 !important;
+  font-size: 13px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  box-sizing: border-box !important;
+  max-width: 668px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-container-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  align-self: stretch !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-full-summary {
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-full-summary-collapsed {
+  max-height: 150px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  mask-image: linear-gradient(
+    to bottom,
+    black 60%,
+    transparent 100%
+  ) !important;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 60%,
+    transparent 100%
+  ) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-hide-show-button-icon {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-show-more-button-text {
+  line-height: 1 !important;
+  display: inline-block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-icon {
+  display: flex !important;
+  width: 16px !important;
+  height: 24px !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  vertical-align: middle !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-subsection-header {
+  display: inline-block !important;
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: 26px !important; /* 130% */
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-response {
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: 22px !important; /* 157.143% */
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-response-item {
+  margin: 0 0 12px 0 !important;
+  padding: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-response-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-paragraph-citation-link {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin-left: 4px !important;
+  cursor: pointer !important;
+  vertical-align: middle !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-header {
+  color: #4d5156 !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: 24px !important;
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-container-wrapper {
+  position: relative !important;
+  max-width: 100% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-container {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  padding: 0 0 8px 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+  max-width: 100% !important;
+  scroll-snap-type: x mandatory !important;
+  scroll-behavior: smooth !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-sge-citations-container::-webkit-scrollbar {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-scroll-button-left,
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-scroll-button-right {
+  position: absolute !important;
+  top: 0 !important;
+  height: 102px !important; /* Fixed to the card height */
+  width: 60px !important;
+  display: none !important; /* Hide on mobile by default */
+  align-items: center !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  opacity: 1 !important;
+  transition: opacity 0.2s ease !important;
+  z-index: 1 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-scroll-button-right {
+  right: 0 !important;
+  background: linear-gradient(
+    to right,
+    rgba(248, 249, 250, 0) 0%,
+    rgba(255, 255, 255, 1) 50%
+  ) !important;
+  justify-content: flex-end !important;
+  padding: 0 4px 0 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-scroll-button-left {
+  left: 0 !important;
+  background: linear-gradient(
+    to left,
+    rgba(248, 249, 250, 0) 0%,
+    rgba(255, 255, 255, 1) 50%
+  ) !important;
+  justify-content: flex-start !important;
+  padding: 0 0 0 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  html[dir='rtl']
+  .gsc-sge-citations-scroll-button-right,
+[data-design^='seeds-layout'].slc-modal
+  body[dir='rtl']
+  .gsc-sge-citations-scroll-button-right {
+  right: auto !important;
+  left: 0 !important;
+  background: linear-gradient(
+    to left,
+    rgba(248, 249, 250, 0) 0%,
+    rgba(255, 255, 255, 1) 50%
+  ) !important;
+  justify-content: flex-start !important;
+  padding: 0 0 0 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  html[dir='rtl']
+  .gsc-sge-citations-scroll-button-left,
+[data-design^='seeds-layout'].slc-modal
+  body[dir='rtl']
+  .gsc-sge-citations-scroll-button-left {
+  left: auto !important;
+  right: 0 !important;
+  background: linear-gradient(
+    to right,
+    rgba(248, 249, 250, 0) 0%,
+    rgba(255, 255, 255, 1) 50%
+  ) !important;
+  justify-content: flex-end !important;
+  padding: 0 4px 0 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-scroll-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  border: 1px solid #dadce0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citations-scroll-icon svg {
+  fill: #4d5156 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-sge-citations-scroll-button:hover
+  .gsc-sge-citations-scroll-icon {
+  background: #f8f9fa !important;
+}
+
+@media (min-width: 600px) {
+  [data-design^='seeds-layout'].slc-modal
+    .gsc-sge-citations-container-wrapper:hover
+    .gsc-sge-citations-scroll-button-left,
+  [data-design^='seeds-layout'].slc-modal
+    .gsc-sge-citations-container-wrapper:hover
+    .gsc-sge-citations-scroll-button-right {
+    display: flex !important;
+  }
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citation-card {
+  display: flex !important;
+  width: 266px !important;
+  height: 102px !important;
+  border-radius: 16px !important;
+  border: 1px solid #e8eaed !important;
+  background: #fff !important;
+  flex-shrink: 0 !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  scroll-snap-align: start !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citation-thumbnail {
+  width: 82px !important;
+  height: 102px !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citation-body {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 10px !important;
+  gap: 2px !important;
+  overflow: hidden !important;
+  flex: 1 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citation-title {
+  color: #4d5156 !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 20px !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citation-snippet {
+  color: #4d5156 !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: 20px !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-show-more-button {
+  border-radius: 100px !important;
+  padding: 4px 16px !important;
+  border: none !important;
+  display: block !important;
+  margin: 8px auto 0 !important;
+  height: 40px !important;
+  font-size: 14px !important;
+  width: 100% !important;
+  line-height: 20px !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-show-more-button-icon {
+  fill: currentColor !important;
+  vertical-align: middle !important;
+  margin-left: 8px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-footer {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  height: 22px !important;
+  width: 100% !important;
+  margin-top: 12px !important;
+  box-sizing: border-box !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-footer-disclaimer {
+  font-family: Arial !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 22px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-footer-buttons {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-left: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-footer-button {
+  width: 20px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: inherit !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-footer-button svg {
+  fill: currentColor !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-footer-button:last-child {
+  margin-left: auto !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-main-content {
+  transition: max-height 0.3s ease-in-out !important;
+  overflow: hidden !important;
+  align-self: stretch !important;
+  max-width: 100% !important;
+}
+[data-design^='seeds-layout'].slc-modal .gsc-sge-collapsed {
+  max-height: 300px !important;
+  position: relative !important;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 60%,
+    transparent 100%
+  ) !important;
+  mask-image: linear-gradient(
+    to bottom,
+    black 60%,
+    transparent 100%
+  ) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-snackbar {
+  position: fixed !important;
+  bottom: 16px !important;
+  left: 16px !important;
+  right: 16px !important;
+  max-width: 344px !important;
+  margin: 0 auto !important;
+  height: 48px !important;
+  background-color: #1f1f1f !important;
+  color: #fff !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+  z-index: 1000 !important;
+  opacity: 0 !important;
+  animation: gsc-sge-fade-in 0.3s ease-in forwards !important;
+}
+
+@media (min-width: 600px) {
+  [data-design^='seeds-layout'].slc-modal .gsc-sge-snackbar {
+    left: 16px !important;
+    right: auto !important;
+    margin: 0 !important;
+  }
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-snackbar-fade-out {
+  animation: gsc-sge-fade-out 0.3s ease-out forwards !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-snackbar-text {
+  font-family: Roboto, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-snackbar-close {
+  background: none !important;
+  border: none !important;
+  color: #9e9e9e !important;
+  cursor: pointer !important;
+  padding: 8px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@keyframes gsc-sge-fade-in {
+  from {
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+  }
+  to {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}
+
+@keyframes gsc-sge-fade-out {
+  from {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+  to {
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+  }
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-backdrop {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  z-index: 2000 !important;
+  opacity: 1 !important;
+  transition: opacity 0.3s ease-in-out !important;
+  padding-bottom: 54px !important;
+  box-sizing: border-box !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-sge-modal-backdrop.gsc-sge-modal-fade-out {
+  opacity: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal {
+  background-color: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px 0 rgba(60, 64, 67, 0.24) !important;
+  width: 90% !important;
+  height: 296px !important;
+  min-width: 280px !important;
+  max-width: 528px !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
+}
+
+@media (min-width: 600px) {
+  [data-design^='seeds-layout'].slc-modal .gsc-sge-modal-backdrop {
+    justify-content: flex-end !important;
+  }
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 16px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-title {
+  font-family: Arial, sans-serif !important;
+  font-size: 20px !important;
+  line-height: 26px !important;
+  color: #3c4043 !important;
+  margin: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-close {
+  background: none !important;
+  border: none !important;
+  color: #5f6368 !important;
+  cursor: pointer !important;
+  padding: 8px !important;
+  font-size: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-close svg {
+  fill: #444746 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-body {
+  font-family: Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 22px !important;
+  color: #3c4043 !important;
+  white-space: pre-wrap !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-feedback {
+  margin-top: 16px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-feedback a {
+  text-decoration: underline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-modal-feedback a:visited {
+  color: inherit !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-loading-ai-overview {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  width: 100% !important;
+  margin-top: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-skeleton-paragraphs {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-skeleton-line {
+  height: 22px !important;
+  background-color: #f3f5f6 !important;
+  border-radius: 16px !important;
+  width: 100% !important;
+  animation: gsc-sge-pulse 1.5s infinite ease-in-out !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-sge-skeleton-line.gsc-sge-skeleton-short {
+  width: 140px !important;
+}
+
+/* Hide extra lines on desktop override */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-sge-skeleton-line.gsc-sge-skeleton-mobile-only {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-skeleton-citations {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-skeleton-citation-title {
+  height: 24px !important;
+  width: 120px !important;
+  background-color: #f3f5f6 !important;
+  border-radius: 16px !important;
+  animation: gsc-sge-pulse 1.5s infinite ease-in-out !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-skeleton-carousel {
+  display: flex !important;
+  gap: 8px !important;
+  overflow: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-skeleton-tile {
+  width: 266px !important;
+  height: 102px !important;
+  background-color: #f3f5f6 !important;
+  border-radius: 12px !important;
+  flex-shrink: 0 !important;
+  animation: gsc-sge-pulse 1.5s infinite ease-in-out !important;
+}
+
+/* Pulsing animation for skeleton placeholders */
+@keyframes gsc-sge-pulse {
+  0% {
+    opacity: 0.6 !important;
+  }
+  50% {
+    opacity: 1 !important;
+  }
+  100% {
+    opacity: 0.6 !important;
+  }
+}
+
+/* Video Search
+ * - single line title
+ */
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-videoResult
+  .gs-videoResult
+  .gs-title {
+  line-height: 1.3em !important;
+  height: 1.3em !important;
+  overflow: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-videoResult
+  .gs-videoResult
+  .gs-snippet {
+  line-height: 1.3em !important;
+  max-height: 2.6em !important;
+  overflow: hidden !important;
+}
+
+/* trailing more link at the bottom of a collection of results */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-imageResult
+  .gsc-trailing-more-results {
+  clear: both !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-trailing-more-results {
+  margin-bottom: 10px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results .gsc-trailing-more-results,
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-trailing-more-results
+  * {
+  color: #1a0dab !important;
+  text-decoration: underline !important;
+}
+
+/* trailing cursor section */
+[data-design^='seeds-layout'].slc-modal .gsc-imageResult .gsc-cursor-box {
+  clear: both !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-cursor-box
+  .gsc-trailing-more-results {
+  margin-bottom: 0 !important;
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results .gsc-cursor-box,
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gcsc-more-maybe-branding-root,
+[data-design^='seeds-layout'].slc-modal .gsc-results .gcsc-branding {
+  text-align: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gcsc-more-maybe-branding-root {
+  padding: 6px 0 16px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results .gsc-cursor {
+  color: #1f1f1f !important;
+  display: inline !important;
+  fill: #636363 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-resultsRoot
+  .gsc-results
+  .gsc-cursor-box {
+  margin: 10px 16px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-cursor-box
+  .gsc-cursor-page {
+  cursor: pointer !important;
+  color: #000 !important;
+  margin-right: 8px !important;
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-cursor-box
+  .gsc-cursor-current-page {
+  cursor: default !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+}
+
+/*** End of Control, Begin Results ***/
+
+/* generic, cross cutting result style
+ * - in the form of .gs-result .gs-xxx where xxx is the generic style
+ * .gs-title: typically the first line of a result, typically a link, image results over ride this, since for image results, the image is the link
+ * .gs-divider: typically separates results from ads
+ * .gs-visibleUrl: typically the last line of a result, displayed in green. sometimes a link (like in blog search)
+ * .gs-clusterUrl: for news, and other similar services, this is a cluster of additional results
+ * .gs-image: an actual image in a result
+ * .gs-phone: a phone number
+ * .gs-address: an address (includes street, city, region, country)
+ * .gs-streetAddress: a street (including #)
+ * .gs-city: a city
+ * .gs-region: a region (zip code, area, etc.)
+ * .gs-country: a country
+ * .gs-snippet: snippetized content
+ * .gs-watermark: indicator that user selected this result
+ * .gs-metadata: generic metadata, e.g.,
+ * .gs-image-box: generic container for a result's image (within a table)
+ * .gs-text-box: generic container for a result's text content (within a table). Note that this class, and image-box are only used in video
+ */
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-title,
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-title * {
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal a .gs-captcha-info-link {
+  color: #1558d6 !important;
+  text-decoration: none !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gs-spelling,
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gs-result .gs-title,
+[data-design^='seeds-layout'].slc-modal
+  .gsc-control-cse
+  .gs-result
+  .gs-title
+  * {
+  font-size: 20px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-control-cse
+  .gs-result
+  .gs-spelling-original {
+  font-size: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-divider {
+  padding-bottom: 8px !important;
+  text-align: center !important;
+  color: #676767 !important;
+}
+
+/* relative and absolute dates, note, news/books inlines these */
+[data-design^='seeds-layout'].slc-modal .gs-relativePublishedDate,
+[data-design^='seeds-layout'].slc-modal .gs-publishedDate {
+  color: #6f6f6f !important;
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-clusterUrl {
+  color: #008000 !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-newsResult .gs-publisher {
+  color: #6f6f6f !important;
+  display: inline !important;
+  text-decoration: none !important;
+}
+
+/*
+ * For news results there are two dates...
+ * The relative date is visible while in the
+ * search control and the published date
+ * is visible when clipped. Why? It doesn't
+ * make sense to say 4 hours ago for a clipped
+ * result...
+ */
+
+/* establish the base style */
+[data-design^='seeds-layout'].slc-modal
+  .gs-newsResult
+  .gs-relativePublishedDate,
+[data-design^='seeds-layout'].slc-modal .gs-newsResult .gs-publishedDate {
+  display: inline !important;
+  margin-left: 4px !important;
+}
+
+/* base styling for relative date is none */
+[data-design^='seeds-layout'].slc-modal
+  .gs-blogResult
+  .gs-relativePublishedDate,
+[data-design^='seeds-layout'].slc-modal
+  .gs-newsResult
+  .gs-relativePublishedDate {
+  display: none !important;
+}
+
+/* suppress publishedDate while in the control */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-blogResult
+  .gs-blogResult
+  .gs-publishedDate,
+[data-design^='seeds-layout'].slc-modal
+  .gsc-newsResult
+  .gs-newsResult
+  .gs-publishedDate {
+  display: none !important;
+}
+
+/* enable relativePublishedDate while in the control */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-blogResult
+  .gs-blogResult
+  .gs-relativePublishedDate,
+[data-design^='seeds-layout'].slc-modal
+  .gsc-newsResult
+  .gs-newsResult
+  .gs-relativePublishedDate {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-newsResult .gs-location {
+  color: #6f6f6f !important;
+  display: inline !important;
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title * {
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-title .gs-promotion-title-right {
+  color: #000 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-webResult.gsc-result.gsc-promotion {
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-fileFormat {
+  color: #666 !important;
+  font-size: 12px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-fileFormatType {
+  font-size: 12px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion table {
+  border: none !important;
+  border-style: none !important;
+  border-width: 0 !important;
+  border-spacing: 0 0 !important;
+  margin: 0 0 0 0 !important;
+  padding: 0 0 0 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-promotion
+  table
+  .gs-snippet
+  a
+  .gs-title,
+[data-design^='seeds-layout'].slc-modal
+  .gs-promotion
+  table
+  .gs-snippet
+  a
+  .gs-title
+  * {
+  font-size: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion em {
+  font-style: normal !important;
+  font-weight: bold !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title em {
+  color: inherit !important;
+  text-decoration: inherit !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-image .gs-image,
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-promotion-image {
+  vertical-align: middle !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-directions,
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-directions * {
+  color: #77c !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-secondary-link,
+[data-design^='seeds-layout'].slc-modal .gs-secondary-link * {
+  color: #77c !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+}
+
+/* wrapper around user supplied to/from mode directions
+ * normally this is disabled by default, and gs-directions is enabled
+ * apps can easily switch this by setting display:block on the rule below,
+ * and display:none on the rule above
+ * e.g., add these two rules to switch local results into
+ * alternate style driving directions
+ * .gs-localResult .gs-directions-to-from { display: block; }
+ * .gs-localResult .gs-directions { display: none; }
+ */
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-directions-to-from {
+  display: none !important;
+  margin-top: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-result
+  .gs-directions-to-from
+  .gs-label {
+  display: inline !important;
+  margin-right: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-result
+  .gs-directions-to-from
+  .gs-secondary-link {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-result
+  .gs-directions-to-from
+  .gs-spacer {
+  display: inline !important;
+  margin-right: 3px !important;
+  margin-left: 3px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-videoResult .gs-publisher {
+  color: #008000 !important;
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-result a {
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-loading-fade .gsc-result-info,
+[data-design^='seeds-layout'].slc-modal .gsc-loading-fade .gsc-loading-resultsRoot,
+[data-design^='seeds-layout'].slc-modal .gsc-loading-resultsRoot,
+[data-design^='seeds-layout'].slc-modal /* customized root */
+.gsc-loading-fade .gsc-loading-refinementsArea,
+[data-design^='seeds-layout'].slc-modal .gsc-loading-fade .gsc-adBlock,
+[data-design^='seeds-layout'].slc-modal .gsc-loading-fade .gsc-adBlockVertical,
+[data-design^='seeds-layout'].slc-modal .gsc-loading-fade .gsc-adBlockNoHeight {
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=33.3)' !important;
+  filter: alpha(opacity=33.3) !important;
+  opacity: 0.333 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-no-results-result {
+  text-align: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-no-results-result .gs-snippet,
+[data-design^='seeds-layout'].slc-modal .gs-error-result .gs-snippet {
+  display: inline-block !important;
+  margin: 5px !important;
+  padding: 5px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-backfill-message {
+  color: #202124 !important;
+  padding: 6px 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-resultsRoot .gs-backfill-message {
+  border-top: 1px solid #e9e9e9 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-captcha-wrapper {
+  margin-top: 12px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal span .gs-captcha-msg {
+  color: #3c4043 !important;
+  margin-top: 1px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal #recaptcha-wrapper {
+  display: inline-block !important;
+  margin-top: 30px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-stylized-error-result {
+  text-align: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-stylized-error-message {
+  font-size: 24px !important;
+  margin: 0 0 20px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-stylized-error-submessage {
+  margin: 0 0 20px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-stylized-error-link {
+  background: #1a73e8 !important;
+  border-radius: 15px !important;
+  color: #fff !important;
+  display: inline-block !important;
+  padding: 5px 10px !important;
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-stylized-error-link {
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-watermark {
+  font-size: 10px !important;
+  color: #77c !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-results-attribution {
+  text-align: center !important;
+  margin-bottom: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-results-attribution,
+[data-design^='seeds-layout'].slc-modal .gs-results-attribution * {
+  font-size: 10px !important;
+  color: #676767 !important;
+  text-decoration: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-results-attribution a {
+  color: #1558d6 !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-results-attribution a:hover {
+  text-decoration: underline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-metadata {
+  color: #676767 !important;
+}
+
+/* searcher specific styling for
+ * - web ad
+ * - web
+ * - local
+ * - image (none)
+ * - blog (none)
+ * - video (none)
+ */
+
+/* webAd search specific over rides
+ * .gs-ad-marker: disabled in control, but on in green to indicate clipped result is an ad
+ */
+[data-design^='seeds-layout'].slc-modal .gs-localAd .gs-ad-marker,
+[data-design^='seeds-layout'].slc-modal .gs-webAd .gs-ad-marker {
+  padding-left: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-webResult .gs-visibleUrl-short,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-visibleUrl-short {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-webResult .gs-visibleUrl-long,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-visibleUrl-long {
+  overflow: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-webResult .gs-visibleUrl-long {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-visibleUrl-breadcrumb {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Per result labels */
+[data-design^='seeds-layout'].slc-modal
+  .gs-webResult
+  .gs-per-result-labels
+  .gs-label {
+  text-decoration: underline !important;
+  cursor: pointer !important;
+  padding: 3px !important;
+  color: black !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-webResult
+  .gs-per-result-labels
+  .gs-label.gs-labelActive {
+  cursor: default !important;
+  text-decoration: none !important;
+}
+
+/* Explicitly set clear:none to render the floated thumbnail correctly. Some
+ * partner websites have clear: both set.
+ */
+[data-design^='seeds-layout'].slc-modal
+  .gs-webResult
+  > :not(.gsc-table-cell-thumbnail.gsc-thumbnail),
+[data-design^='seeds-layout'].slc-modal
+  .gs-webResult
+  > :not(.gsc-table-cell-thumbnail.gsc-thumbnail)
+  * {
+  clear: none !important;
+}
+
+/* local search specific over rides
+ * - city, region displayed inline
+ * - country suppressed
+ * - small font size for info window's
+ */
+
+[data-design^='seeds-layout'].slc-modal .gs-localAd .gs-address * {
+  color: #676767 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-localAd .gs-street {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-city {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-region {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-country {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-infoWindow * {
+  font-size: 11px !important;
+}
+
+/* video search specific overrides
+ * - align the table data
+ * - default image width guarantee
+ * - appropriate cell separation
+ */
+
+/* todo(markl): workaround until gre in gmail fixes his styles */
+[data-design^='seeds-layout'].slc-modal .gs-videoResult * {
+  font-size: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-videoResult td .gs-image-box {
+  width: 110px !important;
+  height: 78px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-videoResult td .gs-text-box {
+  vertical-align: top !important;
+  margin-left: 4px !important;
+}
+
+/* book search specific overrides
+ * - default image width guarantee
+ * - appropriate cell separation
+ */
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box td,
+[data-design^='seeds-layout'].slc-modal .gs-bookResult td {
+  vertical-align: top !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box,
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box div {
+  position: static !important;
+  text-align: start !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box {
+  width: 75px !important;
+  height: 90px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-bookResult td .gs-text-box {
+  vertical-align: top !important;
+  margin-left: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box img {
+  border-spacing: 0 0 !important;
+  border: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box .gs-row-1 {
+  line-height: 7px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box .gs-pages {
+  height: 7px !important;
+  width: 45px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box .gs-page-edge {
+  height: 7px !important;
+  width: 11px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-book-image-box .gs-image {
+  height: 80px !important;
+  border: 1px solid #a0a0a0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-bookResult .gs-author {
+  display: inline !important;
+  color: #6f6f6f !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-bookResult .gs-publishedDate {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-bookResult .gs-pageCount {
+  display: inline !important;
+  color: #6f6f6f !important;
+  margin-left: 4px !important;
+}
+
+/* book search specific overrides
+ * - default image width guarantee
+ * - appropriate cell separation
+ */
+
+[data-design^='seeds-layout'].slc-modal .gs-patentResult td {
+  vertical-align: top !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-patentResult .gs-patent-number,
+[data-design^='seeds-layout'].slc-modal .gs-patentResult .gs-publishedDate,
+[data-design^='seeds-layout'].slc-modal .gs-patentResult .gs-author {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-patentResult .gs-image-box {
+  padding-right: 8px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-patentResult .gs-image {
+  border: 1px solid #77c !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-spelling {
+  color: #3c4043 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-spelling a {
+  color: #1558d6 !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse:after {
+  content: '.' !important;
+  display: block !important;
+  height: 0 !important;
+  clear: both !important;
+  visibility: hidden !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-bidi-start-align {
+  text-align: left !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-bidi-end-align {
+  text-align: right !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse-zh_CN .gs-snippet b,
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse-zh_CN .gs-promotion em,
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse-zh_TW .gs-snippet b,
+[data-design^='seeds-layout'].slc-modal
+  .gsc-control-cse-zh_TW
+  .gs-promotion
+  em {
+  color: #c03 !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-snippet-metadata {
+  vertical-align: top !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-snippet-metadata,
+[data-design^='seeds-layout'].slc-modal .gsc-role,
+[data-design^='seeds-layout'].slc-modal .gsc-tel,
+[data-design^='seeds-layout'].slc-modal .gsc-org,
+[data-design^='seeds-layout'].slc-modal .gsc-location,
+[data-design^='seeds-layout'].slc-modal .gsc-reviewer,
+[data-design^='seeds-layout'].slc-modal .gsc-author {
+  color: #666 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-rating-bar {
+  vertical-align: top !important;
+  display: inline-block !important;
+  width: 64px !important;
+  height: 12px !important;
+  background: transparent url(/cse/static/css/cse_snippets_stars.png) -65px 0 no-repeat !important;
+  overflow: hidden !important;
+  margin: 3px 0 0 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-rating-bar span {
+  vertical-align: top !important;
+  display: inline-block !important;
+  height: 12px !important;
+  background: transparent url(/cse/static/css/cse_snippets_stars.png) 0 0
+    no-repeat !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-review-agregate-first-line {
+  margin: 0 40px 0 0 !important;
+  padding: 6px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-review-agregate-odd-lines,
+[data-design^='seeds-layout'].slc-modal .gsc-review-agregate-even-lines {
+  margin: 0 40px 0 0 !important;
+  padding: 6px 0 !important;
+  border-top: 1px solid #ebebeb !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-table-result,
+[data-design^='seeds-layout'].slc-modal .gs-promotion-table {
+  border-spacing: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-table-cell-thumbnail,
+[data-design^='seeds-layout'].slc-modal .gs-promotion-image-cell {
+  vertical-align: top !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-table-cell-snippet-close {
+  padding: 1px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-table-cell-snippet-close,
+[data-design^='seeds-layout'].slc-modal .gs-promotion-text-cell {
+  vertical-align: top !important;
+  width: 100% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion-text-cell .gs-visibleUrl,
+[data-design^='seeds-layout'].slc-modal .gs-promotion-text-cell .gs-snippet {
+  font-size: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-table-cell-snippet-open {
+  vertical-align: top !important;
+  width: 100% !important;
+  padding: 1px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-preview-reviews {
+  color: #3c4043 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-preview-reviews ul {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-preview-reviews li {
+  list-style: none !important;
+  width: 90% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-zippy {
+  margin: 2px 8px 0 0 !important;
+  float: right !important;
+  outline: none !important;
+  overflow: hidden !important;
+  height: 14px !important;
+  width: 14px !important;
+  background-position: -19px -5px !important;
+  position: relative !important;
+  top: -6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-table-cell-snippet-close
+  .gsc-preview-reviews {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-table-cell-snippet-close
+  .gsc-zippy {
+  background: transparent url(/cse/static/css/plus_icons.png) -19px -5px
+    no-repeat !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-table-cell-snippet-open
+  .gsc-zippy {
+  background: transparent url(/cse/static/css/minus_icons.png) -19px -5px
+    no-repeat !important;
+}
+
+/*
+ * Cross-browser implementation of the "display: inline-block" CSS property.
+ * See http://www.w3.org/TR/CSS21/visuren.html#propdef-display for details.
+ */
+/* Gecko hack */
+[data-design^='seeds-layout'].slc-modal html > body .gsc-inline-block {
+  display: -moz-inline-box !important;
+  display: inline-block !important;
+}
+
+/* Default rule */
+[data-design^='seeds-layout'].slc-modal .gsc-inline-block {
+  display: inline-block !important;
+}
+
+/* Show url at the top of the web result snippet */
+[data-design^='seeds-layout'].slc-modal .gsc-webResult .gsc-url-top {
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-webResult .gsc-url-bottom {
+  display: none !important;
+}
+
+/* Show url at the bottom of the image result snippet */
+[data-design^='seeds-layout'].slc-modal .gsc-imageResult .gsc-url-top {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-imageResult .gsc-url-bottom {
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-thumbnail-left {
+  display: none !important;
+}
+
+/* CSS for labeling search results feature. */
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-main-box-visible {
+  position: fixed !important;
+  z-index: 100003 !important;
+  background-color: rgba(255, 255, 255, 1) !important;
+  width: 400px !important;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 4px 16px 0 !important;
+  opacity: 1 !important;
+  display: block !important;
+  border: none !important;
+  margin: auto !important;
+  -webkit-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -moz-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -ms-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -o-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  border-collapse: separate !important;
+  background: white !important;
+  padding: 30px !important;
+  width: 28% !important;
+  top: 30% !important;
+  left: 35% !important;
+  border: 1px solid rgba(0, 0, 0, 0.333) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-main-box-invisible {
+  display: none !important;
+  opacity: 0 !important;
+  -webkit-transition: all 0.25s linear !important;
+  -moz-transition: all 0.25s linear !important;
+  -ms-transition: all 0.25s linear !important;
+  -o-transition: all 0.25s linear !important;
+  transition: all 0.25s linear !important;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=7, Direction=135, Color='#888888')" !important;
+  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=7, Direction=135, Color='#888888') !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-url {
+  padding-bottom: 5px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  color: #008000 !important;
+  margin-top: 5px !important;
+  font-size: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-url-title {
+  white-space: nowrap !important;
+  margin-top: 10px !important;
+  font-size: 15px !important;
+  color: #1558d6 !important;
+  text-decoration: underline !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-url-heading {
+  margin-bottom: 15px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-labels {
+  vertical-align: text-top !important;
+  font-size: 14px !important;
+  color: #000 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-box {
+  margin-top: 5px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-labels-box {
+  margin-top: 15px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-buttons {
+  margin-top: 20px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-labels-no-label-div-visible {
+  margin-top: 20px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-labels-no-label-div-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-labels-label-div-visible {
+  margin-top: 10px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-labels-label-div-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-form-label {
+  margin-right: 20px !important;
+  margin-left: 2px !important;
+  font-size: 14px !important;
+  color: #000 !important;
+  vertical-align: text-top !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-form-div {
+  margin-top: 5px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-label-prefix-visible {
+  width: 90% !important;
+  height: 20px !important;
+  margin-top: 10px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-label-result-label-prefix-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-label-prefix-error {
+  color: red !important;
+  margin-top: 10px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-label-result-label-prefix-error-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-heading {
+  font-size: 17px !important;
+  color: black !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-result-label-button {
+  background-color: #f5f5f5 !important;
+  font-weight: bold !important;
+  border-radius: 2px !important;
+  text-align: center !important;
+  padding: 0 8px !important;
+  background-image: -webkit-linear-gradient(top, #f5f5f5, #f1f1f1) !important;
+  height: 29px !important;
+  border: 1px solid #dcdcdc !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #444 !important;
+  margin-right: 10px !important;
+  width: 72px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-result-label-save-button {
+  color: #fff !important;
+  background-image: -webkit-linear-gradient(top, #4d90fe, #357ae8) !important;
+  background-image: -moz-linear-gradient(top, #4d90fe, #357ae8) !important;
+  background-image: -ms-linear-gradient(top, #4d90fe, #357ae8) !important;
+  background-image: -o-linear-gradient(top, #4d90fe, #357ae8) !important;
+  background-image: linear-gradient(top, #4d90fe, #357ae8) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-add-label-error {
+  color: red !important;
+  padding-top: 20px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-add-label-error-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-results-close-btn-visible {
+  display: block !important;
+  opacity: 0.7 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-label-result-saving-popup {
+  font-size: 14px !important;
+  -webkit-transition: opacity 218ms !important;
+  -moz-transition: opacity 218ms !important;
+  -o-transition: opacity 218ms !important;
+  transition: opacity 218ms !important;
+  border-width: 1px !important;
+  height: 14px !important;
+  opacity: 1 !important;
+  padding: 6px 16px !important;
+  background-color: #f9edbe !important;
+  border-color: #f0c36d !important;
+  color: #3c4043 !important;
+  position: fixed !important;
+  top: 10% !important;
+  left: 45% !important;
+  border-style: solid !important;
+  border-radius: 2px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-label-result-saving-popup-invisible {
+  display: none !important;
+}
+
+/* CSS for richsnippets feature. */
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-popup-box {
+  position: fixed !important;
+  z-index: 100003 !important;
+  background-color: rgba(255, 255, 255, 1) !important;
+  width: 400px !important;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 4px 16px 0 !important;
+  opacity: 1 !important;
+  display: block !important;
+  border: none !important;
+  margin: auto !important;
+  -webkit-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -moz-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -ms-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  -o-box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  box-shadow: 0 3px 10px rgba(34, 25, 25, 0.4) !important;
+  border-collapse: separate !important;
+  background: white !important;
+  padding: 30px !important;
+  width: 25% !important;
+  top: 15% !important;
+  left: 25% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: 65% !important;
+  width: 50% !important;
+  padding: 30px !important;
+  padding-bottom: 10px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-popup-box-invisible {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-showsnippet-label {
+  color: #009 !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-richsnippet-individual-snippet-box {
+  border: 1px solid #ebebeb !important;
+  padding: 15px !important;
+  margin-bottom: 20px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-richsnippet-individual-snippet-key {
+  font-size: 14px !important;
+  padding: 1px 0 6px !important;
+  color: #009 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-richsnippet-individual-snippet-data {
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -ms-flex-direction: column !important;
+  flex-direction: column !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-popup-box-title {
+  padding-bottom: 20px !important;
+  font-size: 15px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-popup-box-title-text {
+  color: #404040 !important;
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-popup-box-title-url {
+  font-weight: bold !important;
+  color: black !important;
+  display: inline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-richsnippet-individual-snippet-keyvalue {
+  display: -ms-flexbox !important;
+  display: flex !important;
+  margin-bottom: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-richsnippet-individual-snippet-keyelem {
+  font-weight: bold !important;
+  white-space: nowrap !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-richsnippet-individual-snippet-valueelem {
+  margin-left: 6px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-popup-close-button {
+  background-image: url('//www.google.com/images/nav_logo114.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: -140px -230px !important;
+  float: right !important;
+  height: 12px !important;
+  width: 12px !important;
+  top: 20px !important;
+  right: 20px !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-richsnippet-popup-box-contents {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: 88% !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-find-more-on-google {
+  display: inline-block !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-find-more-on-google-magnifier {
+  margin-right: 10px !important;
+  vertical-align: middle !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-find-more-on-google-text {
+  vertical-align: middle !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-find-more-on-google-query {
+  max-width: 200px !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-imageResult > .gsc-expansionArea {
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -ms-flex-wrap: wrap !important;
+  flex-wrap: wrap !important;
+  -ms-flex-pack: distribute !important;
+  justify-content: space-around !important;
+}
+
+/* Facet box */
+[data-design^='seeds-layout'].slc-modal .gsc-context-box {
+  font-size: 83% !important;
+  margin-top: 3px !important;
+  border-collapse: collapse !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-context-box .gsc-col {
+  padding: 1px 0 !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+
+/* UI Modernization style overrides */
+
+/* Searchbox redesign */
+[data-design^='seeds-layout'].slc-modal input.gsc-input {
+  color: #444746 !important;
+  line-height: 24px !important;
+}
+[data-design^='seeds-layout'].slc-modal .gsc-search-button {
+  display: none !important;
+}
+[data-design^='seeds-layout'].slc-modal .gsc-input-box {
+  background-color: #fff !important;
+  border: none !important;
+}
+[data-design^='seeds-layout'].slc-modal .gsc-input .gsc-input-box {
+  border-top-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-input
+  .gsc-input-box-suggestions-displayed {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gscb_a,
+[data-design^='seeds-layout'].slc-modal .gsst_a,
+[data-design^='seeds-layout'].slc-modal .gsst_b {
+  color: #444746 !important;
+  font-size: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gscb_a {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z' fill='%23444746'/></svg>")
+    center no-repeat !important;
+  height: 24px !important;
+  width: 24px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsib_a {
+  position: relative !important;
+  background-image: url("data:image/svg+xml;utf8,<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' clip-rule='evenodd' d='M14.76 13.27L20.49 19L19 20.49L13.27 14.76C12.2 15.53 10.91 16 9.5 16C5.91 16 3 13.09 3 9.5C3 5.91 5.91 3 9.5 3C13.09 3 16 5.91 16 9.5C16 10.91 15.53 12.2 14.76 13.27ZM9.5 5C7.01 5 5 7.01 5 9.5C5 11.99 7.01 14 9.5 14C11.99 14 14 11.99 14 9.5C14 7.01 11.99 5 9.5 5Z' fill='%23444746'/></svg>") !important;
+  background-position: left 16px center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Create an invisible clickable box exactly 56px wide */
+[data-design^='seeds-layout'].slc-modal .gsib_a::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  /* LINT.IfChange(searchbox_magnifier_width) */
+  width: 56px !important;
+  /* LINT.ThenChange(//depot/google3/quality/prose/element/gsearchcontrol.js) */
+  height: 100% !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsib_b {
+  box-sizing: content-box !important;
+  height: 48px !important;
+  width: 48px !important;
+  padding: 4px 4px 4px 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gssb_a table tr td {
+  height: 32px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gssb_e {
+  box-shadow: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsst_b {
+  text-align: center !important;
+}
+
+/* Organic titles */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-cursor-box
+  .gsc-cursor-current-page {
+  color: #1558d6 !important;
+}
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-title,
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-title * {
+  color: #1558d6 !important;
+}
+
+/*
+ * Let the bold text inside the result title not be the target of pointer events
+ * separately from the title.
+ */
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-title b {
+  pointer-events: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-title:hover {
+  text-decoration: underline !important;
+}
+[data-design^='seeds-layout'].slc-modal .gs-snippet {
+  color: #4d5156 !important;
+  line-height: 22px !important;
+}
+
+/* Visible URL */
+[data-design^='seeds-layout'].slc-modal .gs-webResult .gs-visibleUrl,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-visibleUrl {
+  color: #202124 !important;
+  line-height: 20px !important;
+  margin-bottom: 6px !important;
+}
+
+/* Drawer header alignment styling. */
+[data-design^='seeds-layout'].slc-modal .prose-container .cse-favicon {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .prose-container .cse-header {
+  display: none !important;
+}
+
+/* Animation for pulsing a citation card when linked from a paragraph. */
+@keyframes gsc-sge-citation-pulse-anim {
+  0% {
+    background-color: #dadce0 !important; /* Neutral highlight matching border color */
+  }
+  100% {
+    background-color: transparent !important;
+  }
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-citation-pulse {
+  animation: gsc-sge-citation-pulse-anim 2s ease-out forwards !important;
+}
+
+/**
+ * Default Theme, v6.
+ *
+ */
+
+/* Selector for entire element. */
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse {
+  border: 1px solid #fff !important;
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gsc-table-result {
+  width: auto !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse,
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gsc-table-result {
+  font-family: Arial, sans-serif !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-resultsHeader {
+  border: block !important;
+}
+
+/* Search input */
+[data-design^='seeds-layout'].slc-modal .gsc-input {
+  font-size: 16px !important;
+}
+
+/* Hide clear input X added by MSIE. */
+[data-design^='seeds-layout'].slc-modal .gsc-input::-ms-clear {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-input-box {
+  background: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-search-box
+  .gsc-input
+  > input:focus,
+[data-design^='seeds-layout'].slc-modal .gsc-input-box-focus {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  outline: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-input-box,
+[data-design^='seeds-layout'].slc-modal .gsc-input-box-hover,
+[data-design^='seeds-layout'].slc-modal .gsc-input-box-focus {
+  border: 1px solid #d2d2d2 !important;
+}
+
+/* Search button */
+[data-design^='seeds-layout'].slc-modal .gsc-search-button-v2 {
+  font-size: 0 !important;
+  padding: 6px 27px !important;
+  width: auto !important;
+  vertical-align: middle !important;
+
+  border: 1px solid #666 !important;
+  border-radius: 2px !important;
+
+  border-color: #3079ed !important;
+  background-color: #4d90fe !important;
+  background-image: linear-gradient(top, #4d90fe, #4787ed) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-search-button-v2:hover {
+  border-color: #2f5bb7 !important;
+  background-color: #357ae8 !important;
+  background-image: linear-gradient(top, #4d90fe, #357ae8) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-search-button-v2 svg {
+  fill: #fff !important;
+}
+
+/* Firefox button fix */
+[data-design^='seeds-layout'].slc-modal button::-moz-focus-inner {
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Inactive tab */
+[data-design^='seeds-layout'].slc-modal .gsc-tabHeader.gsc-tabhInactive {
+  color: #4d5156 !important;
+  background-color: #fff !important;
+}
+
+/* Active tab */
+[data-design^='seeds-layout'].slc-modal .gsc-tabHeader.gsc-tabhActive {
+  border-bottom: 3px solid #1a0dab !important;
+  color: #1a0dab !important;
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-refinementsArea {
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-refinementHeader {
+  text-decoration: none !important;
+  color: #666 !important;
+  line-height: 20px !important;
+  margin-right: 8px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-refinementHeader.gsc-refinementhActive {
+  border-bottom: 3px solid #1a0dab !important;
+  color: #1a0dab !important;
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-refinementHeader.gsc-refinementhInactive {
+  color: #4d5156 !important;
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results-wrapper-overlay {
+  background-color: #fff !important;
+}
+
+/* Inner wrapper for a result */
+[data-design^='seeds-layout'].slc-modal .gsc-webResult.gsc-result {
+  border: 1px solid #fff !important;
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-webResult.gsc-result:hover {
+  border-color: #fff !important;
+  background-color: #fff !important;
+}
+
+/* Set link colors. */
+[data-design^='seeds-layout'].slc-modal .gs-result .gs-title *,
+[data-design^='seeds-layout'].slc-modal .gsc-cursor-page,
+[data-design^='seeds-layout'].slc-modal .gs-spelling a {
+  color: #1a0dab !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-webResult.gs-result a.gs-title,
+[data-design^='seeds-layout'].slc-modal .gs-webResult.gs-result a.gs-title b,
+[data-design^='seeds-layout'].slc-modal .gs-imageResult a.gs-title,
+[data-design^='seeds-layout'].slc-modal .gs-imageResult a.gs-title b {
+  color: #1a0dab !important;
+}
+
+/* Snippet text color */
+[data-design^='seeds-layout'].slc-modal .gs-webResult .gs-snippet,
+[data-design^='seeds-layout'].slc-modal .gs-fileFormatType {
+  color: #4d5156 !important;
+}
+
+/*Promotion Settings*/
+/* The entire promo */
+[data-design^='seeds-layout'].slc-modal
+  .gsc-webResult.gsc-result.gsc-promotion {
+  background-color: #f6f6f6 !important;
+  border-color: #fff !important;
+}
+
+/* Promotion links */
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:link,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:link *,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-snippet a:link {
+  color: #1a0dab !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:visited,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:visited *,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-snippet a:visited {
+  color: #1a0dab !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:hover,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:hover *,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-snippet a:hover {
+  color: #1a0dab !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:active,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-title:active *,
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-snippet a:active {
+  color: #1a0dab !important;
+}
+
+/* Promotion snippet */
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-snippet,
+[data-design^='seeds-layout'].slc-modal
+  .gs-promotion
+  .gs-title
+  .gs-promotion-title-right,
+[data-design^='seeds-layout'].slc-modal
+  .gs-promotion
+  .gs-title
+  .gs-promotion-title-right
+  * {
+  color: #4d5156 !important;
+}
+
+/* Promotion url */
+[data-design^='seeds-layout'].slc-modal .gs-promotion .gs-visibleUrl,
+[data-design^='seeds-layout'].slc-modal .gs-webResult .gs-visibleUrl {
+  color: #202124 !important;
+}
+
+/* Style for auto-completion table
+ * .gsc-completion-selected: styling for a suggested query which the user has moused-over
+ * .gsc-completion-container: styling for the table which contains the completions
+ */
+[data-design^='seeds-layout'].slc-modal .gsc-completion-selected {
+  background: rgba(31, 31, 31, 0.08) !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-completion-container {
+  font-family: Arial, sans-serif !important;
+  font-size: 16px !important;
+  background: #fff !important;
+  border: 1px solid #d2d2d2 !important;
+  /* The top, left, and width are set in JavaScript. */
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-completion-title {
+  color: #1a0dab !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-completion-snippet {
+  color: #4d5156 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results .gsc-cursor {
+  color: #1f1f1f !important;
+  fill: #636363 !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results .gsc-cursor-box {
+  margin: 10px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-cursor-box
+  .gsc-cursor-page {
+  text-decoration: none !important;
+  color: #4d5156 !important;
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-cursor-box
+  .gsc-cursor-page:hover {
+  text-decoration: underline !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gsc-results
+  .gsc-cursor-box
+  .gsc-cursor-current-page {
+  color: #1a0dab !important;
+  background-color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-context-box .gsc-facet-label {
+  width: 65px !important;
+  padding-left: 2px !important;
+  text-decoration: underline !important;
+  color: #15c !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-context-box .gsc-chart {
+  width: 32em !important;
+  padding: 3px !important;
+  border-left: 1px solid #15c !important;
+  border-right: 1px solid #15c !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-context-box .gsc-top {
+  border-top: 1px solid #15c !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-context-box .gsc-bottom {
+  border-bottom: 1px solid #15c !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-context-box .gsc-chart div {
+  background: #15c !important;
+  height: 9px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-context-box .gsc-facet-result {
+  color: #15c !important;
+  width: 30px !important;
+  text-align: right !important;
+  padding-right: 5px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-webResult
+  .gs-title
+  .gs-title.gsc-usr-group-heading {
+  color: #15c !important;
+  cursor: pointer !important;
+}
+
+[data-design^='seeds-layout'].slc-modal
+  .gs-webResult
+  .gs-title
+  .gs-title.gsc-usr-group-heading
+  b {
+  color: #15c !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-find-more-on-google {
+  color: #1a0dab !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gcsc-find-more-on-google-magnifier {
+  fill: #1a0dab !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-sge-container-header {
+  color: #1a0dab !important;
+}
+[data-design^='seeds-layout'].slc-modal .gsc-sge-icon,
+[data-design^='seeds-layout'].slc-modal .gsc-sge-paragraph-citation-link {
+  fill: #1a0dab !important;
+}
+[data-design^='seeds-layout'].slc-modal .gsc-sge-response {
+  color: #4d5156 !important;
+}
+[data-design^='seeds-layout'].slc-modal .gsc-sge-show-more-button {
+  background-color: #1a0dab !important;
+  color: #fff !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsib_a {
+  height: 48px !important;
+  padding: 4px 10px 4px 56px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsib_b {
+  display: none !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gs-spelling,
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gs-result .gs-title,
+[data-design^='seeds-layout'].slc-modal
+  .gsc-control-cse
+  .gs-result
+  .gs-title
+  * {
+  font-size: 16px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse,
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gsc-table-result {
+  font-size: 13px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-results .gsc-cursor {
+  padding: 12px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse .gsc-option-menu {
+  left: -24px !important;
+}
+
+[data-design^='seeds-layout'].slc-modal .gsc-control-cse {
+  text-align: left !important;
+}
+
+[data-design^='seeds-layout'].slc-modal input.gsc-input {
+  border: none !important;
+  vertical-align: baseline !important;
+}

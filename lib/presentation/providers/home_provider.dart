@@ -51,15 +51,16 @@ final homeStatsProvider = Provider<HomeStats>((ref) {
     );
   }
 
-  final length = 35;
+  const length = 35;
   final startBase = DateTime(now.year, 1, 1);
   final start = currentPeriodStart(startBase, length, now);
-  final periodEndExclusive = start.add(Duration(days: length));
+  final periodEndExclusive = start.add(const Duration(days: length));
   final remaining = periodEndExclusive.difference(truncateDate(now)).inDays;
   final diffDays = truncateDate(now).difference(startBase).inDays;
   final periodIndex = diffDays < 0 ? 0 : diffDays ~/ length;
   final fallbackColors = buildAnnualScheduleColors(1);
-  final periodColor = fallbackColors.isNotEmpty ? fallbackColors.first : Colors.transparent;
+  final periodColor =
+      fallbackColors.isNotEmpty ? fallbackColors.first : Colors.transparent;
 
   return HomeStats(
     periodIndex: periodIndex,
@@ -82,7 +83,36 @@ class HomeCalendarSummary {
   });
 }
 
-final homeCalendarSummaryProvider = FutureProvider<HomeCalendarSummary>((ref) async {
+final homeMonthTotalsProvider =
+    FutureProvider.family<Map<DateTime, ({int income, int expense})>, DateTime>(
+        (ref, month) async {
+  if (!sl.isRegistered<GetTransactionsByRange>()) {
+    return <DateTime, ({int income, int expense})>{};
+  }
+
+  final firstDay = DateTime(month.year, month.month, 1);
+  final gridStart =
+      DateTime(firstDay.year, firstDay.month, 1 - firstDay.weekday % 7);
+  final lastDay = DateTime(month.year, month.month + 1, 0);
+  final gridEndExclusive = DateTime(
+      lastDay.year, lastDay.month, lastDay.day + 7 - lastDay.weekday % 7);
+  final transactions =
+      await sl<GetTransactionsByRange>()(gridStart, gridEndExclusive);
+  final totalsByDay = <DateTime, ({int income, int expense})>{};
+
+  for (final tx in transactions) {
+    final day = truncateDate(tx.date);
+    final current = totalsByDay[day] ?? (income: 0, expense: 0);
+    totalsByDay[day] = tx.type == TransactionType.income
+        ? (income: current.income + tx.amount.value, expense: current.expense)
+        : (income: current.income, expense: current.expense + tx.amount.value);
+  }
+
+  return totalsByDay;
+});
+
+final homeCalendarSummaryProvider =
+    FutureProvider<HomeCalendarSummary>((ref) async {
   final stats = ref.watch(homeStatsProvider);
   final settings = ref.watch(settingsProvider);
 
@@ -142,7 +172,9 @@ class BonusSummary {
 final bonusSummaryProvider = FutureProvider<BonusSummary>((ref) async {
   final schedule = await ref.watch(currentAnnualScheduleProvider.future);
   final settings = ref.watch(settingsProvider);
-  if (schedule == null || schedule.periods.isEmpty || !sl.isRegistered<GetTransactionsByRange>()) {
+  if (schedule == null ||
+      schedule.periods.isEmpty ||
+      !sl.isRegistered<GetTransactionsByRange>()) {
     return const BonusSummary(
       isBonusPeriod: false,
       bonusBalance: 0,
