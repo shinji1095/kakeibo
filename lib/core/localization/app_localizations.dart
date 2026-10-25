@@ -169,6 +169,8 @@ class AppLocalizations {
       'homePeriodLengthLabel': '期間長: {days}日',
       'homeDaysRemaining': '終了日まであと{days}日',
       'homeCalendarTitle': '期間カレンダー',
+      'homePeriodColorsOn': '期間の色分け：ON',
+      'homePeriodColorsOff': '期間の色分け：OFF',
       'homeBudgetRemainingLabel': 'やりくり費 残額',
       'homeBonusPlaceholder': 'ボーナス表示は未実装です（プレースホルダー）',
       'expenseAttrFixed': '固定費',
@@ -366,6 +368,8 @@ class AppLocalizations {
       'homePeriodLengthLabel': 'Length: {days} days',
       'homeDaysRemaining': '{days} days remaining',
       'homeCalendarTitle': 'Period Calendar',
+      'homePeriodColorsOn': 'Period colors: ON',
+      'homePeriodColorsOff': 'Period colors: OFF',
       'homeBudgetRemainingLabel': 'Remaining Budget',
       'homeBonusPlaceholder': 'Bonus view is not implemented (placeholder).',
       'expenseAttrFixed': 'Fixed',
@@ -557,6 +561,8 @@ class AppLocalizations {
   String get homeStartDate => _value('homeStartDate');
   String get homeEndDate => _value('homeEndDate');
   String get homeCalendarTitle => _value('homeCalendarTitle');
+  String get homePeriodColorsOn => _value('homePeriodColorsOn');
+  String get homePeriodColorsOff => _value('homePeriodColorsOff');
   String get homeBudgetRemainingLabel => _value('homeBudgetRemainingLabel');
   String get homeBonusPlaceholder => _value('homeBonusPlaceholder');
   String get csvExportTitle => _value('csvExportTitle');

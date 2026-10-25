@@ -153,8 +153,9 @@ void main() {
     final firstDay = DateTime(now.year, now.month, 1);
     final lastDay = DateTime(now.year, now.month + 1, 0);
     final gridStart = firstDay.subtract(Duration(days: firstDay.weekday % 7));
-    final gridEnd = lastDay.add(Duration(days: 6 - lastDay.weekday % 7));
-    expect(dayCells, findsNWidgets(gridEnd.difference(gridStart).inDays + 1));
+    final gridEnd =
+        DateTime(gridStart.year, gridStart.month, gridStart.day + 41);
+    expect(dayCells, findsNWidgets(42));
 
     expect(find.text('${now.year}年${now.month}月'), findsOneWidget);
     expect(find.byKey(Key(_calendarKey(firstDay))), findsOneWidget);
@@ -168,9 +169,9 @@ void main() {
     await _pumpHomePage(tester, schedule);
 
     final firstDay = DateTime(now.year, now.month, 1);
-    final lastDay = DateTime(now.year, now.month + 1, 0);
     final gridStart = firstDay.subtract(Duration(days: firstDay.weekday % 7));
-    final gridEnd = lastDay.add(Duration(days: 6 - lastDay.weekday % 7));
+    final gridEnd =
+        DateTime(gridStart.year, gridStart.month, gridStart.day + 41);
 
     expect(find.byKey(Key(_calendarKey(gridStart))), findsOneWidget);
     expect(find.byKey(Key(_calendarKey(gridEnd))), findsOneWidget);

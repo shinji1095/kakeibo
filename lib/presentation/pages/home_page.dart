@@ -56,6 +56,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final calendarSummaryAsync = ref.watch(homeCalendarSummaryProvider);
     final monthTotalsAsync =
         ref.watch(homeMonthTotalsProvider(_displayedMonth));
+    final showPeriodColors = ref.watch(homePeriodColorsEnabledProvider);
     final remainingBudget = calendarSummaryAsync.valueOrNull?.remainingBudget;
     final now = DateTime.now();
     final incomeRange = _formatRange(
@@ -111,10 +112,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                   const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) => SizedBox(
-                      height: PeriodCalendar.maxHeightForWidth(
-                        context,
-                        constraints.maxWidth,
-                      ),
+                      height: PeriodCalendar.heightForWidth(
+                          context, constraints.maxWidth),
                       child: PageView.builder(
                         key: const Key('home-month-calendar'),
                         controller: _calendarPageController,
@@ -129,11 +128,33 @@ class _HomePageState extends ConsumerState<HomePage> {
                           return Consumer(builder: (context, ref, _) {
                             final totals =
                                 ref.watch(homeMonthTotalsProvider(month));
+                            final previousSchedule = ref
+                                .watch(
+                                  annualScheduleForYearProvider(month.year - 1),
+                                )
+                                .valueOrNull;
+                            final currentSchedule = ref
+                                .watch(
+                                  annualScheduleForYearProvider(month.year),
+                                )
+                                .valueOrNull;
+                            final nextSchedule = ref
+                                .watch(
+                                  annualScheduleForYearProvider(month.year + 1),
+                                )
+                                .valueOrNull;
                             return PeriodCalendar(
                               displayedMonth: month,
                               totalsByDay: totals.valueOrNull ??
                                   const <DateTime,
                                       ({int income, int expense})>{},
+                              annualSchedules: [
+                                if (previousSchedule != null) previousSchedule,
+                                if (currentSchedule != null) currentSchedule,
+                                if (nextSchedule != null) nextSchedule,
+                              ],
+                              showPeriodColors:
+                                  ref.watch(homePeriodColorsEnabledProvider),
                               onMonthChanged: _shiftMonth,
                               onDateTap: (date) =>
                                   context.go('/input', extra: date),
@@ -148,6 +169,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                     Text(l10n.errorMessage(monthTotalsAsync.error!)),
                   ],
                   const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      key: const Key('home-period-colors-toggle'),
+                      onPressed: () {
+                        final notifier =
+                            ref.read(homePeriodColorsEnabledProvider.notifier);
+                        notifier.state = !notifier.state;
+                      },
+                      icon: Icon(showPeriodColors
+                          ? Icons.palette
+                          : Icons.palette_outlined),
+                      label: Text(showPeriodColors
+                          ? l10n.homePeriodColorsOn
+                          : l10n.homePeriodColorsOff),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(

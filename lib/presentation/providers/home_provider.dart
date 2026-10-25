@@ -28,6 +28,8 @@ class HomeStats {
   });
 }
 
+final homePeriodColorsEnabledProvider = StateProvider<bool>((ref) => true);
+
 final homeStatsProvider = Provider<HomeStats>((ref) {
   final now = DateTime.now();
   final schedule = ref.watch(currentAnnualScheduleProvider).valueOrNull;
@@ -93,9 +95,8 @@ final homeMonthTotalsProvider =
   final firstDay = DateTime(month.year, month.month, 1);
   final gridStart =
       DateTime(firstDay.year, firstDay.month, 1 - firstDay.weekday % 7);
-  final lastDay = DateTime(month.year, month.month + 1, 0);
-  final gridEndExclusive = DateTime(
-      lastDay.year, lastDay.month, lastDay.day + 7 - lastDay.weekday % 7);
+  final gridEndExclusive =
+      DateTime(gridStart.year, gridStart.month, gridStart.day + 42);
   final transactions =
       await sl<GetTransactionsByRange>()(gridStart, gridEndExclusive);
   final totalsByDay = <DateTime, ({int income, int expense})>{};
