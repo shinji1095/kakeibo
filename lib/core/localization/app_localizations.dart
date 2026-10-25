@@ -160,6 +160,15 @@ class AppLocalizations {
       'homeTitle': 'ホーム',
       'homeDescription': '固定費・特別費は暦月で管理し、やりくり費は35日/7日の期間で管理する家計簿です。7日の期間はボーナス月として扱います。',
       'homeCurrentPeriod': '現在の期間',
+      'homeSelectedPeriod': '選択中の期間',
+      'homePeriodsTitle': 'やりくり期間',
+      'homeBudgetTitle': '予算',
+      'homeMonthlyIncomeLabel': '月の収入',
+      'homeVariableTotalLabel': 'やりくり費合計',
+      'homeFixedExpensesLabel': '固定費',
+      'homeSpecialExpensesLabel': '特別費',
+      'homePeriodRemaining': '今期は残り{amount}',
+      'homeSelectedPeriodRemaining': 'この期間は残り{amount}',
       'homeIncomeLabel': '収入',
       'homeFixedSpecialLabel': '固定費・特別費',
       'homeBudgetLabel': 'やりくり費',
@@ -168,7 +177,7 @@ class AppLocalizations {
       'homeEndDate': '終了日',
       'homePeriodLengthLabel': '期間長: {days}日',
       'homeDaysRemaining': '終了日まであと{days}日',
-      'homeCalendarTitle': '期間カレンダー',
+      'homeCalendarTitle': 'カレンダー',
       'homePeriodColorsOn': '期間の色分け：ON',
       'homePeriodColorsOff': '期間の色分け：OFF',
       'homeBudgetRemainingLabel': 'やりくり費 残額',
@@ -359,6 +368,15 @@ class AppLocalizations {
       'homeDescription':
           'Fixed/special expenses are managed monthly, and the discretionary budget is managed in 35/7-day periods. The 7-day periods are treated as bonus months.',
       'homeCurrentPeriod': 'Current Period',
+      'homeSelectedPeriod': 'Selected period',
+      'homePeriodsTitle': 'Budget Periods',
+      'homeBudgetTitle': 'Budget',
+      'homeMonthlyIncomeLabel': 'Monthly income',
+      'homeVariableTotalLabel': 'Discretionary spending',
+      'homeFixedExpensesLabel': 'Fixed expenses',
+      'homeSpecialExpensesLabel': 'Special expenses',
+      'homePeriodRemaining': 'Remaining this period: {amount}',
+      'homeSelectedPeriodRemaining': 'Remaining for selected period: {amount}',
       'homeIncomeLabel': 'Income',
       'homeFixedSpecialLabel': 'Fixed/Special',
       'homeBudgetLabel': 'Budget',
@@ -367,7 +385,7 @@ class AppLocalizations {
       'homeEndDate': 'End',
       'homePeriodLengthLabel': 'Length: {days} days',
       'homeDaysRemaining': '{days} days remaining',
-      'homeCalendarTitle': 'Period Calendar',
+      'homeCalendarTitle': 'Calendar',
       'homePeriodColorsOn': 'Period colors: ON',
       'homePeriodColorsOff': 'Period colors: OFF',
       'homeBudgetRemainingLabel': 'Remaining Budget',
@@ -555,6 +573,13 @@ class AppLocalizations {
   String get homeTitle => _value('homeTitle');
   String get homeDescription => _value('homeDescription');
   String get homeCurrentPeriod => _value('homeCurrentPeriod');
+  String get homeSelectedPeriod => _value('homeSelectedPeriod');
+  String get homePeriodsTitle => _value('homePeriodsTitle');
+  String get homeBudgetTitle => _value('homeBudgetTitle');
+  String get homeMonthlyIncomeLabel => _value('homeMonthlyIncomeLabel');
+  String get homeVariableTotalLabel => _value('homeVariableTotalLabel');
+  String get homeFixedExpensesLabel => _value('homeFixedExpensesLabel');
+  String get homeSpecialExpensesLabel => _value('homeSpecialExpensesLabel');
   String get homeIncomeLabel => _value('homeIncomeLabel');
   String get homeFixedSpecialLabel => _value('homeFixedSpecialLabel');
   String get homeBudgetLabel => _value('homeBudgetLabel');
@@ -668,6 +693,12 @@ class AppLocalizations {
 
   String homePeriodLabel(int index) =>
       _format('homePeriodLabel', {'index': index.toString()});
+
+  String homePeriodRemaining(int amount) =>
+      _format('homePeriodRemaining', {'amount': formatCurrency(amount)});
+
+  String homeSelectedPeriodRemaining(int amount) =>
+      _format('homeSelectedPeriodRemaining', {'amount': formatCurrency(amount)});
 
   String languageLabel(AppLanguage language) {
     switch (language) {

@@ -110,8 +110,8 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
     if (ok == true) {
       await ref.read(deleteTransactionProvider).call(tx.id!);
       ref.invalidate(transactionsProvider);
-    ref.invalidate(homeCalendarSummaryProvider);
-    ref.invalidate(homeMonthTotalsProvider);
+      ref.invalidate(homePeriodVariableTotalProvider);
+      ref.invalidate(homeMonthSummaryProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.deletedMessage)));
       }

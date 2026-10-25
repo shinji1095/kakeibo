@@ -75,21 +75,29 @@ final homeStatsProvider = Provider<HomeStats>((ref) {
   );
 });
 
-class HomeCalendarSummary {
+class HomeMonthSummary {
   final Map<DateTime, ({int income, int expense})> totalsByDay;
-  final int remainingBudget;
+  final int income;
+  final int fixedExpenses;
+  final int specialExpenses;
 
-  const HomeCalendarSummary({
+  const HomeMonthSummary({
     required this.totalsByDay,
-    required this.remainingBudget,
+    required this.income,
+    required this.fixedExpenses,
+    required this.specialExpenses,
   });
 }
 
-final homeMonthTotalsProvider =
-    FutureProvider.family<Map<DateTime, ({int income, int expense})>, DateTime>(
-        (ref, month) async {
+final homeMonthSummaryProvider =
+    FutureProvider.family<HomeMonthSummary, DateTime>((ref, month) async {
   if (!sl.isRegistered<GetTransactionsByRange>()) {
-    return <DateTime, ({int income, int expense})>{};
+    return const HomeMonthSummary(
+      totalsByDay: <DateTime, ({int income, int expense})>{},
+      income: 0,
+      fixedExpenses: 0,
+      specialExpenses: 0,
+    );
   }
 
   final firstDay = DateTime(month.year, month.month, 1);
@@ -100,60 +108,60 @@ final homeMonthTotalsProvider =
   final transactions =
       await sl<GetTransactionsByRange>()(gridStart, gridEndExclusive);
   final totalsByDay = <DateTime, ({int income, int expense})>{};
+  var income = 0;
+  var fixedExpenses = 0;
+  var specialExpenses = 0;
 
   for (final tx in transactions) {
     final day = truncateDate(tx.date);
     final current = totalsByDay[day] ?? (income: 0, expense: 0);
-    totalsByDay[day] = tx.type == TransactionType.income
+    final isIncome = tx.type == TransactionType.income;
+    totalsByDay[day] = isIncome
         ? (income: current.income + tx.amount.value, expense: current.expense)
         : (income: current.income, expense: current.expense + tx.amount.value);
-  }
 
-  return totalsByDay;
-});
-
-final homeCalendarSummaryProvider =
-    FutureProvider<HomeCalendarSummary>((ref) async {
-  final stats = ref.watch(homeStatsProvider);
-  final settings = ref.watch(settingsProvider);
-
-  if (!sl.isRegistered<GetTransactionsByRange>()) {
-    return HomeCalendarSummary(
-      totalsByDay: <DateTime, ({int income, int expense})>{},
-      remainingBudget: settings.periodBudget,
-    );
-  }
-
-  final use = sl<GetTransactionsByRange>();
-  final list = await use(stats.periodStart, stats.periodEndExclusive);
-  final totalsByDay = <DateTime, ({int income, int expense})>{};
-  var usedBudget = 0;
-
-  for (final tx in list) {
-    final day = truncateDate(tx.date);
-    final current = totalsByDay[day] ?? (income: 0, expense: 0);
-    if (tx.type == TransactionType.income) {
-      totalsByDay[day] = (
-        income: current.income + tx.amount.value,
-        expense: current.expense,
-      );
-    } else {
-      totalsByDay[day] = (
-        income: current.income,
-        expense: current.expense + tx.amount.value,
-      );
-      final attr = tx.expenseAttribute ?? kDefaultExpenseAttribute;
-      if (attr == ExpenseAttribute.variable) {
-        usedBudget += tx.amount.value;
-      }
+    if (day.year != month.year || day.month != month.month) continue;
+    if (isIncome) {
+      income += tx.amount.value;
+      continue;
+    }
+    switch (tx.expenseAttribute ?? kDefaultExpenseAttribute) {
+      case ExpenseAttribute.variable:
+        break;
+      case ExpenseAttribute.fixed:
+        fixedExpenses += tx.amount.value;
+        break;
+      case ExpenseAttribute.bonus:
+        specialExpenses += tx.amount.value;
+        break;
     }
   }
 
-  final remaining = settings.periodBudget - usedBudget;
-  return HomeCalendarSummary(
+  return HomeMonthSummary(
     totalsByDay: totalsByDay,
-    remainingBudget: remaining,
+    income: income,
+    fixedExpenses: fixedExpenses,
+    specialExpenses: specialExpenses,
   );
+});
+
+final homePeriodVariableTotalProvider =
+    FutureProvider.family<int, ({DateTime start, DateTime endExclusive})>(
+        (ref, period) async {
+  if (!sl.isRegistered<GetTransactionsByRange>()) return 0;
+  final transactions = await sl<GetTransactionsByRange>()(
+    period.start,
+    period.endExclusive,
+  );
+  var total = 0;
+  for (final tx in transactions) {
+    if (tx.type == TransactionType.expense &&
+        (tx.expenseAttribute ?? kDefaultExpenseAttribute) ==
+            ExpenseAttribute.variable) {
+      total += tx.amount.value;
+    }
+  }
+  return total;
 });
 
 class BonusSummary {

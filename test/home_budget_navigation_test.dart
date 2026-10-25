@@ -49,6 +49,8 @@ void main() {
 
     final budgetLink = find.byKey(const Key('home-budget-link'));
     expect(budgetLink, findsOneWidget);
+    await tester.ensureVisible(budgetLink);
+    await tester.pumpAndSettle();
     await tester.tap(budgetLink);
     await tester.pumpAndSettle();
 

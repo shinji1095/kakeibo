@@ -99,8 +99,8 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
       );
     }
     ref.invalidate(transactionsProvider);
-    ref.invalidate(homeCalendarSummaryProvider);
-    ref.invalidate(homeMonthTotalsProvider);
+    ref.invalidate(homePeriodVariableTotalProvider);
+    ref.invalidate(homeMonthSummaryProvider);
   }
 
   @override

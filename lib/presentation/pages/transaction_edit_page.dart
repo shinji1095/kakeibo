@@ -93,8 +93,8 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
 
     await ref.read(updateTransactionProvider).call(updated);
     ref.invalidate(transactionsProvider);
-    ref.invalidate(homeCalendarSummaryProvider);
-    ref.invalidate(homeMonthTotalsProvider);
+    ref.invalidate(homePeriodVariableTotalProvider);
+    ref.invalidate(homeMonthSummaryProvider);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.updatedMessage)));

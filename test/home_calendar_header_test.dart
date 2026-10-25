@@ -59,11 +59,6 @@ void main() {
         overrides: [
           settingsProvider.overrideWith((ref) => SettingsNotifier()),
           currentAnnualScheduleProvider.overrideWith((ref) async => schedule),
-          homeCalendarSummaryProvider
-              .overrideWith((ref) async => const HomeCalendarSummary(
-                    totalsByDay: <DateTime, ({int income, int expense})>{},
-                    remainingBudget: 0,
-                  )),
           bonusSummaryProvider.overrideWith((ref) async => const BonusSummary(
                 isBonusPeriod: false,
                 bonusBalance: 0,
@@ -89,7 +84,7 @@ void main() {
     expect(find.byType(HomePage), findsOneWidget);
   }
 
-  testWidgets('home calendar shows labels, ranges, and matching colors',
+  testWidgets('home shows period, calendar, and budget sections',
       (WidgetTester tester) async {
     final now = DateTime.now();
     final schedule = _buildSchedule(now);
@@ -102,40 +97,25 @@ void main() {
     expect(find.text(l10n.bonusSummaryTitle), findsNothing);
     expect(find.text(l10n.bonusMonthInactive), findsNothing);
 
-    final periodLabel = find.text(l10n.homePeriodLabel(1));
-    expect(periodLabel, findsOneWidget);
-    final periodText = tester.widget<Text>(periodLabel);
-    expect(periodText.style?.color, equals(Colors.white));
-
-    expect(find.text(l10n.homeIncomeLabel), findsOneWidget);
-    expect(find.text(l10n.homeFixedSpecialLabel), findsOneWidget);
-    expect(find.text(l10n.homeBudgetLabel), findsOneWidget);
-
-    final prevStart = DateTime(now.year, now.month - 1, 1);
-    final prevEnd = DateTime(now.year, now.month, 0);
-    final currentStart = DateTime(now.year, now.month, 1);
-    final currentEnd = DateTime(now.year, now.month + 1, 0);
-    final incomeRange =
-        '${l10n.formatShortDate(prevStart)}${l10n.rangeSeparator}${l10n.formatShortDate(prevEnd)}';
-    final fixedRange =
-        '${l10n.formatShortDate(currentStart)}${l10n.rangeSeparator}${l10n.formatShortDate(currentEnd)}';
-    expect(find.text(incomeRange), findsOneWidget);
-    expect(find.text(fixedRange), findsOneWidget);
+    expect(find.text(l10n.homePeriodsTitle), findsOneWidget);
+    expect(find.text(l10n.homeCalendarTitle), findsOneWidget);
+    expect(find.text(l10n.homeBudgetTitle), findsOneWidget);
+    expect(find.text(l10n.homePeriodLabel(1)), findsOneWidget);
+    expect(find.text('${now.year}'), findsOneWidget);
+    expect(find.text(l10n.homeMonthlyIncomeLabel), findsOneWidget);
+    expect(find.text(l10n.homeVariableTotalLabel), findsOneWidget);
+    expect(find.text(l10n.homeFixedExpensesLabel), findsOneWidget);
+    expect(find.text(l10n.homeSpecialExpensesLabel), findsOneWidget);
+    expect(find.text(l10n.homePeriodRemaining(50000)), findsOneWidget);
 
     final expectedColor =
         buildAnnualScheduleColors(schedule.periods.length).first;
-    final periodContainer =
-        tester.widget<Container>(find.byKey(const Key('home-period-label')));
+    final periodContainer = tester.widget<Container>(find.descendant(
+      of: find.byKey(Key('home-period-${now.year}-0')),
+      matching: find.byType(Container),
+    ));
     final periodDecoration = periodContainer.decoration as BoxDecoration?;
     expect(periodDecoration?.color, expectedColor);
-    final colorMatches = find.byWidgetPredicate((widget) {
-      if (widget is Container) {
-        final decoration = widget.decoration;
-        return decoration is BoxDecoration && decoration.color == expectedColor;
-      }
-      return false;
-    });
-    expect(colorMatches, findsOneWidget);
 
     final todayCell =
         tester.widget<Container>(find.byKey(Key(_calendarKey(now))));
@@ -152,9 +132,6 @@ void main() {
     });
     final firstDay = DateTime(now.year, now.month, 1);
     final lastDay = DateTime(now.year, now.month + 1, 0);
-    final gridStart = firstDay.subtract(Duration(days: firstDay.weekday % 7));
-    final gridEnd =
-        DateTime(gridStart.year, gridStart.month, gridStart.day + 41);
     expect(dayCells, findsNWidgets(42));
 
     expect(find.text('${now.year}年${now.month}月'), findsOneWidget);
