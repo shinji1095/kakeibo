@@ -11,10 +11,14 @@ import 'package:kakeibo/presentation/widgets/expense_attribute_icon_selector.dar
 
 class InputPage extends ConsumerStatefulWidget {
   final DateTime? initialDate;
+  final TransactionType initialType;
+  final ExpenseAttribute initialExpenseAttribute;
 
   const InputPage({
     super.key,
     this.initialDate,
+    this.initialType = TransactionType.expense,
+    this.initialExpenseAttribute = kDefaultExpenseAttribute,
   });
 
   @override
@@ -29,13 +33,18 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
   late DateTime _date;
   int? _expenseCategoryId;
   int? _incomeCategoryId;
-  ExpenseAttribute _expenseAttribute = kDefaultExpenseAttribute;
+  late ExpenseAttribute _expenseAttribute;
 
   @override
   void initState() {
     super.initState();
     _date = widget.initialDate ?? DateTime.now();
-    _tab = TabController(length: 2, vsync: this);
+    _expenseAttribute = widget.initialExpenseAttribute;
+    _tab = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialType == TransactionType.income ? 1 : 0,
+    );
   }
 
   @override

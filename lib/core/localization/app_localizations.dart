@@ -166,8 +166,8 @@ class AppLocalizations {
       'homeSelectedPeriod': '選択中の期間',
       'homePeriodsTitle': 'やりくり期間',
       'homeBudgetTitle': '予算',
-      'homeMonthlyIncomeLabel': '月の収入',
-      'homeVariableTotalLabel': 'やりくり費合計',
+      'homeMonthlyIncomeLabel': '月収',
+      'homeVariableTotalLabel': 'やりくり費',
       'homeFixedExpensesLabel': '固定費',
       'homeSpecialExpensesLabel': '特別費',
       'homePeriodRemaining': '今期は残り{amount}',
@@ -188,7 +188,7 @@ class AppLocalizations {
       'homeDailyExpenseTotal': '支出',
       'homeDailyIncome': 'この日の収入',
       'homeDailyBudgetRatioLabel': 'やりくり費（支出 / 日割り目安）',
-      'homeDailyBudgetRatio': '{spent} / {target}円',
+      'currencyRatio': '{spent} / {target}円',
       'homeDailyBudgetOver': '目安を{amount}超過',
       'homeDailyInput': 'この日に入力',
       'homeBudgetRemainingLabel': 'やりくり費 残額',
@@ -406,7 +406,7 @@ class AppLocalizations {
       'homeDailyExpenseTotal': 'Expenses',
       'homeDailyIncome': 'Income for this day',
       'homeDailyBudgetRatioLabel': 'Discretionary spending / daily target',
-      'homeDailyBudgetRatio': '{spent} / {target} JPY',
+      'currencyRatio': '{spent} / {target} JPY',
       'homeDailyBudgetOver': '{amount} over daily target',
       'homeDailyInput': 'Add for this day',
       'homeBudgetRemainingLabel': 'Remaining Budget',
@@ -751,9 +751,9 @@ class AppLocalizations {
   String homeDailyBudgetOver(int amount) =>
       _format('homeDailyBudgetOver', {'amount': formatCurrency(amount)});
 
-  String homeDailyBudgetRatio(int? spent, int? target) {
+  String formatCurrencyRatio(int? spent, int? target) {
     if (spent == null || target == null) return '—';
-    return _format('homeDailyBudgetRatio', {
+    return _format('currencyRatio', {
       'spent': spent.toString(),
       'target': target.toString(),
     });

@@ -68,9 +68,21 @@ final _router = GoRouter(
       path: '/input',
       pageBuilder: (ctx, st) {
         final date = st.extra is DateTime ? st.extra as DateTime : null;
+        final type = st.uri.queryParameters['type'] == 'income'
+            ? TransactionType.income
+            : TransactionType.expense;
+        final attribute = switch (st.uri.queryParameters['attribute']) {
+          'fixed' => ExpenseAttribute.fixed,
+          'bonus' => ExpenseAttribute.bonus,
+          _ => ExpenseAttribute.variable,
+        };
         return NoTransitionPage<void>(
           key: st.pageKey,
-          child: InputPage(initialDate: date),
+          child: InputPage(
+            initialDate: date,
+            initialType: type,
+            initialExpenseAttribute: attribute,
+          ),
         );
       },
       name: 'input',

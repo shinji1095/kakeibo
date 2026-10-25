@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/annual_schedule.dart';
+import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
 import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
@@ -507,18 +508,20 @@ class _HomePageState extends ConsumerState<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(l10n.homeSelectedPeriod),
-                    if (spentThisPeriod != null)
-                      Expanded(
-                        child: Text(
-                          '${l10n.formatCurrency(spentThisPeriod)} / ${l10n.formatCurrency(periodBudget)}',
-                          textAlign: TextAlign.end,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    Expanded(
+                      child: Text(
+                        l10n.formatCurrencyRatio(spentThisPeriod, periodBudget),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                    ),
+                    IconButton(
+                      key: const Key('home-budget-link'),
+                      tooltip: l10n.budgetSettingsTitle,
+                      onPressed: () => context.push('/settings/budget'),
+                      icon: const Icon(Icons.chevron_right),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -537,50 +540,47 @@ class _HomePageState extends ConsumerState<HomePage> {
                 _AmountRow(
                   label: l10n.homeMonthlyIncomeLabel,
                   amount: monthSummaryAsync.valueOrNull?.income,
+                  onTap: () =>
+                      context.go('/input?type=income', extra: _selectedDate),
                 ),
                 _AmountRow(
                   label: l10n.homeVariableTotalLabel,
                   amount: spentThisPeriod,
+                  onTap: () => context.go(
+                    '/input?attribute=${ExpenseAttribute.variable.name}',
+                    extra: _selectedDate,
+                  ),
                 ),
                 _AmountRow(
                   label: l10n.homeFixedExpensesLabel,
                   amount: monthSummaryAsync.valueOrNull?.fixedExpenses,
+                  onTap: () => context.go(
+                    '/input?attribute=${ExpenseAttribute.fixed.name}',
+                    extra: _selectedDate,
+                  ),
                 ),
                 _AmountRow(
                   label: l10n.homeSpecialExpensesLabel,
                   amount: monthSummaryAsync.valueOrNull?.specialExpenses,
+                  onTap: () => context.go(
+                    '/input?attribute=${ExpenseAttribute.bonus.name}',
+                    extra: _selectedDate,
+                  ),
                 ),
                 const Divider(height: 24),
-                InkWell(
-                  key: const Key('home-budget-link'),
-                  borderRadius: BorderRadius.circular(8),
-                  onTap: () => context.push('/settings/budget'),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            remainingBudget == null
-                                ? l10n.homeBudgetRemainingLabel
-                                : isCurrentPeriod
-                                    ? l10n.homePeriodRemaining(remainingBudget)
-                                    : l10n.homeSelectedPeriodRemaining(
-                                        remainingBudget),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  color: remainingBudget != null &&
-                                          remainingBudget < 0
-                                      ? Theme.of(context).colorScheme.error
-                                      : null,
-                                ),
-                          ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Text(
+                    remainingBudget == null
+                        ? l10n.homeBudgetRemainingLabel
+                        : isCurrentPeriod
+                            ? l10n.homePeriodRemaining(remainingBudget)
+                            : l10n.homeSelectedPeriodRemaining(remainingBudget),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: remainingBudget != null && remainingBudget < 0
+                              ? Theme.of(context).colorScheme.error
+                              : null,
                         ),
-                        const Icon(Icons.chevron_right),
-                      ],
-                    ),
                   ),
                 ),
                 if (periodTotalAsync.hasError) ...[
@@ -710,7 +710,7 @@ class _DailyExpenseSummary extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           Text(
-            l10n.homeDailyBudgetRatio(variableExpense, dailyTarget),
+            l10n.formatCurrencyRatio(variableExpense, dailyTarget),
             key: const Key('home-daily-budget-ratio'),
             style: Theme.of(context).textTheme.titleMedium,
           ),
@@ -742,21 +742,29 @@ class _DailyExpenseSummary extends StatelessWidget {
 class _AmountRow extends StatelessWidget {
   final String label;
   final int? amount;
+  final VoidCallback? onTap;
 
-  const _AmountRow({required this.label, required this.amount});
+  const _AmountRow({required this.label, required this.amount, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
+    final content = Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(child: Text(label)),
           Text(amount == null ? '—' : l10n.formatCurrency(amount!)),
+          if (onTap != null) const Icon(Icons.chevron_right, size: 18),
         ],
       ),
+    );
+    if (onTap == null) return content;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: content,
     );
   }
 }
