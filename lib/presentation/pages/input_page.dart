@@ -116,7 +116,6 @@ class _InputPageState extends ConsumerState<InputPage> with SingleTickerProvider
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AppScaffold(
-      title: l10n.inputTitle,
       currentIndex: 2,
       body: Column(
         children: [

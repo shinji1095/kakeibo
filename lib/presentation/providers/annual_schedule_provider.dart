@@ -2,15 +2,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakeibo/core/di/injector.dart';
 import 'package:kakeibo/domain/entities/annual_schedule.dart';
 import 'package:kakeibo/domain/usecases/get_annual_schedule.dart';
-import 'package:kakeibo/domain/usecases/set_annual_schedule_bonus_periods.dart';
+import 'package:kakeibo/domain/usecases/save_annual_schedule.dart';
+import 'package:kakeibo/domain/usecases/annual_schedule_generator.dart';
 
-final annualSchedulePageYearProvider = StateProvider<int>((ref) => DateTime.now().year);
+final annualSchedulePageYearProvider =
+    StateProvider<int>((ref) => DateTime.now().year);
 
 const int annualScheduleYearsAroundNow = 5;
 
-final annualScheduleForYearProvider = FutureProvider.family<AnnualSchedule?, int>((ref, year) async {
+DateTime defaultAnnualStartDate(int year) =>
+    AnnualScheduleGenerator.defaultStartDate(year);
+
+final annualScheduleForYearProvider =
+    FutureProvider.family<AnnualSchedule?, int>((ref, year) async {
   if (!sl.isRegistered<GetAnnualSchedule>()) return null;
-  final startDate = DateTime(year, 1, 1);
+  final startDate = defaultAnnualStartDate(year);
   final usecase = sl<GetAnnualSchedule>();
   return usecase(year: year, startDate: startDate, weekStart: 0);
 });
@@ -22,12 +28,13 @@ final preloadAnnualSchedulesProvider = FutureProvider<void>((ref) async {
   for (var year = now.year - annualScheduleYearsAroundNow;
       year <= now.year + annualScheduleYearsAroundNow;
       year++) {
-    final startDate = DateTime(year, 1, 1);
+    final startDate = defaultAnnualStartDate(year);
     await usecase(year: year, startDate: startDate, weekStart: 0);
   }
 });
 
-final annualSchedulesAroundNowProvider = Provider<Map<int, AnnualSchedule>>((ref) {
+final annualSchedulesAroundNowProvider =
+    Provider<Map<int, AnnualSchedule>>((ref) {
   final now = DateTime.now();
   final map = <int, AnnualSchedule>{};
   for (var year = now.year - annualScheduleYearsAroundNow;
@@ -41,53 +48,35 @@ final annualSchedulesAroundNowProvider = Provider<Map<int, AnnualSchedule>>((ref
   return map;
 });
 
-final currentAnnualScheduleProvider = FutureProvider<AnnualSchedule?>((ref) async {
-  final year = DateTime.now().year;
-  return ref.watch(annualScheduleForYearProvider(year).future);
+final currentAnnualScheduleProvider =
+    FutureProvider<AnnualSchedule?>((ref) async {
+  final now = DateTime.now();
+  final schedules = <AnnualSchedule>[];
+  for (final year in [now.year - 1, now.year, now.year + 1]) {
+    final schedule =
+        await ref.watch(annualScheduleForYearProvider(year).future);
+    if (schedule != null) schedules.add(schedule);
+  }
+  schedules.sort((a, b) => b.startDate.compareTo(a.startDate));
+  for (final schedule in schedules) {
+    if (!now.isBefore(schedule.startDate) &&
+        !now.isAfter(schedule.periods.last.endDate)) {
+      return schedule;
+    }
+  }
+  if (schedules.isEmpty) return null;
+  return schedules.firstWhere(
+    (schedule) => !now.isBefore(schedule.startDate),
+    orElse: () => schedules.last,
+  );
 });
 
-final setAnnualScheduleBonusPeriodsProvider = Provider<SetAnnualScheduleBonusPeriods>(
-  (ref) => sl<SetAnnualScheduleBonusPeriods>(),
+final annualScheduleGeneratorProvider = Provider<AnnualScheduleGenerator>(
+  (ref) => sl.isRegistered<AnnualScheduleGenerator>()
+      ? sl<AnnualScheduleGenerator>()
+      : AnnualScheduleGenerator(),
 );
 
-class AnnualScheduleCountStatus {
-  static const int expected35Default = 10;
-  static const int expected7Default = 2;
-
-  final int count35;
-  final int count7;
-  final int expected35;
-  final int expected7;
-
-  const AnnualScheduleCountStatus({
-    required this.count35,
-    required this.count7,
-    required this.expected35,
-    required this.expected7,
-  });
-
-  bool get isValid => count35 == expected35 && count7 == expected7;
-
-  factory AnnualScheduleCountStatus.fromSchedule(AnnualSchedule schedule) {
-    final count35 = schedule.periods.where((period) => period.days == 35).length;
-    final count7 = schedule.periods.where((period) => period.days == 7).length;
-    return AnnualScheduleCountStatus(
-      count35: count35,
-      count7: count7,
-      expected35: expected35Default,
-      expected7: expected7Default,
-    );
-  }
-}
-
-final annualScheduleCountStatusProvider = Provider.family<AnnualScheduleCountStatus?, int>((ref, year) {
-  final schedule = ref.watch(annualScheduleForYearProvider(year)).valueOrNull;
-  if (schedule == null) return null;
-  return AnnualScheduleCountStatus.fromSchedule(schedule);
-});
-
-final currentAnnualScheduleCountStatusProvider = Provider<AnnualScheduleCountStatus?>((ref) {
-  final schedule = ref.watch(currentAnnualScheduleProvider).valueOrNull;
-  if (schedule == null) return null;
-  return AnnualScheduleCountStatus.fromSchedule(schedule);
-});
+final saveAnnualScheduleProvider = Provider<SaveAnnualSchedule>(
+  (ref) => sl<SaveAnnualSchedule>(),
+);

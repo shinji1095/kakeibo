@@ -152,7 +152,6 @@ class _TransactionListPageState extends ConsumerState<TransactionListPage> {
     );
 
     return AppScaffold(
-      title: l10n.listTitle,
       currentIndex: 1,
       body: Column(
         children: [

@@ -23,14 +23,17 @@ class Transactions extends Table {
   TextColumn get memo => text().withDefault(const Constant(''))();
   IntColumn get categoryId => integer().references(Categories, #id)();
   IntColumn get type => integer()(); // 0: expense, 1: income
-  IntColumn get expenseAttribute =>
-      integer().withDefault(const Constant(1))(); // 0: fixed, 1: variable, 2: bonus
+  IntColumn get expenseAttribute => integer()
+      .withDefault(const Constant(1))(); // 0: fixed, 1: variable, 2: bonus
 }
 
 class AnnualSchedules extends Table {
   IntColumn get year => integer()();
   DateTimeColumn get startDate => dateTime()();
   IntColumn get weekStart => integer()(); // 0=Mon..6=Sun
+  TextColumn get bonusConfig => text().withDefault(const Constant(''))();
+  TextColumn get sixWeekPeriods => text().withDefault(const Constant(''))();
+  IntColumn get periodBudget => integer().withDefault(const Constant(50000))();
 
   @override
   Set<Column> get primaryKey => {year};
@@ -40,7 +43,7 @@ class AnnualPeriods extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get scheduleYear => integer().references(AnnualSchedules, #year)();
   IntColumn get periodIndex => integer()();
-  IntColumn get days => integer()(); // 35 or 7
+  IntColumn get days => integer()(); // 0, 7, 35 or 42
 }
 
 class AnnualBonusOverrides extends Table {
@@ -91,13 +94,18 @@ const List<_SeedCategory> _defaultCategories = [
 
 String _seedKey(int type, String name) => '$type:$name';
 
-
-@DriftDatabase(tables: [Categories, Transactions, AnnualSchedules, AnnualPeriods, AnnualBonusOverrides])
+@DriftDatabase(tables: [
+  Categories,
+  Transactions,
+  AnnualSchedules,
+  AnnualPeriods,
+  AnnualBonusOverrides
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -115,15 +123,22 @@ class AppDatabase extends _$AppDatabase {
           if (from < 4) {
             await m.createTable(annualBonusOverrides);
           }
+          if (from < 5) {
+            await m.addColumn(annualSchedules, annualSchedules.bonusConfig);
+            await m.addColumn(annualSchedules, annualSchedules.sixWeekPeriods);
+            await m.addColumn(annualSchedules, annualSchedules.periodBudget);
+          }
         },
       );
 
   // Seed default categories if missing.
   Future<void> ensureSeeded() async {
     var rows = await select(categories).get();
-    final hasTransportFee = rows.any((row) => row.type == 0 && row.name == '交通費');
+    final hasTransportFee =
+        rows.any((row) => row.type == 0 && row.name == '交通費');
     if (!hasTransportFee) {
-      final legacyTransport = rows.where((row) => row.type == 0 && row.name == '交通').toList();
+      final legacyTransport =
+          rows.where((row) => row.type == 0 && row.name == '交通').toList();
       if (legacyTransport.isNotEmpty) {
         await batch((b) {
           for (final row in legacyTransport) {

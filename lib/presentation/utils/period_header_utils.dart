@@ -13,7 +13,8 @@ String buildPeriodHeaderTitle({
   if (basis == RangeBasis.month) {
     return _formatYearMonth(l10n, rangeStart);
   }
-  final periodIndex = _resolvePeriodIndex(schedule, rangeStart, rangeEndExclusive);
+  final periodIndex =
+      _resolvePeriodIndex(schedule, rangeStart, rangeEndExclusive);
   return _formatYearPeriod(l10n, rangeStart.year, periodIndex);
 }
 
@@ -37,7 +38,8 @@ String buildRangeLegendLabel({
   if (basis == RangeBasis.month) {
     return l10n.formatMonth(rangeStart.month);
   }
-  final periodIndex = _resolvePeriodIndex(schedule, rangeStart, rangeEndExclusive);
+  final periodIndex =
+      _resolvePeriodIndex(schedule, rangeStart, rangeEndExclusive);
   return _formatPeriodLabel(l10n, periodIndex);
 }
 
@@ -48,7 +50,7 @@ int _resolvePeriodIndex(
 ) {
   if (schedule != null && schedule.periods.isNotEmpty) {
     final match = schedule.periods.firstWhere(
-      (period) => period.startDate == rangeStart,
+      (period) => period.days > 0 && period.startDate == rangeStart,
       orElse: () => resolveSchedulePeriod(schedule.periods, rangeStart),
     );
     return match.index + 1;

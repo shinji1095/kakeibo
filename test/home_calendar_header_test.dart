@@ -58,6 +58,8 @@ void main() {
       ProviderScope(
         overrides: [
           settingsProvider.overrideWith((ref) => SettingsNotifier()),
+          annualScheduleForYearProvider.overrideWith(
+              (ref, year) async => year == schedule.year ? schedule : null),
           currentAnnualScheduleProvider.overrideWith((ref) async => schedule),
           bonusSummaryProvider.overrideWith((ref) async => const BonusSummary(
                 isBonusPeriod: false,
@@ -98,24 +100,33 @@ void main() {
     expect(find.text(l10n.bonusMonthInactive), findsNothing);
 
     expect(find.text(l10n.homePeriodsTitle), findsOneWidget);
+    expect(find.byKey(const Key('home-display-mode-toggle')), findsOneWidget);
+    expect(find.byKey(const Key('home-period-date-table')), findsNothing);
+    expect(find.text(l10n.homeMonthColorsLabel), findsOneWidget);
     expect(find.text(l10n.homeCalendarTitle), findsOneWidget);
     expect(find.text(l10n.homeBudgetTitle), findsOneWidget);
-    expect(find.text(l10n.homeTimelinePeriodLabel(1)), findsOneWidget);
+    expect(find.byKey(const Key('home-period-calendar')), findsOneWidget);
+    expect(find.byKey(Key('home-month-choice-${now.year}-${now.month}')),
+        findsOneWidget);
     expect(find.text('${now.year}'), findsOneWidget);
     expect(find.text(l10n.homeMonthlyIncomeLabel), findsOneWidget);
     expect(find.text(l10n.homeVariableTotalLabel), findsOneWidget);
     expect(find.text(l10n.homeFixedExpensesLabel), findsOneWidget);
     expect(find.text(l10n.homeSpecialExpensesLabel), findsOneWidget);
-    expect(find.text(l10n.homePeriodRemaining(50000)), findsOneWidget);
+    expect(find.byKey(const Key('home-budget-days-remaining')), findsOneWidget);
+    expect(find.text(l10n.formatYenAmount(50000)), findsOneWidget);
+    expect(find.text(l10n.homeRemainingLabel), findsNWidgets(2));
+    expect(find.text(' / ${l10n.homeBudgetUnitWeek}'), findsOneWidget);
+    expect(find.text(' / ${l10n.homeBudgetUnitMonth}'), findsOneWidget);
+    expect(find.textContaining('この期間は残り'), findsNothing);
 
-    final expectedColor =
-        buildAnnualScheduleColors(schedule.periods.length).first;
-    final periodContainer = tester.widget<Container>(find.descendant(
-      of: find.byKey(Key('home-period-${now.year}-0')),
+    final expectedColor = buildAnnualScheduleColors(12)[now.month - 1];
+    final monthContainer = tester.widget<Container>(find.descendant(
+      of: find.byKey(Key('home-month-choice-${now.year}-${now.month}')),
       matching: find.byType(Container),
     ));
-    final periodDecoration = periodContainer.decoration as BoxDecoration?;
-    expect(periodDecoration?.color, expectedColor);
+    final monthDecoration = monthContainer.decoration as BoxDecoration?;
+    expect(monthDecoration?.color, expectedColor);
 
     final todayCell =
         tester.widget<Container>(find.byKey(Key(_calendarKey(now))));
@@ -132,11 +143,41 @@ void main() {
     });
     final firstDay = DateTime(now.year, now.month, 1);
     final lastDay = DateTime(now.year, now.month + 1, 0);
-    expect(dayCells, findsNWidgets(42));
+    expect(dayCells, findsNWidgets(35));
+    final surface =
+        Theme.of(tester.element(find.byType(HomePage))).colorScheme.surface;
+    expect(todayDecoration?.color,
+        Color.alphaBlend(expectedColor.withAlpha(110), surface));
 
+    expect(find.text(l10n.formatLongDate(now)), findsOneWidget);
+    expect(
+        tester
+            .widget<Text>(find.byKey(const Key('home-budget-period-range')))
+            .data,
+        '${l10n.formatMonthDay(schedule.periods[0].startDate)} - ${l10n.formatMonthDay(schedule.periods[0].endDate)}');
+    expect(find.byKey(const Key('home-budget-link')), findsNothing);
+    expect(find.byKey(const Key('home-selected-day-total')), findsNothing);
+    expect(
+        find.byKey(const Key('home-weekly-target-progress')), findsOneWidget);
+    await tester.tap(find.text(l10n.homeModeMonth));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('home-period-timeline')), findsOneWidget);
+    expect(find.text(l10n.homePeriodColorsLabel), findsOneWidget);
     expect(find.text('${now.year}年${now.month}月'), findsOneWidget);
     expect(find.byKey(Key(_calendarKey(firstDay))), findsOneWidget);
     expect(find.byKey(Key(_calendarKey(lastDay))), findsOneWidget);
+
+    final periodColor =
+        buildAnnualScheduleColors(schedule.periods.length).first;
+    final periodCircle = tester.widget<Container>(find.descendant(
+      of: find.byKey(Key('home-period-${now.year}-0')),
+      matching: find.byType(Container),
+    ));
+    expect((periodCircle.decoration as BoxDecoration).color, periodColor);
+    final firstDayCell =
+        tester.widget<Container>(find.byKey(Key(_calendarKey(firstDay))));
+    expect((firstDayCell.decoration as BoxDecoration).color,
+        Color.alphaBlend(periodColor.withAlpha(110), surface));
   });
 
   testWidgets('home calendar shows the whole current month',
@@ -144,6 +185,8 @@ void main() {
     final now = DateTime.now();
     final schedule = _buildSchedule(now);
     await _pumpHomePage(tester, schedule);
+    await tester.tap(find.text('暦月'));
+    await tester.pumpAndSettle();
 
     final firstDay = DateTime(now.year, now.month, 1);
     final gridStart = firstDay.subtract(Duration(days: firstDay.weekday % 7));
@@ -164,6 +207,8 @@ void main() {
       (WidgetTester tester) async {
     final now = DateTime.now();
     await _pumpHomePage(tester, _buildSchedule(now));
+    await tester.tap(find.text('暦月'));
+    await tester.pumpAndSettle();
 
     final nextMonth = DateTime(now.year, now.month + 1, 1);
     await tester.fling(find.byKey(const Key('home-month-calendar')),
@@ -179,39 +224,78 @@ void main() {
         const Offset(300, 0), 1000);
     await tester.pumpAndSettle();
     expect(find.text('${now.year}年${now.month}月'), findsOneWidget);
+
+    await tester.fling(find.byKey(const Key('home-month-calendar')),
+        const Offset(-300, 0), 1000);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('home-calendar-today')));
+    await tester.pumpAndSettle();
+    expect(find.text('${now.year}年${now.month}月'), findsOneWidget);
   });
 
-  testWidgets('month navigation crosses the year boundary',
+  testWidgets('period calendar moves by swiping', (WidgetTester tester) async {
+    final now = DateTime.now();
+    final schedule = _buildSchedule(now);
+    await _pumpHomePage(tester, schedule);
+    await tester.fling(find.byKey(const Key('home-period-calendar')),
+        const Offset(-300, 0), 1000);
+    await tester.pumpAndSettle();
+    final l10n = AppLocalizations.of(tester.element(find.byType(HomePage)));
+    expect(find.byKey(const Key('home-period-date-table')), findsNothing);
+    expect(find.text('${schedule.year} · ${l10n.homePeriodLabel(2)}'),
+        findsOneWidget);
+    expect(find.byKey(const Key('home-calendar-today')), findsOneWidget);
+    expect(find.byKey(const Key('home-previous-month')), findsNothing);
+    expect(find.byKey(const Key('home-next-month')), findsNothing);
+    expect(
+        tester
+            .widget<Text>(find.byKey(const Key('home-budget-days-remaining')))
+            .data,
+        l10n.homeCountdownDays(schedule.periods[1].days - 1));
+  });
+
+  testWidgets('tapping a day selects it after swiping away from today',
       (WidgetTester tester) async {
-    var month = DateTime(2026, 12);
-    await tester.pumpWidget(MaterialApp(
-      locale: const Locale('ja', 'JP'),
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: Scaffold(
-        body: StatefulBuilder(
-          builder: (context, setState) => PeriodCalendar(
-            displayedMonth: month,
-            totalsByDay: const {},
-            onMonthChanged: (offset) => setState(() {
-              month = DateTime(month.year, month.month + offset);
-            }),
-          ),
-        ),
-      ),
-    ));
+    final now = DateTime.now();
+    final schedule = _buildSchedule(now);
+    await _pumpHomePage(tester, schedule);
+
+    await tester.fling(find.byKey(const Key('home-period-calendar')),
+        const Offset(-300, 0), 1000);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('home-next-month')));
+    final date = schedule.periods[1].startDate.add(const Duration(days: 10));
+    final dateCell = find.byKey(Key(_calendarKey(date)));
+    expect(dateCell, findsOneWidget);
+    await tester.tap(dateCell);
     await tester.pumpAndSettle();
-    expect(find.text('2027年1月'), findsOneWidget);
+
+    final l10n = AppLocalizations.of(tester.element(find.byType(HomePage)));
     expect(
-        find.byKey(Key(_calendarKey(DateTime(2027, 1, 31)))), findsOneWidget);
+        tester.widget<Text>(find.byKey(const Key('home-selected-date'))).data,
+        l10n.formatLongDate(date));
+    expect(
+        tester
+            .widget<Text>(find.byKey(const Key('home-budget-days-remaining')))
+            .data,
+        l10n.homeCountdownDays(schedule.periods[1].days - 11));
+    final decoration =
+        tester.widget<Container>(dateCell).decoration as BoxDecoration;
+    expect((decoration.border as Border).top.width, 3);
+  });
+
+  test('period calendar uses only the weeks in each period', () {
+    AnnualSchedulePeriod periodWithDays(int days) => AnnualSchedulePeriod(
+          index: 0,
+          days: days,
+          startDate: DateTime(2026, 1, 1),
+          endDate: DateTime(2026, 1, days),
+        );
+
+    expect(PeriodCalendar.rowCountForPeriod(periodWithDays(7)), 1);
+    expect(PeriodCalendar.rowCountForPeriod(periodWithDays(35)), 5);
+    expect(PeriodCalendar.rowCountForPeriod(periodWithDays(36)), 6);
+    expect(PeriodCalendar.rowCountForPeriod(periodWithDays(42)), 6);
   });
 }
 

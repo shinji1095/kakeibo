@@ -149,7 +149,6 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     );
 
     return AppScaffold(
-      title: l10n.trendTitle,
       currentIndex: 4,
       body: ListView(
         padding: EdgeInsets.zero,

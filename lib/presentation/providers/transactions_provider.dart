@@ -16,7 +16,8 @@ final periodOffsetProvider = StateProvider<int>((ref) => 0);
 
 enum TrendMetric { balance, income, expense }
 
-final trendMetricProvider = StateProvider<TrendMetric>((ref) => TrendMetric.balance);
+final trendMetricProvider =
+    StateProvider<TrendMetric>((ref) => TrendMetric.balance);
 final trendShowAmountsProvider = StateProvider<bool>((ref) => true);
 
 final expenseAttributeFilterProvider = StateProvider<Set<ExpenseAttribute>>(
@@ -25,7 +26,8 @@ final expenseAttributeFilterProvider = StateProvider<Set<ExpenseAttribute>>(
 
 enum RangeBasis { period, month }
 
-final rangeBasisProvider = StateProvider<RangeBasis>((ref) => RangeBasis.period);
+final rangeBasisProvider =
+    StateProvider<RangeBasis>((ref) => RangeBasis.period);
 
 List<AnnualSchedule> _sortedSchedules(Map<int, AnnualSchedule> schedules) {
   final list = schedules.values.toList()
@@ -39,6 +41,7 @@ List<({DateTime start, DateTime end})> _collectScheduleRanges(
   final ranges = <({DateTime start, DateTime end})>[];
   for (final schedule in schedules) {
     for (final period in schedule.periods) {
+      if (period.days == 0) continue;
       ranges.add((
         start: period.startDate,
         end: period.endDate.add(const Duration(days: 1)),
@@ -87,43 +90,57 @@ final periodRangeProvider = Provider<({DateTime start, DateTime end})>((ref) {
   final ranges = _collectScheduleRanges(schedules);
   final currentIndex = _findRangeIndex(ranges, DateTime.now());
   if (currentIndex >= 0) {
-    final targetIndex = (currentIndex + offset).clamp(0, ranges.length - 1).toInt();
+    final targetIndex =
+        (currentIndex + offset).clamp(0, ranges.length - 1).toInt();
     final target = ranges[targetIndex];
     return (start: target.start, end: target.end);
   }
 
   final schedule = ref.watch(currentAnnualScheduleProvider).valueOrNull;
   if (schedule != null && schedule.periods.isNotEmpty) {
-    final current = resolveSchedulePeriod(schedule.periods, DateTime.now());
+    final active = schedule.periods.where((period) => period.days > 0).toList();
+    final current = resolveSchedulePeriod(active, DateTime.now());
+    final currentIndex =
+        active.indexWhere((period) => period.index == current.index);
     final targetIndex =
-        (current.index + offset).clamp(0, schedule.periods.length - 1).toInt();
-    final target = schedule.periods[targetIndex];
-    return (start: target.startDate, end: target.endDate.add(const Duration(days: 1)));
+        (currentIndex + offset).clamp(0, active.length - 1).toInt();
+    final target = active[targetIndex];
+    return (
+      start: target.startDate,
+      end: target.endDate.add(const Duration(days: 1))
+    );
   }
 
   final length = 35;
-  final baseStart = currentPeriodStart(DateTime(DateTime.now().year, 1, 1), length, DateTime.now());
+  final baseStart = currentPeriodStart(
+      DateTime(DateTime.now().year, 1, 1), length, DateTime.now());
   final start = baseStart.add(Duration(days: length * offset));
   final end = start.add(Duration(days: length));
   return (start: start, end: end);
 });
 
-final transactionsProvider = FutureProvider<List<KakeiboTransaction>>((ref) async {
+final transactionsProvider =
+    FutureProvider<List<KakeiboTransaction>>((ref) async {
   final range = ref.watch(periodRangeProvider);
   final use = sl<GetTransactionsByRange>();
   return use(range.start, range.end);
 });
 
-final addTransactionProvider = Provider<AddTransaction>((ref) => sl<AddTransaction>());
-final updateTransactionProvider = Provider<UpdateTransaction>((ref) => sl<UpdateTransaction>());
-final deleteTransactionProvider = Provider<DeleteTransaction>((ref) => sl<DeleteTransaction>());
+final addTransactionProvider =
+    Provider<AddTransaction>((ref) => sl<AddTransaction>());
+final updateTransactionProvider =
+    Provider<UpdateTransaction>((ref) => sl<UpdateTransaction>());
+final deleteTransactionProvider =
+    Provider<DeleteTransaction>((ref) => sl<DeleteTransaction>());
 
-final monthlySummaryProvider = FutureProvider.family<Map<int, int>, ({DateTime month, TransactionType type})>((ref, arg) async {
+final monthlySummaryProvider = FutureProvider.family<Map<int, int>,
+    ({DateTime month, TransactionType type})>((ref, arg) async {
   final use = sl<GetMonthlySummary>();
   return use(arg.month, arg.type);
 });
 
-final periodCategoryTotalsProvider = FutureProvider.family<Map<int, int>, TransactionType>((ref, type) async {
+final periodCategoryTotalsProvider =
+    FutureProvider.family<Map<int, int>, TransactionType>((ref, type) async {
   final range = ref.watch(periodRangeProvider);
   final filters = ref.watch(expenseAttributeFilterProvider);
   final use = sl<GetCategoryTotalsByRange>();
@@ -132,7 +149,9 @@ final periodCategoryTotalsProvider = FutureProvider.family<Map<int, int>, Transa
 
 final trendCountProvider = StateProvider<int>((ref) => 3);
 
-final periodTotalsProvider = FutureProvider<List<({DateTime start, DateTime end, int income, int expense})>>((ref) async {
+final periodTotalsProvider = FutureProvider<
+        List<({DateTime start, DateTime end, int income, int expense})>>(
+    (ref) async {
   final range = ref.watch(periodRangeProvider);
   final offset = ref.watch(periodOffsetProvider);
   final count = ref.watch(trendCountProvider);
@@ -145,12 +164,15 @@ final periodTotalsProvider = FutureProvider<List<({DateTime start, DateTime end,
       ? buildMonthRanges(range.start, count)
       : (currentIndex >= 0 && combinedRanges.isNotEmpty)
           ? () {
-              final targetIndex =
-                  (currentIndex + offset).clamp(0, combinedRanges.length - 1).toInt();
-              final startIndex = (targetIndex - (count - 1)).clamp(0, targetIndex).toInt();
+              final targetIndex = (currentIndex + offset)
+                  .clamp(0, combinedRanges.length - 1)
+                  .toInt();
+              final startIndex =
+                  (targetIndex - (count - 1)).clamp(0, targetIndex).toInt();
               return combinedRanges.sublist(startIndex, targetIndex + 1);
             }()
-          : buildPeriodRanges(range.start, range.end.difference(range.start).inDays, count);
+          : buildPeriodRanges(
+              range.start, range.end.difference(range.start).inDays, count);
   final use = sl<GetTotalByRange>();
   final filters = ref.watch(expenseAttributeFilterProvider);
 

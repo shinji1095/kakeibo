@@ -12,8 +12,10 @@ class PeriodCalendar extends StatelessWidget {
   final Map<DateTime, ({int income, int expense})> totalsByDay;
   final ValueChanged<DateTime>? onDateTap;
   final DateTime displayedMonth;
+  final AnnualSchedulePeriod? displayedPeriod;
+  final String? periodLabel;
   final DateTime? selectedDate;
-  final ValueChanged<int>? onMonthChanged;
+  final VoidCallback? onTodayTap;
   final List<AnnualSchedule> annualSchedules;
   final bool showPeriodColors;
 
@@ -21,19 +23,25 @@ class PeriodCalendar extends StatelessWidget {
     super.key,
     required this.totalsByDay,
     required this.displayedMonth,
+    this.displayedPeriod,
+    this.periodLabel,
     this.selectedDate,
     this.onDateTap,
-    this.onMonthChanged,
+    this.onTodayTap,
     this.annualSchedules = const [],
     this.showPeriodColors = true,
   });
 
-  static double heightForWidth(BuildContext context, double width) {
+  static int rowCountForPeriod(AnnualSchedulePeriod period) {
+    return math.max(1, (period.days + 6) ~/ 7);
+  }
+
+  static double heightForWidth(BuildContext context, double width,
+      {int rows = rowCount}) {
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final cellAspectRatio = (1.0 / textScale).clamp(0.5, 1.1);
     final cellWidth = (width - 6 * 4) / 7;
-    final gridHeight =
-        rowCount * cellWidth / cellAspectRatio + (rowCount - 1) * 4;
+    final gridHeight = rows * cellWidth / cellAspectRatio + (rows - 1) * 4;
     return math.max(48, 24 * textScale) +
         math.max(24, 16 * textScale) +
         8 +
@@ -44,27 +52,28 @@ class PeriodCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = truncateDate(DateTime.now());
-    final firstDay = DateTime(displayedMonth.year, displayedMonth.month, 1);
-    final gridStart =
-        DateTime(firstDay.year, firstDay.month, 1 - firstDay.weekday % 7);
-    final weekdayLabels = MaterialLocalizations.of(context).narrowWeekdays;
+    final firstDay = displayedPeriod?.startDate ??
+        DateTime(displayedMonth.year, displayedMonth.month, 1);
+    final gridStart = displayedPeriod == null
+        ? DateTime(
+            firstDay.year, firstDay.month, firstDay.day - firstDay.weekday % 7)
+        : firstDay;
+    final rows = displayedPeriod == null
+        ? rowCount
+        : rowCountForPeriod(displayedPeriod!);
+    final allWeekdayLabels = MaterialLocalizations.of(context).narrowWeekdays;
+    final firstWeekdayIndex = gridStart.weekday % 7;
+    final weekdayLabels = [
+      ...allWeekdayLabels.skip(firstWeekdayIndex),
+      ...allWeekdayLabels.take(firstWeekdayIndex),
+    ];
     final scheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final cellAspectRatio = (1.0 / textScale).clamp(0.5, 1.1);
-    final periodRanges = <({DateTime start, DateTime end, Color color})>[];
-    if (showPeriodColors) {
-      for (final schedule in annualSchedules) {
-        final colors = buildAnnualScheduleColors(schedule.periods.length);
-        for (final period in schedule.periods) {
-          periodRanges.add((
-            start: period.startDate,
-            end: period.endDate,
-            color: colors[period.index % colors.length],
-          ));
-        }
-      }
-    }
+    final monthColors = showPeriodColors && displayedPeriod != null
+        ? buildAnnualScheduleColors(12)
+        : const <Color>[];
 
     Widget buildDateCell(DateTime date) {
       final totals = totalsByDay[truncateDate(date)];
@@ -73,15 +82,14 @@ class PeriodCalendar extends StatelessWidget {
       final isToday = date == now;
       final isSelected =
           selectedDate != null && date == truncateDate(selectedDate!);
-      final isCurrentMonth = date.month == displayedMonth.month &&
-          date.year == displayedMonth.year;
-      Color? periodColor;
-      for (final range in periodRanges) {
-        if (!date.isBefore(range.start) && !date.isAfter(range.end)) {
-          periodColor = range.color;
-          break;
-        }
-      }
+      final isCurrentMonth = displayedPeriod != null ||
+          (date.month == displayedMonth.month &&
+              date.year == displayedMonth.year);
+      final periodColor = !showPeriodColors
+          ? null
+          : displayedPeriod == null
+              ? colorForScheduleDate(annualSchedules, date)
+              : monthColors[date.month - 1];
 
       return GestureDetector(
         onTap: onDateTap == null ? null : () => onDateTap!(truncateDate(date)),
@@ -154,24 +162,29 @@ class PeriodCalendar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              key: const Key('home-previous-month'),
-              icon: const Icon(Icons.chevron_left),
-              onPressed: () => onMonthChanged?.call(-1),
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  displayedPeriod != null
+                      ? periodLabel ?? ''
+                      : l10n.locale.languageCode == 'ja'
+                          ? '${displayedMonth.year}年${displayedMonth.month}月'
+                          : '${displayedMonth.year}/${displayedMonth.month}',
+                  key: const Key('home-displayed-month'),
+                  maxLines: 1,
+                  softWrap: false,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
             ),
-            Text(
-              l10n.locale.languageCode == 'ja'
-                  ? '${displayedMonth.year}年${displayedMonth.month}月'
-                  : '${displayedMonth.year}/${displayedMonth.month}',
-              key: const Key('home-displayed-month'),
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
             IconButton(
-              key: const Key('home-next-month'),
-              icon: const Icon(Icons.chevron_right),
-              onPressed: () => onMonthChanged?.call(1),
+              key: const Key('home-calendar-today'),
+              icon: const Icon(Icons.today_outlined),
+              tooltip: l10n.homeGoToToday,
+              onPressed: onTodayTap,
             ),
           ],
         ),
@@ -198,7 +211,7 @@ class PeriodCalendar extends StatelessWidget {
             mainAxisSpacing: 4,
             childAspectRatio: cellAspectRatio,
           ),
-          itemCount: rowCount * 7,
+          itemCount: rows * 7,
           itemBuilder: (context, index) => buildDateCell(DateTime(
             gridStart.year,
             gridStart.month,

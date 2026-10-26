@@ -1,0 +1,688 @@
+.innerWrapper {
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px 25px 0px 25px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+article.raceResult {
+  text-align: left;
+}
+
+.smallTitle {
+  font-weight: bold;
+  font-size: 15px;
+  color: #FF0000;
+}
+
+.redTitle {
+  font-weight: bold;
+  color: red;
+}
+
+.gradeTable {
+  height: auto;
+  margin: 0 0 30px;
+  padding: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.gradeTable table {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: table;
+  font-size: 12.8px;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+.gradeTable table table.arrival {
+  width: 100%;
+  height: 100%;
+  margin: 0 0 0 -3px;
+  border: none;
+}
+
+.gradeTable table tr:nth-child(1) {
+  border-bottom: none;
+}
+
+.gradeTable table tr:last-child {
+  border-bottom: none;
+}
+
+.gradeTable table tr {
+  border-bottom: 1px solid #9f9f9f;
+}
+
+.gradeTable table td {
+  padding: 5px 0;
+  vertical-align: middle;
+}
+
+.gradeTable table tr th {
+  background: #555;
+  text-align: center;
+  font-size: 12px;
+  padding: 3px 2px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #9f9f9f;
+  vertical-align: middle;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.gradeTable table tr td {
+  white-space: nowrap;
+}
+
+.gradeTable table tr th.a {
+  min-width: 43px;
+  width: auto;
+}
+
+.gradeTable table tr th.b {
+  min-width: 25px;
+  width: auto;
+}
+
+.gradeTable table tr th.c {
+  min-width: 32px;
+  width: auto;
+}
+
+.gradeTable table tr th.d {
+  width: auto;
+}
+
+.gradeTable table tr th.e {
+  width: auto;
+}
+
+.gradeTable table tr th.f {
+  width: auto;
+}
+
+.gradeTable table tr th.g {
+  width: auto;
+}
+
+.gradeTable table tr th.h {
+  width: auto;
+}
+
+.gradeTable table tr th.i {
+  width: auto;
+}
+
+.gradeTable table tr th.j {
+  width: auto;
+}
+
+.gradeTable table tr th.k {
+  width: auto;
+}
+
+.gradeTable table tr th.l {
+  width: auto;
+}
+
+.gradeTable table tr th.m {
+  width: auto;
+}
+
+.gradeTable table tr th.n {
+  width: auto;
+}
+
+.gradeTable table tr th.o {
+  width: auto;
+}
+
+.gradeTable table tr th.p {
+  min-width: 55px;
+  width: auto;
+}
+
+.gradeTable table tr th.q {
+  min-width: 43px;
+  width: auto;
+}
+
+.gradeTable table .courseNum.course_01 {
+  background: #fff;
+}
+
+.gradeTable table .courseNum.course_02 {
+  background: #bfbfbf;
+}
+
+.gradeTable table .courseNum.course_03 {
+  background: #ff9890;
+}
+
+.gradeTable table .courseNum.course_04 {
+  background: #A6F6F6;
+}
+
+.gradeTable table .courseNum.course_05 {
+  background: #FEFEAB;
+}
+
+.gradeTable table .courseNum.course_06 {
+  background: #B7FEB7;
+}
+
+.gradeTable table .courseNum.course_07 {
+  background: #FCC38A;
+}
+
+.gradeTable table .courseNum.course_08 {
+  background: #F6A9E8;
+}
+
+/* 上がり3F着色 */
+.gradeTable table .furlongNum.course_01 {
+  background: #f5aea8;
+}
+
+.gradeTable table .furlongNum.course_02 {
+  background: #afdff3;
+}
+
+.gradeTable table .furlongNum.course_03 {
+  background: #e6cd57;
+}
+
+/* 人気3位着色 */
+.gradeTable table .popularNum.course_01 {
+  background: #f5aea8;
+}
+
+.gradeTable table .popularNum.course_02 {
+  background: #afdff3;
+}
+
+.gradeTable table .popularNum.course_03 {
+  background: #e6cd57;
+}
+
+.gradeTable .horseName,
+.gradeTable .jockeyName,
+.gradeTable .horseWeight {
+  text-align: left;
+}
+
+.gradeTable table tr td:nth-child(n+4):nth-child(-n+14) {
+  padding: 0 0.5em;
+}
+
+.gradeTable .horseName a,
+.gradeTable .jockeyName a {
+  font-weight: bold;
+  font-size: 14.5px;
+}
+
+.gradeTable .jockeyName span,
+.gradeTable .horseWeight span,
+.gradeTable th span {
+  font-size: x-small;
+}
+
+.gradeTable td.femal {
+  color: #FF0000;
+}
+
+/* タイムテーブル , 全馬コーナー通過順テーブル */
+
+.timeTable {
+  width: 240px;
+  height: auto;
+  margin: 0 0 30px;
+  padding: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.timeTable table {
+  width: 100%;
+  height: auto;
+  margin: 0 auto 5px;
+  padding: 0;
+  box-sizing: border-box;
+  display: table;
+  font-size: 12.8px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.timeTable table tr {
+  border-bottom: 1px solid #9f9f9f;
+}
+
+/* ヘッダー(th)設定 */
+.timeTable table th {
+  background: #555;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  padding: 3px 2px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  width: 60px; /* 基本幅 */
+}
+
+.timeTable table th:nth-child(1) {
+  width: 120px; /* 1列目のみ幅広 */
+}
+
+/* ボディ(td)設定 */
+.timeTable table td {
+  padding: 5px 2px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+/* 1列目（項目名など） */
+.timeTable table td:nth-child(1) {
+  background: #ddd;
+  color: #333;
+  text-align: center;
+  font-size: 12.5px;
+}
+
+/* 全馬コーナー通過順テーブル */
+
+.cornerPassTable {
+  width: 100%;
+  height: auto;
+  margin: 0 0 30px;
+  padding: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.cornerPassTable table {
+  width: auto;
+  height: auto;
+  margin: 0 0 5px 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: table;
+  font-size: 12.8px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.cornerPassTable table tr {
+  border-bottom: 1px solid #9f9f9f;
+}
+
+/* ヘッダー(th)設定 */
+.cornerPassTable table th {
+  background: #555;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  padding: 3px 2px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+/* ボディ(td)設定 */
+.cornerPassTable table td {
+  vertical-align: middle;
+  box-sizing: border-box;
+  padding: 5px 2px;
+}
+
+/* 1列目（コーナー数など） */
+.cornerPassTable table td:nth-child(1) {
+  width: 130px;
+  background: #ddd;
+  color: #333;
+  text-align: center;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+/* 2列目（通過順詳細） */
+.cornerPassTable table td:nth-child(2) {
+  background: #fff;
+  text-align: left;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* 通過順内の強調表示（1着馬など） */
+.cornerPassTable .firstHorse {
+  background-color: #ff9890;
+  display: inline-block;
+  width: 20px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+/* 払戻金テーブル */
+
+.twoRefundTable table:first-child {
+  width: 84%;
+}
+
+.newRefundTable {
+  width: 578px;
+  height: auto;
+  margin: 0 0 30px;
+  padding: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.newRefundTable table {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto 5px;
+  padding: 0;
+  box-sizing: border-box;
+  display: table;
+  font-size: 12.8px;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+.newRefundTable table tr {
+  border-bottom: 1px dotted #9f9f9f;
+}
+
+.newRefundTable table tr td {
+  border-bottom: none !important;
+}
+
+.newRefundTable table tr:has(+ tr td.title) {
+  border-bottom: 1px solid #9f9f9f;
+}
+
+.newRefundTable table tr:last-child {
+  border-bottom: 1px solid #9f9f9f;
+}
+
+.newRefundTable table tr td.title {
+  border-right: 1px solid #9f9f9f;
+}
+
+.newRefundTable table tr td {
+  vertical-align: middle;
+  white-space: nowrap;
+  background: #fff;
+  font-size: 12px;
+  padding: 5px;
+  vertical-align: middle;
+}
+
+.newRefundTable table tr td.title {
+  width: 65px;
+  background: #ddd;
+  color: #333;
+  text-align: center;
+  font-size: 12.5px;
+  padding: 5px 2px;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+
+.newRefundTable table tr td.a {
+  width: 40px;
+}
+
+.newRefundTable table tr td.c {
+  width: 50px;
+}
+
+.newRefundTable table tr td.d {
+  width: 68px;
+}
+
+.newRefundTable table tr:nth-child(2) td:nth-child(1) {
+  vertical-align: top;
+}
+
+.newRefundTable .twoRefundTable {
+  display: flex
+}
+
+.newRefundTable .twoRefundTable tr td:last-child {
+  text-align: right;
+}
+
+.newRefundTable table:nth-child(1) {
+  margin-right: 10px;
+}
+
+.newRefundTable .refundMoney {
+  text-align: right; 
+}
+
+/* 優勝馬情報テーブル */
+
+.winHorseTable a.cNaviBtn:hover {
+  transition-duration: 0.8s;
+  opacity: 0.5;
+}
+
+.winHorseTable h3 {
+  width: 100%;
+  height: auto;
+  margin: 0 auto 3px;
+  padding: 0;
+  box-sizing: border-box;
+  display: block;
+  background: none;
+}
+
+.winHorseTable .smallFont01, .winHorseTable .smallFont02 {
+  margin-left: 20px;
+  font-size: small;
+}
+
+.winHorseTable .smallFont01, .winHorseTable .smallFont03{
+  color: red;
+}
+
+.winHorseTable .smallFont03, .winHorseTable .smallFont04 {
+  font-size: small;
+}
+
+.winHorseTable a.cNaviBtn {
+  width: 125px;
+  height: 35px;
+  margin-left: 50px;
+  margin-bottom: 5px;
+  padding: 0;
+  font-weight: bold;
+  text-align: center;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  display: inline-block;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);
+  background: #1a74bc;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 12.8px;
+  line-height: 35px;
+  position: relative;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+.winHorseTable {
+  width: 930px;
+  height: auto;
+  margin: 0 0 30px;
+  padding: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.winHorseTable table {
+  width: 100%;
+  height: auto;
+  margin: 0 auto 5px;
+  padding: 0;
+  box-sizing: border-box;
+  display: table;
+  font-size: 12.8px;
+  border-collapse: collapse;
+  line-height: 1.7;
+}
+
+.winHorseTable table tr {
+  border: 1px solid #9f9f9f;
+}
+
+.winHorseTable table tr th {
+  font-size: 14px;
+}
+
+.winHorseTable table tr td {
+  font-size: 14px;
+}
+
+.winHorseTable .infoAndBonus tr th:nth-child(1) {
+  width: 647px;
+}
+
+.winHorseTable .infoAndBonus tr th:nth-child(2) {
+  width: 240px;
+}
+
+.winHorseTable .infoAndBonus tr td:nth-child(2), .winHorseTable .infoAndBonus tr td:nth-child(4) {
+  width: 254px;
+}
+
+.winHorseTable .infoAndBonus tr td:last-child {
+  width: 126px;
+}
+
+.winHorseTable .infoAndBonus tr td:nth-child(1), .winHorseTable .infoAndBonus tr td:nth-child(3), .winHorseTable .infoAndBonus tr td:nth-child(5) {
+  background: #d9d9d9;
+}
+
+.winHorseTable .infoAndBonus tr:nth-child(2) td:last-child,
+.winHorseTable .infoAndBonus tr:nth-child(3) td:last-child,
+.winHorseTable .infoAndBonus tr:nth-child(4) td:last-child {
+  padding-right: 5px;
+  width: 150px;
+  padding-left: 0;
+}
+
+.winHorseTable .infoAndBonus tr td {
+  padding-left: 5px;
+  text-align: left;
+}
+
+.winHorseTable .infoAndBonus tr td:last-child {
+  text-align: right;
+}
+
+.winHorseTable .infoAndBonus .trainerName {
+  font-weight: bold;
+}
+
+.winHorseTable .pedigreeTable, .winHorseTable .infoAndBonus {
+  margin-bottom: 20px;
+}
+
+.winHorseTable .pedigreeTable tr td {
+  vertical-align: middle;
+}
+
+.winHorseTable .pedigreeTable tr td:nth-child(2), .winHorseTable .pedigreeTable tr td:nth-child(4) {
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: left;
+}
+
+.winHorseTable .maleHorse {
+  background: #dbedf3;
+  width: 120px;
+}
+
+.winHorseTable .femaleHorse {
+  background: #fdccff;
+}
+
+.winHorseTable .horseGrade {
+  width: 640px;
+  margin: 0;
+}
+
+.winHorseTable .horseGrade tr th {
+  width: auto;
+}
+
+.winHorseTable .horseGrade tr th:first-child {
+  width: 148px;
+}
+
+.winHorseTable .horseGrade tr th:nth-child(9),
+.winHorseTable .horseGrade tr th:nth-child(10) {
+  width: 68px
+}
+
+.winHorseTable .horseGrade tr th:nth-child(2),
+.winHorseTable .horseGrade tr th:nth-child(3),
+.winHorseTable .horseGrade tr th:nth-child(4),
+.winHorseTable .horseGrade tr th:nth-child(5),
+.winHorseTable .horseGrade tr th:nth-child(6),
+.winHorseTable .horseGrade tr th:nth-child(7),
+.winHorseTable .horseGrade tr th:nth-child(8) {
+  width: 50px;
+}
+
+.winHorseTable .horseGrade tr:nth-child(2) td, .winHorseTable .horseGrade tr:nth-child(6) td {
+  background: #d9d9d9;
+}
+
+.winHorseTable .horseGrade tr td:nth-child(2),
+.winHorseTable .horseGrade tr td:nth-child(3),
+.winHorseTable .horseGrade tr td:nth-child(4),
+.winHorseTable .horseGrade tr td:nth-child(5),
+.winHorseTable .horseGrade tr td:nth-child(6),
+.winHorseTable .horseGrade tr td:nth-child(7),
+.winHorseTable .horseGrade tr td:nth-child(8),
+.winHorseTable .horseGrade tr td:nth-child(9),
+.winHorseTable .horseGrade tr td:nth-child(10) {
+  padding-right: 5px;
+  text-align: right;
+}
+
+.attention .innerWrapper {
+  text-align: left;
+}
+
+.gradeTable table td,
+.timeTable table td,
+.cornerPassTable table td,
+.newRefundTable table td,
+.winHorseTable table td {
+  background: #fff;
+}
+
+#mainContainer.fixed {
+  margin-bottom: 135px;
+}
+.cornerPassTable table td:nth-child(2) {
+  padding-left: 30px;
+  padding-right: 30px;
+}

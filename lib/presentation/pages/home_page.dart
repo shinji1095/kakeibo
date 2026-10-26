@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
+import 'package:kakeibo/core/utils/period_utils.dart';
 import 'package:kakeibo/domain/entities/annual_schedule.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
@@ -13,6 +16,8 @@ import 'package:kakeibo/presentation/widgets/period_calendar.dart';
 
 typedef _PeriodId = ({int year, int index});
 
+enum _HomeDisplayMode { period, month }
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -20,23 +25,31 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage>
+    with WidgetsBindingObserver {
   static const _initialPage = 12000;
   static const _yearMarkerWidth = 52.0;
   static const _periodTileWidth = 72.0;
 
   late final DateTime _initialMonth;
-  late final PageController _calendarPageController;
+  late PageController _calendarPageController;
+  late final PageController _periodPageController;
   final ScrollController _periodScrollController = ScrollController();
+  final ScrollController _monthScrollController = ScrollController();
+  Timer? _dayChangeTimer;
   late DateTime _displayedMonth;
   late DateTime _selectedDate;
+  _HomeDisplayMode _displayMode = _HomeDisplayMode.period;
   var _currentPage = _initialPage;
   _PeriodId? _selectedPeriod;
   _PeriodId? _lastCenteredPeriod;
   String? _lastTimelineSignature;
+  int? _lastCenteredMonthPage;
+  String? _lastMonthTimelineSignature;
   _PeriodId? _pendingPeriod;
   int? _pendingPage;
   DateTime? _pendingDate;
+  bool _resettingPeriodPage = false;
 
   @override
   void initState() {
@@ -46,13 +59,38 @@ class _HomePageState extends ConsumerState<HomePage> {
     _displayedMonth = _initialMonth;
     _selectedDate = DateTime(now.year, now.month, now.day);
     _calendarPageController = PageController(initialPage: _initialPage);
+    _periodPageController = PageController(initialPage: 1);
+    WidgetsBinding.instance.addObserver(this);
+    _scheduleDayChange();
   }
 
   @override
   void dispose() {
+    _dayChangeTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     _calendarPageController.dispose();
+    _periodPageController.dispose();
     _periodScrollController.dispose();
+    _monthScrollController.dispose();
     super.dispose();
+  }
+
+  void _scheduleDayChange() {
+    _dayChangeTimer?.cancel();
+    final now = DateTime.now();
+    final nextDay = DateTime(now.year, now.month, now.day + 1);
+    _dayChangeTimer = Timer(nextDay.difference(now), () {
+      if (!mounted) return;
+      setState(() {});
+      _scheduleDayChange();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || !mounted) return;
+    setState(() {});
+    _scheduleDayChange();
   }
 
   DateTime _monthForPage(int page) => DateTime(
@@ -72,7 +110,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   _PeriodId? _periodIdForDate(List<AnnualSchedule> schedules, DateTime date) {
-    for (final schedule in schedules) {
+    for (final schedule in schedules.reversed) {
       for (final period in schedule.periods) {
         if (!date.isBefore(period.startDate) && !date.isAfter(period.endDate)) {
           return (year: schedule.year, index: period.index);
@@ -82,16 +120,42 @@ class _HomePageState extends ConsumerState<HomePage> {
     return null;
   }
 
-  void _shiftMonth(int offset) {
-    _calendarPageController.animateToPage(
-      _currentPage + offset,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutCubic,
-    );
+  void _jumpToToday() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final targetPage = _pageForMonth(today);
+    setState(() {
+      _selectedDate = today;
+      _selectedPeriod = null;
+      _displayedMonth = DateTime(today.year, today.month);
+      _currentPage = targetPage;
+      _pendingPage = _displayMode == _HomeDisplayMode.month ? targetPage : null;
+      _pendingDate = _displayMode == _HomeDisplayMode.month ? today : null;
+      _pendingPeriod = null;
+    });
+    if (_displayMode == _HomeDisplayMode.month &&
+        _calendarPageController.hasClients) {
+      _calendarPageController.jumpToPage(targetPage);
+    }
+    if (_displayMode == _HomeDisplayMode.period &&
+        _periodPageController.hasClients) {
+      _periodPageController.jumpToPage(1);
+    }
   }
 
   void _selectPeriod(AnnualSchedule schedule, AnnualSchedulePeriod period) {
+    if (period.days == 0) return;
     final selected = (year: schedule.year, index: period.index);
+    if (_displayMode == _HomeDisplayMode.period) {
+      setState(() {
+        _selectedPeriod = selected;
+        _selectedDate = period.startDate;
+        _displayedMonth =
+            DateTime(period.startDate.year, period.startDate.month);
+        _currentPage = _pageForMonth(_displayedMonth);
+      });
+      return;
+    }
     final page = _pageForMonth(period.startDate);
     if (page == _currentPage) {
       setState(() {
@@ -108,6 +172,13 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _selectDate(DateTime date, List<AnnualSchedule> schedules) {
     final selected = _periodIdForDate(schedules, date);
+    if (_displayMode == _HomeDisplayMode.period) {
+      setState(() {
+        _selectedDate = date;
+        _selectedPeriod = selected;
+      });
+      return;
+    }
     final page = _pageForMonth(date);
     if (page == _currentPage) {
       setState(() {
@@ -136,29 +207,159 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
+  void _setDisplayMode(_HomeDisplayMode mode) {
+    if (mode == _displayMode) return;
+    final targetPage = _pageForMonth(_selectedDate);
+    final calendarWasVisible = _calendarPageController.hasClients;
+    if (mode == _HomeDisplayMode.month) {
+      if (!calendarWasVisible) {
+        _calendarPageController.dispose();
+        _calendarPageController = PageController(initialPage: targetPage);
+      }
+    }
+    setState(() {
+      _displayMode = mode;
+      if (mode == _HomeDisplayMode.month) {
+        _displayedMonth = DateTime(_selectedDate.year, _selectedDate.month);
+        _currentPage = targetPage;
+        _pendingPage = _currentPage;
+        _pendingDate = _selectedDate;
+        _pendingPeriod = _selectedPeriod;
+      }
+    });
+    if (mode == _HomeDisplayMode.month && calendarWasVisible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _calendarPageController.hasClients) {
+          _calendarPageController.jumpToPage(targetPage);
+        }
+      });
+    }
+  }
+
+  void _selectMonth(int year, int month) {
+    final target = DateTime(year, month);
+    final page = _pageForMonth(target);
+    if (_displayMode == _HomeDisplayMode.period) {
+      setState(() {
+        _selectedDate = _defaultDateForMonth(target);
+        _selectedPeriod = null;
+        _displayedMonth = target;
+        _currentPage = page;
+      });
+      return;
+    }
+    if (page == _currentPage) {
+      setState(() {
+        _selectedDate = _defaultDateForMonth(target);
+        _selectedPeriod = null;
+      });
+    } else if (_calendarPageController.hasClients) {
+      _calendarPageController.jumpToPage(page);
+    }
+  }
+
+  void _shiftPeriod(
+      List<AnnualSchedule> schedules, _PeriodId? selected, int offset) {
+    if (selected == null) return;
+    final periods = [
+      for (final schedule in schedules)
+        for (final period in schedule.periods)
+          if (period.days > 0) (schedule: schedule, period: period),
+    ];
+    final index = periods.indexWhere((entry) =>
+        entry.schedule.year == selected.year &&
+        entry.period.index == selected.index);
+    final target = index + offset;
+    if (index < 0 || target < 0 || target >= periods.length) return;
+    _selectPeriod(periods[target].schedule, periods[target].period);
+  }
+
   _PeriodId? _periodForDisplayedMonth(List<AnnualSchedule> schedules) {
     final selected = _selectedPeriod;
     if (selected != null &&
         schedules.any((schedule) =>
             schedule.year == selected.year &&
-            schedule.periods.any((period) => period.index == selected.index))) {
+            schedule.periods.any((period) =>
+                period.index == selected.index && period.days > 0))) {
       return selected;
     }
 
     final anchor = _selectedDate;
-    _PeriodId? previous;
-    for (final schedule in schedules) {
-      for (final period in schedule.periods) {
+    for (final schedule in schedules.reversed) {
+      for (final period
+          in schedule.periods.where((period) => period.days > 0)) {
         if (!anchor.isBefore(period.startDate) &&
             !anchor.isAfter(period.endDate)) {
           return (year: schedule.year, index: period.index);
         }
+      }
+    }
+    _PeriodId? previous;
+    for (final schedule in schedules) {
+      for (final period
+          in schedule.periods.where((period) => period.days > 0)) {
         if (!period.startDate.isAfter(anchor)) {
           previous = (year: schedule.year, index: period.index);
         }
       }
     }
     return previous;
+  }
+
+  Widget _timelineTile(
+    BuildContext context, {
+    required Key key,
+    required String label,
+    required String tooltip,
+    required Color color,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final scheme = Theme.of(context).colorScheme;
+    return SizedBox(
+      width: _periodTileWidth,
+      child: Tooltip(
+        message: tooltip,
+        child: InkWell(
+          key: key,
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Semantics(
+            selected: selected,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: color,
+                      border: Border.all(
+                        color: selected ? scheme.primary : Colors.transparent,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontWeight:
+                              selected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildPeriodTimeline(
@@ -185,7 +386,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         double? selectedCenter;
         for (final schedule in schedules) {
           itemStart += _yearMarkerWidth;
-          for (final period in schedule.periods) {
+          for (final period
+              in schedule.periods.where((period) => period.days > 0)) {
             if (schedule.year == selected.year &&
                 period.index == selected.index) {
               selectedCenter = itemStart + _periodTileWidth / 2;
@@ -225,67 +427,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                 ),
               ),
-              for (final period in schedule.periods)
-                SizedBox(
-                  width: _periodTileWidth,
-                  child: Tooltip(
-                    message:
-                        '${l10n.formatDate(period.startDate)}${l10n.rangeSeparator}${l10n.formatDate(period.endDate)}',
-                    child: InkWell(
-                      key: Key('home-period-${schedule.year}-${period.index}'),
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: () => _selectPeriod(schedule, period),
-                      child: Semantics(
-                        selected: selected ==
-                            (year: schedule.year, index: period.index),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: colorsByYear[schedule.year]![
-                                      period.index],
-                                  border: Border.all(
-                                    color: selected ==
-                                            (
-                                              year: schedule.year,
-                                              index: period.index
-                                            )
-                                        ? scheme.primary
-                                        : Colors.transparent,
-                                    width: 3,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                l10n.homeTimelinePeriodLabel(period.index + 1),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      fontWeight: selected ==
-                                              (
-                                                year: schedule.year,
-                                                index: period.index
-                                              )
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+              for (final period
+                  in schedule.periods.where((period) => period.days > 0))
+                _timelineTile(
+                  context,
+                  key: Key('home-period-${schedule.year}-${period.index}'),
+                  label: l10n.homePeriodLabel(period.index + 1),
+                  tooltip:
+                      '${l10n.formatDate(period.startDate)}${l10n.rangeSeparator}${l10n.formatDate(period.endDate)}',
+                  color: colorsByYear[schedule.year]![period.index],
+                  selected:
+                      selected == (year: schedule.year, index: period.index),
+                  onTap: () => _selectPeriod(schedule, period),
                 ),
             ],
           ],
@@ -294,14 +447,190 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
+  Widget _buildMonthTimeline(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final monthColors = buildAnnualScheduleColors(12);
+    final selectedMonth = DateTime(_selectedDate.year, _selectedDate.month);
+    final years = [
+      selectedMonth.year - 1,
+      selectedMonth.year,
+      selectedMonth.year + 1,
+    ];
+    return LayoutBuilder(builder: (context, constraints) {
+      final selectedPage = _pageForMonth(selectedMonth);
+      final signature = years.join(',');
+      if (_lastCenteredMonthPage != selectedPage ||
+          _lastMonthTimelineSignature != signature) {
+        _lastCenteredMonthPage = selectedPage;
+        _lastMonthTimelineSignature = signature;
+        final selectedIndex = 12 + selectedMonth.month - 1;
+        final selectedCenter = (selectedIndex ~/ 12 + 1) * _yearMarkerWidth +
+            selectedIndex * _periodTileWidth +
+            _periodTileWidth / 2;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || !_monthScrollController.hasClients) return;
+          _monthScrollController.animateTo(
+            (selectedCenter - constraints.maxWidth / 2).clamp(
+              0.0,
+              _monthScrollController.position.maxScrollExtent,
+            ),
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
+        });
+      }
+      return SingleChildScrollView(
+        key: const Key('home-month-timeline'),
+        controller: _monthScrollController,
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          for (final year in years) ...[
+            SizedBox(
+              width: _yearMarkerWidth,
+              child: Text(
+                '$year',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+              ),
+            ),
+            for (var month = 1; month <= 12; month++)
+              _timelineTile(
+                context,
+                key: Key('home-month-choice-$year-$month'),
+                label: l10n.formatMonth(month),
+                tooltip: l10n.locale.languageCode == 'ja'
+                    ? '$year年$month月'
+                    : '$year/${month.toString().padLeft(2, '0')}',
+                color: monthColors[month - 1],
+                selected:
+                    selectedMonth.year == year && selectedMonth.month == month,
+                onTap: () => _selectMonth(year, month),
+              ),
+          ],
+        ]),
+      );
+    });
+  }
+
+  Widget _buildSelectedPeriodCalendar(
+      BuildContext context,
+      WidgetRef pageRef,
+      AnnualSchedulePeriod period,
+      _PeriodId id,
+      List<AnnualSchedule> schedules,
+      bool showPeriodColors) {
+    final totals = <DateTime, ({int income, int expense})>{};
+    var month = DateTime(period.startDate.year, period.startDate.month);
+    final calendarEnd = DateTime(
+      period.startDate.year,
+      period.startDate.month,
+      period.startDate.day + PeriodCalendar.rowCountForPeriod(period) * 7 - 1,
+    );
+    final lastMonth = DateTime(calendarEnd.year, calendarEnd.month);
+    while (!month.isAfter(lastMonth)) {
+      final summary =
+          pageRef.watch(homeMonthSummaryProvider(month)).valueOrNull;
+      if (summary != null) totals.addAll(summary.totalsByDay);
+      month = DateTime(month.year, month.month + 1);
+    }
+    final l10n = AppLocalizations.of(context);
+    final label = '${id.year} · ${l10n.homePeriodLabel(id.index + 1)}';
+    return PeriodCalendar(
+      displayedMonth: _displayedMonth,
+      displayedPeriod: period,
+      periodLabel: label,
+      selectedDate: _selectedDate,
+      totalsByDay: totals,
+      annualSchedules: schedules,
+      showPeriodColors: showPeriodColors,
+      onTodayTap: _jumpToToday,
+      onDateTap: (date) => _selectDate(date, schedules),
+    );
+  }
+
+  Widget _buildPeriodCalendarPages(BuildContext context,
+      List<AnnualSchedule> schedules, _PeriodId selected, bool showColors) {
+    final entries = [
+      for (final schedule in schedules)
+        for (final period in schedule.periods)
+          if (period.days > 0) (schedule: schedule, period: period),
+    ];
+    final index = entries.indexWhere((entry) =>
+        entry.schedule.year == selected.year &&
+        entry.period.index == selected.index);
+    if (index < 0) return const SizedBox.shrink();
+    final pages = [
+      entries[index > 0 ? index - 1 : index],
+      entries[index],
+      entries[index + 1 < entries.length ? index + 1 : index],
+    ];
+    final rows = PeriodCalendar.rowCountForPeriod(pages[1].period);
+    return LayoutBuilder(
+      builder: (context, constraints) => AnimatedSize(
+        duration: const Duration(milliseconds: 180),
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          height: PeriodCalendar.heightForWidth(context, constraints.maxWidth,
+              rows: rows),
+          child: NotificationListener<ScrollEndNotification>(
+            onNotification: (notification) {
+              if (_resettingPeriodPage ||
+                  notification.metrics.axis != Axis.horizontal) {
+                return false;
+              }
+              final page = _periodPageController.page?.round();
+              if (page == null || page == 1) return false;
+              _resettingPeriodPage = true;
+              try {
+                _periodPageController.jumpToPage(1);
+              } finally {
+                _resettingPeriodPage = false;
+              }
+              if ((page == 0 && index == 0) ||
+                  (page == 2 && index == entries.length - 1)) {
+                return false;
+              }
+              _shiftPeriod(schedules, selected, page - 1);
+              return false;
+            },
+            child: PageView.builder(
+              key: const Key('home-period-calendar'),
+              controller: _periodPageController,
+              itemCount: pages.length,
+              itemBuilder: (context, page) {
+                final entry = pages[page];
+                return Consumer(builder: (context, pageRef, _) {
+                  return SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: _buildSelectedPeriodCalendar(
+                      context,
+                      pageRef,
+                      entry.period,
+                      (year: entry.schedule.year, index: entry.period.index),
+                      schedules,
+                      showColors,
+                    ),
+                  );
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final stats = ref.watch(homeStatsProvider);
-    final monthSummaryAsync =
-        ref.watch(homeMonthSummaryProvider(_displayedMonth));
+    final monthSummaryAsync = ref.watch(homeMonthSummaryProvider(
+        DateTime(_selectedDate.year, _selectedDate.month)));
     final showPeriodColors = ref.watch(homePeriodColorsEnabledProvider);
-    final periodBudget = ref.watch(settingsProvider).periodBudget;
+    final fallbackBudget = ref.watch(settingsProvider).periodBudget;
 
     final schedulesByYear = <int, AnnualSchedule>{};
     var schedulesLoading = false;
@@ -324,11 +653,15 @@ class _HomePageState extends ConsumerState<HomePage> {
     final schedules = schedulesByYear.values.toList()
       ..sort((a, b) => a.year.compareTo(b.year));
     final selectedPeriod = _periodForDisplayedMonth(schedules);
+    final periodBudget = selectedPeriod == null
+        ? currentSchedule?.periodBudget ?? fallbackBudget
+        : schedulesByYear[selectedPeriod.year]?.periodBudget ?? fallbackBudget;
     AnnualSchedulePeriod? selectedSchedulePeriod;
     if (selectedPeriod != null) {
       for (final schedule in schedules) {
         if (schedule.year != selectedPeriod.year) continue;
-        for (final period in schedule.periods) {
+        for (final period
+            in schedule.periods.where((period) => period.days > 0)) {
           if (period.index == selectedPeriod.index) {
             selectedSchedulePeriod = period;
             break;
@@ -344,30 +677,37 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
     final periodTotalAsync =
         ref.watch(homePeriodVariableTotalProvider(periodRange));
-    final dailyPeriod = selectedSchedulePeriod != null &&
-            !_selectedDate.isBefore(selectedSchedulePeriod.startDate) &&
-            !_selectedDate.isAfter(selectedSchedulePeriod.endDate)
-        ? selectedSchedulePeriod
-        : null;
-    final monthSummary = monthSummaryAsync.valueOrNull;
-    final dailyIncome = monthSummary == null
+    final selectedWeek = selectedSchedulePeriod == null ||
+            _selectedDate.isBefore(selectedSchedulePeriod.startDate) ||
+            _selectedDate.isAfter(selectedSchedulePeriod.endDate)
         ? null
-        : monthSummary.totalsByDay[_selectedDate]?.income ?? 0;
-    final dailyExpenses = monthSummary == null
+        : weekWithinSchedulePeriod(selectedSchedulePeriod, _selectedDate);
+    final weekTotalAsync = selectedWeek == null
         ? null
-        : monthSummary.totalsByDay[_selectedDate]?.expense ?? 0;
-    final dailyVariableExpenses = monthSummary == null
+        : ref.watch(homePeriodVariableTotalProvider(selectedWeek));
+    final weeklyTarget = selectedWeek == null || selectedSchedulePeriod == null
         ? null
-        : monthSummary.variableExpensesByDay[_selectedDate] ?? 0;
-    final dailyTarget = dailyPeriod == null || dailyPeriod.days <= 0
-        ? null
-        : (periodBudget / dailyPeriod.days).ceil();
+        : targetForScheduleWeek(
+            periodBudget,
+            selectedSchedulePeriod,
+            selectedWeek.start,
+            selectedWeek.endExclusive,
+          );
     final spentThisPeriod = periodTotalAsync.valueOrNull;
     final remainingBudget =
         spentThisPeriod == null ? null : periodBudget - spentThisPeriod;
-    final now = DateTime.now();
-    final isCurrentPeriod = !now.isBefore(periodRange.start) &&
-        now.isBefore(periodRange.endExclusive);
+    final endDate = selectedSchedulePeriod?.endDate;
+    final daysToPeriodEnd = endDate == null
+        ? null
+        : DateTime.utc(endDate.year, endDate.month, endDate.day)
+            .difference(DateTime.utc(
+                _selectedDate.year, _selectedDate.month, _selectedDate.day))
+            .inDays;
+    final remainingDays = daysToPeriodEnd == null
+        ? null
+        : daysToPeriodEnd < 0
+            ? 0
+            : daysToPeriodEnd;
     final progress = spentThisPeriod == null
         ? null
         : periodBudget == 0
@@ -375,13 +715,32 @@ class _HomePageState extends ConsumerState<HomePage> {
             : (spentThisPeriod / periodBudget).clamp(0.0, 1.0);
 
     return AppScaffold(
-      title: l10n.homeTitle,
       currentIndex: 0,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _HomeSection(
             title: l10n.homePeriodsTitle,
+            trailing: ToggleButtons(
+              key: const Key('home-display-mode-toggle'),
+              borderRadius: BorderRadius.circular(8),
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 36),
+              isSelected: [
+                _displayMode == _HomeDisplayMode.period,
+                _displayMode == _HomeDisplayMode.month,
+              ],
+              onPressed: (index) => _setDisplayMode(index == 0
+                  ? _HomeDisplayMode.period
+                  : _HomeDisplayMode.month),
+              children: [
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(l10n.homeModePeriod)),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(l10n.homeModeMonth)),
+              ],
+            ),
             child: Column(
               children: [
                 if (schedules.isEmpty && schedulesLoading)
@@ -394,16 +753,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Text(l10n.annualScheduleMissing),
                   )
-                else
+                else if (_displayMode == _HomeDisplayMode.period)
+                  _buildMonthTimeline(context),
+                if (schedules.isNotEmpty &&
+                    _displayMode == _HomeDisplayMode.month)
                   _buildPeriodTimeline(context, schedules, selectedPeriod),
-                if (selectedSchedulePeriod != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      '${l10n.formatDate(selectedSchedulePeriod.startDate)}${l10n.rangeSeparator}${l10n.formatDate(selectedSchedulePeriod.endDate)}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(
@@ -419,13 +773,19 @@ class _HomePageState extends ConsumerState<HomePage> {
           _HomeSection(
             title: l10n.homeCalendarTitle,
             trailing: Tooltip(
-              message: showPeriodColors
-                  ? l10n.homePeriodColorsOn
-                  : l10n.homePeriodColorsOff,
+              message: _displayMode == _HomeDisplayMode.month
+                  ? showPeriodColors
+                      ? l10n.homePeriodColorsOn
+                      : l10n.homePeriodColorsOff
+                  : showPeriodColors
+                      ? l10n.homeMonthColorsOn
+                      : l10n.homeMonthColorsOff,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(l10n.homePeriodColorsLabel),
+                  Text(_displayMode == _HomeDisplayMode.month
+                      ? l10n.homePeriodColorsLabel
+                      : l10n.homeMonthColorsLabel),
                   Switch.adaptive(
                     key: const Key('home-period-colors-toggle'),
                     value: showPeriodColors,
@@ -439,64 +799,73 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                LayoutBuilder(
-                  builder: (context, constraints) => SizedBox(
-                    height: PeriodCalendar.heightForWidth(
-                        context, constraints.maxWidth),
-                    child: PageView.builder(
-                      key: const Key('home-month-calendar'),
-                      controller: _calendarPageController,
-                      onPageChanged: _onCalendarPageChanged,
-                      itemBuilder: (context, page) {
-                        final month = _monthForPage(page);
-                        return Consumer(builder: (context, ref, _) {
-                          final summary =
-                              ref.watch(homeMonthSummaryProvider(month));
-                          final previousSchedule = ref
-                              .watch(
-                                  annualScheduleForYearProvider(month.year - 1))
-                              .valueOrNull;
-                          final schedule = ref
-                              .watch(annualScheduleForYearProvider(month.year))
-                              .valueOrNull;
-                          final nextSchedule = ref
-                              .watch(
-                                  annualScheduleForYearProvider(month.year + 1))
-                              .valueOrNull;
-                          final pageSchedules = [
-                            if (previousSchedule != null) previousSchedule,
-                            if (schedule != null) schedule,
-                            if (nextSchedule != null) nextSchedule,
-                          ];
-                          return PeriodCalendar(
-                            displayedMonth: month,
-                            selectedDate: _selectedDate,
-                            totalsByDay: summary.valueOrNull?.totalsByDay ??
-                                const <DateTime, ({int income, int expense})>{},
-                            annualSchedules: pageSchedules,
-                            showPeriodColors:
-                                ref.watch(homePeriodColorsEnabledProvider),
-                            onMonthChanged: _shiftMonth,
-                            onDateTap: (date) =>
-                                _selectDate(date, pageSchedules),
-                          );
-                        });
-                      },
+                if (_displayMode == _HomeDisplayMode.period &&
+                    selectedSchedulePeriod != null &&
+                    selectedPeriod != null)
+                  _buildPeriodCalendarPages(
+                    context,
+                    schedules,
+                    selectedPeriod,
+                    showPeriodColors,
+                  )
+                else
+                  LayoutBuilder(
+                    builder: (context, constraints) => SizedBox(
+                      height: PeriodCalendar.heightForWidth(
+                          context, constraints.maxWidth),
+                      child: PageView.builder(
+                        key: const Key('home-month-calendar'),
+                        controller: _calendarPageController,
+                        onPageChanged: _onCalendarPageChanged,
+                        itemBuilder: (context, page) {
+                          final month = _monthForPage(page);
+                          return Consumer(builder: (context, ref, _) {
+                            final summary =
+                                ref.watch(homeMonthSummaryProvider(month));
+                            final previousSchedule = ref
+                                .watch(annualScheduleForYearProvider(
+                                    month.year - 1))
+                                .valueOrNull;
+                            final schedule = ref
+                                .watch(
+                                    annualScheduleForYearProvider(month.year))
+                                .valueOrNull;
+                            final nextSchedule = ref
+                                .watch(annualScheduleForYearProvider(
+                                    month.year + 1))
+                                .valueOrNull;
+                            final pageSchedules = [
+                              if (previousSchedule != null) previousSchedule,
+                              if (schedule != null) schedule,
+                              if (nextSchedule != null) nextSchedule,
+                            ];
+                            return PeriodCalendar(
+                              displayedMonth: month,
+                              selectedDate: _selectedDate,
+                              totalsByDay: summary.valueOrNull?.totalsByDay ??
+                                  const <DateTime,
+                                      ({int income, int expense})>{},
+                              annualSchedules: pageSchedules,
+                              showPeriodColors:
+                                  ref.watch(homePeriodColorsEnabledProvider),
+                              onTodayTap: _jumpToToday,
+                              onDateTap: (date) =>
+                                  _selectDate(date, pageSchedules),
+                            );
+                          });
+                        },
+                      ),
                     ),
                   ),
-                ),
                 if (monthSummaryAsync.hasError) ...[
                   const SizedBox(height: 12),
                   Text(l10n.errorMessage(monthSummaryAsync.error!)),
                 ],
                 const SizedBox(height: 12),
-                _DailyExpenseSummary(
+                _SelectedDaySummary(
                   date: _selectedDate,
-                  income: dailyIncome,
-                  expenseTotal: dailyExpenses,
-                  variableExpense: dailyVariableExpenses,
-                  dailyTarget: dailyTarget,
-                  onInput: () => context.go('/input', extra: _selectedDate),
+                  weeklyExpense: weekTotalAsync?.valueOrNull,
+                  weeklyTarget: weeklyTarget,
                 ),
               ],
             ),
@@ -504,27 +873,41 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: 12),
           _HomeSection(
             title: l10n.homeBudgetTitle,
+            titleSuffix: selectedSchedulePeriod == null
+                ? null
+                : Text(
+                    '${l10n.formatMonthDay(selectedSchedulePeriod.startDate)} - ${l10n.formatMonthDay(selectedSchedulePeriod.endDate)}',
+                    key: const Key('home-budget-period-range'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        l10n.formatCurrencyRatio(spentThisPeriod, periodBudget),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                if (remainingDays != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(l10n.homeCountdownPrefix,
+                            style: Theme.of(context).textTheme.bodySmall),
+                        const SizedBox(width: 4),
+                        Text(
+                          l10n.homeCountdownDays(remainingDays),
+                          key: const Key('home-budget-days-remaining'),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      key: const Key('home-budget-link'),
-                      tooltip: l10n.budgetSettingsTitle,
-                      onPressed: () => context.push('/settings/budget'),
-                      icon: const Icon(Icons.chevron_right),
-                    ),
-                  ],
+                  ),
+                _ProgressAmountLabels(
+                  spent: spentThisPeriod,
+                  remaining: remainingBudget,
+                  unit: l10n.homeBudgetUnitMonth,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(5),
                   child: LinearProgressIndicator(
@@ -567,22 +950,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     extra: _selectedDate,
                   ),
                 ),
-                const Divider(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Text(
-                    remainingBudget == null
-                        ? l10n.homeBudgetRemainingLabel
-                        : isCurrentPeriod
-                            ? l10n.homePeriodRemaining(remainingBudget)
-                            : l10n.homeSelectedPeriodRemaining(remainingBudget),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: remainingBudget != null && remainingBudget < 0
-                              ? Theme.of(context).colorScheme.error
-                              : null,
-                        ),
-                  ),
-                ),
                 if (periodTotalAsync.hasError) ...[
                   const SizedBox(height: 8),
                   Text(l10n.errorMessage(periodTotalAsync.error!)),
@@ -598,11 +965,13 @@ class _HomePageState extends ConsumerState<HomePage> {
 
 class _HomeSection extends StatelessWidget {
   final String title;
+  final Widget? titleSuffix;
   final Widget? trailing;
   final Widget child;
 
   const _HomeSection({
     required this.title,
+    this.titleSuffix,
     this.trailing,
     required this.child,
   });
@@ -617,13 +986,18 @@ class _HomeSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
-                if (trailing != null) trailing!,
+                if (titleSuffix != null) ...[
+                  const SizedBox(width: 4),
+                  Flexible(child: titleSuffix!),
+                ],
+                if (trailing != null) ...[
+                  const Spacer(),
+                  trailing!,
+                ],
               ],
             ),
             const SizedBox(height: 12),
@@ -635,90 +1009,57 @@ class _HomeSection extends StatelessWidget {
   }
 }
 
-class _DailyExpenseSummary extends StatelessWidget {
+class _SelectedDaySummary extends StatelessWidget {
   final DateTime date;
-  final int? income;
-  final int? expenseTotal;
-  final int? variableExpense;
-  final int? dailyTarget;
-  final VoidCallback onInput;
+  final int? weeklyExpense;
+  final int? weeklyTarget;
 
-  const _DailyExpenseSummary({
+  const _SelectedDaySummary({
     required this.date,
-    required this.income,
-    required this.expenseTotal,
-    required this.variableExpense,
-    required this.dailyTarget,
-    required this.onInput,
+    required this.weeklyExpense,
+    required this.weeklyTarget,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final isOverTarget = variableExpense != null &&
-        dailyTarget != null &&
-        variableExpense! > dailyTarget!;
-    final progress = variableExpense == null || dailyTarget == null
+    final isOverTarget = weeklyExpense != null &&
+        weeklyTarget != null &&
+        weeklyExpense! > weeklyTarget!;
+    final progress = weeklyExpense == null || weeklyTarget == null
         ? 0.0
-        : dailyTarget == 0
-            ? (variableExpense! > 0 ? 1.0 : 0.0)
-            : (variableExpense! / dailyTarget!).clamp(0.0, 1.0);
+        : weeklyTarget == 0
+            ? (weeklyExpense! > 0 ? 1.0 : 0.0)
+            : (weeklyExpense! / weeklyTarget!).clamp(0.0, 1.0);
 
     return Container(
-      key: const Key('home-daily-expense-summary'),
+      key: const Key('home-selected-day-summary'),
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.formatDate(date),
-                  key: const Key('home-selected-date'),
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-              TextButton.icon(
-                onPressed: onInput,
-                icon: const Icon(Icons.add, size: 18),
-                label: Text(l10n.homeDailyInput),
-              ),
-            ],
-          ),
           Text(
-            l10n.homeDailyExpenseTotal,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          Text(
-            expenseTotal == null ? '—' : l10n.formatCurrency(expenseTotal!),
-            key: const Key('home-selected-day-total'),
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          if (income != null && income! > 0)
-            _AmountRow(
-              label: l10n.homeDailyIncome,
-              amount: income,
-            ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.homeDailyBudgetRatioLabel,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          Text(
-            l10n.formatCurrencyRatio(variableExpense, dailyTarget),
-            key: const Key('home-daily-budget-ratio'),
+            l10n.formatLongDate(date),
+            key: const Key('home-selected-date'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
+          _ProgressAmountLabels(
+            spent: weeklyExpense,
+            remaining: weeklyExpense == null || weeklyTarget == null
+                ? null
+                : weeklyTarget! - weeklyExpense!,
+            unit: l10n.homeBudgetUnitWeek,
+          ),
+          const SizedBox(height: 6),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
-              key: const Key('home-daily-target-progress'),
+              key: const Key('home-weekly-target-progress'),
               value: progress,
               minHeight: 12,
               color: isOverTarget ? scheme.error : scheme.primary,
@@ -727,7 +1068,7 @@ class _DailyExpenseSummary extends StatelessWidget {
           if (isOverTarget) ...[
             const SizedBox(height: 6),
             Text(
-              l10n.homeDailyBudgetOver(variableExpense! - dailyTarget!),
+              l10n.homeWeeklyBudgetOver(weeklyExpense! - weeklyTarget!),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: scheme.error,
                   ),
@@ -736,6 +1077,56 @@ class _DailyExpenseSummary extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _ProgressAmountLabels extends StatelessWidget {
+  final int? spent;
+  final int? remaining;
+  final String unit;
+
+  const _ProgressAmountLabels({
+    required this.spent,
+    required this.remaining,
+    required this.unit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final style = Theme.of(context).textTheme.labelSmall;
+    return Row(children: [
+      Expanded(
+        child: Text(
+          l10n.homeProgressSpent(spent),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: style,
+        ),
+      ),
+      Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(l10n.homeRemainingLabel, style: style),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                l10n.formatYenAmount(remaining),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: remaining != null && remaining! < 0
+                          ? Theme.of(context).colorScheme.error
+                          : null,
+                    ),
+              ),
+            ),
+            Text(' / $unit', style: style),
+          ],
+        ),
+      ),
+    ]);
   }
 }
 

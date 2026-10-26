@@ -4,6 +4,7 @@ import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
+import 'package:kakeibo/presentation/widgets/adaptive_page_title.dart';
 
 class CategoryManagePage extends ConsumerStatefulWidget {
   const CategoryManagePage({super.key});
@@ -172,7 +173,7 @@ class _CategoryManagePageState extends ConsumerState<CategoryManagePage>
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.categoryManageTitle),
+        title: AdaptivePageTitle(l10n.categoryManageTitle),
         bottom: TabBar(
           controller: _tab,
           tabs: [

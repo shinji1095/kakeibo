@@ -5,6 +5,7 @@ import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
 import 'package:kakeibo/presentation/providers/home_provider.dart';
 import 'package:kakeibo/presentation/providers/transactions_provider.dart';
+import 'package:kakeibo/presentation/widgets/adaptive_page_title.dart';
 import 'package:kakeibo/presentation/widgets/category_icon_selector.dart';
 import 'package:kakeibo/presentation/widgets/expense_attribute_icon_selector.dart';
 
@@ -108,7 +109,7 @@ class _TransactionEditPageState extends ConsumerState<TransactionEditPage> {
     final categoriesAsync = ref.watch(categoriesByTypeProvider(_type));
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.editTitle)),
+      appBar: AppBar(title: AdaptivePageTitle(l10n.editTitle)),
       body: categoriesAsync.when(
         data: (categories) {
           final selectable = categories.where((c) => c.id != null).toList();

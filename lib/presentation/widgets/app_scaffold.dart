@@ -3,13 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 
 class AppScaffold extends StatelessWidget {
-  final String title;
   final int currentIndex;
   final Widget body;
 
   const AppScaffold({
     super.key,
-    required this.title,
     required this.currentIndex,
     required this.body,
   });
@@ -23,7 +21,6 @@ class AppScaffold extends StatelessWidget {
           padding: const EdgeInsets.only(left: 12),
           child: Icon(Icons.account_balance_wallet_outlined),
         ),
-        title: Text(title),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -85,15 +82,19 @@ class AppBottomNav extends StatelessWidget {
         }
       },
       destinations: [
-        NavigationDestination(icon: const Icon(Icons.home), label: l10n.navHome),
-        NavigationDestination(icon: const Icon(Icons.list), label: l10n.navList),
+        NavigationDestination(
+            icon: const Icon(Icons.home), label: l10n.navHome),
+        NavigationDestination(
+            icon: const Icon(Icons.list), label: l10n.navList),
         NavigationDestination(
           icon: buildAddIcon(),
           selectedIcon: buildAddIcon(),
           label: l10n.navInput,
         ),
-        NavigationDestination(icon: const Icon(Icons.pie_chart), label: l10n.navBreakdown),
-        NavigationDestination(icon: const Icon(Icons.show_chart), label: l10n.navTrend),
+        NavigationDestination(
+            icon: const Icon(Icons.pie_chart), label: l10n.navBreakdown),
+        NavigationDestination(
+            icon: const Icon(Icons.show_chart), label: l10n.navTrend),
       ],
     );
   }

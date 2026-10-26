@@ -84,7 +84,6 @@ class BreakdownPage extends ConsumerWidget {
       rangeEndInclusive: endInclusive,
     );
     return AppScaffold(
-      title: l10n.breakdownTitle,
       currentIndex: 3,
       body: ListView(
         padding: EdgeInsets.zero,

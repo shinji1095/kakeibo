@@ -657,8 +657,33 @@ class $AnnualSchedulesTable extends AnnualSchedules
   late final GeneratedColumn<int> weekStart = GeneratedColumn<int>(
       'week_start', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _bonusConfigMeta =
+      const VerificationMeta('bonusConfig');
   @override
-  List<GeneratedColumn> get $columns => [year, startDate, weekStart];
+  late final GeneratedColumn<String> bonusConfig = GeneratedColumn<String>(
+      'bonus_config', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _sixWeekPeriodsMeta =
+      const VerificationMeta('sixWeekPeriods');
+  @override
+  late final GeneratedColumn<String> sixWeekPeriods = GeneratedColumn<String>(
+      'six_week_periods', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _periodBudgetMeta =
+      const VerificationMeta('periodBudget');
+  @override
+  late final GeneratedColumn<int> periodBudget = GeneratedColumn<int>(
+      'period_budget', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(50000));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [year, startDate, weekStart, bonusConfig, sixWeekPeriods, periodBudget];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -685,6 +710,24 @@ class $AnnualSchedulesTable extends AnnualSchedules
     } else if (isInserting) {
       context.missing(_weekStartMeta);
     }
+    if (data.containsKey('bonus_config')) {
+      context.handle(
+          _bonusConfigMeta,
+          bonusConfig.isAcceptableOrUnknown(
+              data['bonus_config']!, _bonusConfigMeta));
+    }
+    if (data.containsKey('six_week_periods')) {
+      context.handle(
+          _sixWeekPeriodsMeta,
+          sixWeekPeriods.isAcceptableOrUnknown(
+              data['six_week_periods']!, _sixWeekPeriodsMeta));
+    }
+    if (data.containsKey('period_budget')) {
+      context.handle(
+          _periodBudgetMeta,
+          periodBudget.isAcceptableOrUnknown(
+              data['period_budget']!, _periodBudgetMeta));
+    }
     return context;
   }
 
@@ -700,6 +743,12 @@ class $AnnualSchedulesTable extends AnnualSchedules
           .read(DriftSqlType.dateTime, data['${effectivePrefix}start_date'])!,
       weekStart: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}week_start'])!,
+      bonusConfig: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bonus_config'])!,
+      sixWeekPeriods: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}six_week_periods'])!,
+      periodBudget: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}period_budget'])!,
     );
   }
 
@@ -713,14 +762,25 @@ class AnnualSchedule extends DataClass implements Insertable<AnnualSchedule> {
   final int year;
   final DateTime startDate;
   final int weekStart;
+  final String bonusConfig;
+  final String sixWeekPeriods;
+  final int periodBudget;
   const AnnualSchedule(
-      {required this.year, required this.startDate, required this.weekStart});
+      {required this.year,
+      required this.startDate,
+      required this.weekStart,
+      required this.bonusConfig,
+      required this.sixWeekPeriods,
+      required this.periodBudget});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['year'] = Variable<int>(year);
     map['start_date'] = Variable<DateTime>(startDate);
     map['week_start'] = Variable<int>(weekStart);
+    map['bonus_config'] = Variable<String>(bonusConfig);
+    map['six_week_periods'] = Variable<String>(sixWeekPeriods);
+    map['period_budget'] = Variable<int>(periodBudget);
     return map;
   }
 
@@ -729,6 +789,9 @@ class AnnualSchedule extends DataClass implements Insertable<AnnualSchedule> {
       year: Value(year),
       startDate: Value(startDate),
       weekStart: Value(weekStart),
+      bonusConfig: Value(bonusConfig),
+      sixWeekPeriods: Value(sixWeekPeriods),
+      periodBudget: Value(periodBudget),
     );
   }
 
@@ -739,6 +802,9 @@ class AnnualSchedule extends DataClass implements Insertable<AnnualSchedule> {
       year: serializer.fromJson<int>(json['year']),
       startDate: serializer.fromJson<DateTime>(json['startDate']),
       weekStart: serializer.fromJson<int>(json['weekStart']),
+      bonusConfig: serializer.fromJson<String>(json['bonusConfig']),
+      sixWeekPeriods: serializer.fromJson<String>(json['sixWeekPeriods']),
+      periodBudget: serializer.fromJson<int>(json['periodBudget']),
     );
   }
   @override
@@ -748,20 +814,40 @@ class AnnualSchedule extends DataClass implements Insertable<AnnualSchedule> {
       'year': serializer.toJson<int>(year),
       'startDate': serializer.toJson<DateTime>(startDate),
       'weekStart': serializer.toJson<int>(weekStart),
+      'bonusConfig': serializer.toJson<String>(bonusConfig),
+      'sixWeekPeriods': serializer.toJson<String>(sixWeekPeriods),
+      'periodBudget': serializer.toJson<int>(periodBudget),
     };
   }
 
-  AnnualSchedule copyWith({int? year, DateTime? startDate, int? weekStart}) =>
+  AnnualSchedule copyWith(
+          {int? year,
+          DateTime? startDate,
+          int? weekStart,
+          String? bonusConfig,
+          String? sixWeekPeriods,
+          int? periodBudget}) =>
       AnnualSchedule(
         year: year ?? this.year,
         startDate: startDate ?? this.startDate,
         weekStart: weekStart ?? this.weekStart,
+        bonusConfig: bonusConfig ?? this.bonusConfig,
+        sixWeekPeriods: sixWeekPeriods ?? this.sixWeekPeriods,
+        periodBudget: periodBudget ?? this.periodBudget,
       );
   AnnualSchedule copyWithCompanion(AnnualSchedulesCompanion data) {
     return AnnualSchedule(
       year: data.year.present ? data.year.value : this.year,
       startDate: data.startDate.present ? data.startDate.value : this.startDate,
       weekStart: data.weekStart.present ? data.weekStart.value : this.weekStart,
+      bonusConfig:
+          data.bonusConfig.present ? data.bonusConfig.value : this.bonusConfig,
+      sixWeekPeriods: data.sixWeekPeriods.present
+          ? data.sixWeekPeriods.value
+          : this.sixWeekPeriods,
+      periodBudget: data.periodBudget.present
+          ? data.periodBudget.value
+          : this.periodBudget,
     );
   }
 
@@ -770,55 +856,85 @@ class AnnualSchedule extends DataClass implements Insertable<AnnualSchedule> {
     return (StringBuffer('AnnualSchedule(')
           ..write('year: $year, ')
           ..write('startDate: $startDate, ')
-          ..write('weekStart: $weekStart')
+          ..write('weekStart: $weekStart, ')
+          ..write('bonusConfig: $bonusConfig, ')
+          ..write('sixWeekPeriods: $sixWeekPeriods, ')
+          ..write('periodBudget: $periodBudget')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(year, startDate, weekStart);
+  int get hashCode => Object.hash(
+      year, startDate, weekStart, bonusConfig, sixWeekPeriods, periodBudget);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AnnualSchedule &&
           other.year == this.year &&
           other.startDate == this.startDate &&
-          other.weekStart == this.weekStart);
+          other.weekStart == this.weekStart &&
+          other.bonusConfig == this.bonusConfig &&
+          other.sixWeekPeriods == this.sixWeekPeriods &&
+          other.periodBudget == this.periodBudget);
 }
 
 class AnnualSchedulesCompanion extends UpdateCompanion<AnnualSchedule> {
   final Value<int> year;
   final Value<DateTime> startDate;
   final Value<int> weekStart;
+  final Value<String> bonusConfig;
+  final Value<String> sixWeekPeriods;
+  final Value<int> periodBudget;
   const AnnualSchedulesCompanion({
     this.year = const Value.absent(),
     this.startDate = const Value.absent(),
     this.weekStart = const Value.absent(),
+    this.bonusConfig = const Value.absent(),
+    this.sixWeekPeriods = const Value.absent(),
+    this.periodBudget = const Value.absent(),
   });
   AnnualSchedulesCompanion.insert({
     this.year = const Value.absent(),
     required DateTime startDate,
     required int weekStart,
+    this.bonusConfig = const Value.absent(),
+    this.sixWeekPeriods = const Value.absent(),
+    this.periodBudget = const Value.absent(),
   })  : startDate = Value(startDate),
         weekStart = Value(weekStart);
   static Insertable<AnnualSchedule> custom({
     Expression<int>? year,
     Expression<DateTime>? startDate,
     Expression<int>? weekStart,
+    Expression<String>? bonusConfig,
+    Expression<String>? sixWeekPeriods,
+    Expression<int>? periodBudget,
   }) {
     return RawValuesInsertable({
       if (year != null) 'year': year,
       if (startDate != null) 'start_date': startDate,
       if (weekStart != null) 'week_start': weekStart,
+      if (bonusConfig != null) 'bonus_config': bonusConfig,
+      if (sixWeekPeriods != null) 'six_week_periods': sixWeekPeriods,
+      if (periodBudget != null) 'period_budget': periodBudget,
     });
   }
 
   AnnualSchedulesCompanion copyWith(
-      {Value<int>? year, Value<DateTime>? startDate, Value<int>? weekStart}) {
+      {Value<int>? year,
+      Value<DateTime>? startDate,
+      Value<int>? weekStart,
+      Value<String>? bonusConfig,
+      Value<String>? sixWeekPeriods,
+      Value<int>? periodBudget}) {
     return AnnualSchedulesCompanion(
       year: year ?? this.year,
       startDate: startDate ?? this.startDate,
       weekStart: weekStart ?? this.weekStart,
+      bonusConfig: bonusConfig ?? this.bonusConfig,
+      sixWeekPeriods: sixWeekPeriods ?? this.sixWeekPeriods,
+      periodBudget: periodBudget ?? this.periodBudget,
     );
   }
 
@@ -834,6 +950,15 @@ class AnnualSchedulesCompanion extends UpdateCompanion<AnnualSchedule> {
     if (weekStart.present) {
       map['week_start'] = Variable<int>(weekStart.value);
     }
+    if (bonusConfig.present) {
+      map['bonus_config'] = Variable<String>(bonusConfig.value);
+    }
+    if (sixWeekPeriods.present) {
+      map['six_week_periods'] = Variable<String>(sixWeekPeriods.value);
+    }
+    if (periodBudget.present) {
+      map['period_budget'] = Variable<int>(periodBudget.value);
+    }
     return map;
   }
 
@@ -842,7 +967,10 @@ class AnnualSchedulesCompanion extends UpdateCompanion<AnnualSchedule> {
     return (StringBuffer('AnnualSchedulesCompanion(')
           ..write('year: $year, ')
           ..write('startDate: $startDate, ')
-          ..write('weekStart: $weekStart')
+          ..write('weekStart: $weekStart, ')
+          ..write('bonusConfig: $bonusConfig, ')
+          ..write('sixWeekPeriods: $sixWeekPeriods, ')
+          ..write('periodBudget: $periodBudget')
           ..write(')'))
         .toString();
   }
@@ -1672,12 +1800,18 @@ typedef $$AnnualSchedulesTableCreateCompanionBuilder = AnnualSchedulesCompanion
   Value<int> year,
   required DateTime startDate,
   required int weekStart,
+  Value<String> bonusConfig,
+  Value<String> sixWeekPeriods,
+  Value<int> periodBudget,
 });
 typedef $$AnnualSchedulesTableUpdateCompanionBuilder = AnnualSchedulesCompanion
     Function({
   Value<int> year,
   Value<DateTime> startDate,
   Value<int> weekStart,
+  Value<String> bonusConfig,
+  Value<String> sixWeekPeriods,
+  Value<int> periodBudget,
 });
 
 class $$AnnualSchedulesTableTableManager extends RootTableManager<
@@ -1701,21 +1835,33 @@ class $$AnnualSchedulesTableTableManager extends RootTableManager<
             Value<int> year = const Value.absent(),
             Value<DateTime> startDate = const Value.absent(),
             Value<int> weekStart = const Value.absent(),
+            Value<String> bonusConfig = const Value.absent(),
+            Value<String> sixWeekPeriods = const Value.absent(),
+            Value<int> periodBudget = const Value.absent(),
           }) =>
               AnnualSchedulesCompanion(
             year: year,
             startDate: startDate,
             weekStart: weekStart,
+            bonusConfig: bonusConfig,
+            sixWeekPeriods: sixWeekPeriods,
+            periodBudget: periodBudget,
           ),
           createCompanionCallback: ({
             Value<int> year = const Value.absent(),
             required DateTime startDate,
             required int weekStart,
+            Value<String> bonusConfig = const Value.absent(),
+            Value<String> sixWeekPeriods = const Value.absent(),
+            Value<int> periodBudget = const Value.absent(),
           }) =>
               AnnualSchedulesCompanion.insert(
             year: year,
             startDate: startDate,
             weekStart: weekStart,
+            bonusConfig: bonusConfig,
+            sixWeekPeriods: sixWeekPeriods,
+            periodBudget: periodBudget,
           ),
         ));
 }
@@ -1735,6 +1881,21 @@ class $$AnnualSchedulesTableFilterComposer
 
   ColumnFilters<int> get weekStart => $state.composableBuilder(
       column: $state.table.weekStart,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get bonusConfig => $state.composableBuilder(
+      column: $state.table.bonusConfig,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get sixWeekPeriods => $state.composableBuilder(
+      column: $state.table.sixWeekPeriods,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get periodBudget => $state.composableBuilder(
+      column: $state.table.periodBudget,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -1785,6 +1946,21 @@ class $$AnnualSchedulesTableOrderingComposer
 
   ColumnOrderings<int> get weekStart => $state.composableBuilder(
       column: $state.table.weekStart,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get bonusConfig => $state.composableBuilder(
+      column: $state.table.bonusConfig,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get sixWeekPeriods => $state.composableBuilder(
+      column: $state.table.sixWeekPeriods,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get periodBudget => $state.composableBuilder(
+      column: $state.table.periodBudget,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

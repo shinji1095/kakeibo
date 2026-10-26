@@ -7,7 +7,6 @@ import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/presentation/pages/breakdown_page.dart';
 import 'package:kakeibo/presentation/pages/annual_schedule_page.dart';
-import 'package:kakeibo/presentation/pages/budget_settings_page.dart';
 import 'package:kakeibo/presentation/pages/category_manage_page.dart';
 import 'package:kakeibo/presentation/pages/csv_export_page.dart';
 import 'package:kakeibo/presentation/pages/home_page.dart';
@@ -25,7 +24,8 @@ class KakeiboApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
-    final ThemeData lightTheme = AppTheme.themeFor(settings.colorTheme, Brightness.light);
+    final ThemeData lightTheme =
+        AppTheme.themeFor(settings.colorTheme, Brightness.light);
 
     return MaterialApp.router(
       title: AppLocalizations(settings.language.locale).appTitle,
@@ -103,12 +103,30 @@ final _router = GoRouter(
       ),
       name: 'trend',
     ),
-    GoRoute(path: '/settings', builder: (ctx, st) => const SettingsPage(), name: 'settings'),
-    GoRoute(path: '/settings/csv', builder: (ctx, st) => const CsvExportPage(), name: 'csv_export'),
-    GoRoute(path: '/settings/categories', builder: (ctx, st) => const CategoryManagePage(), name: 'category_manage'),
-    GoRoute(path: '/settings/budget', builder: (ctx, st) => const BudgetSettingsPage(), name: 'budget_settings'),
-    GoRoute(path: '/settings/annual', builder: (ctx, st) => const AnnualSchedulePage(), name: 'annual_schedule'),
-    GoRoute(path: '/settings/reminder', builder: (ctx, st) => const ReminderManagePage(), name: 'reminder_manage'),
+    GoRoute(
+        path: '/settings',
+        builder: (ctx, st) => const SettingsPage(),
+        name: 'settings'),
+    GoRoute(
+        path: '/settings/csv',
+        builder: (ctx, st) => const CsvExportPage(),
+        name: 'csv_export'),
+    GoRoute(
+        path: '/settings/categories',
+        builder: (ctx, st) => const CategoryManagePage(),
+        name: 'category_manage'),
+    GoRoute(
+        path: '/settings/budget',
+        builder: (ctx, st) => const AnnualSchedulePage(),
+        name: 'budget_settings'),
+    GoRoute(
+        path: '/settings/annual',
+        builder: (ctx, st) => const AnnualSchedulePage(),
+        name: 'annual_schedule'),
+    GoRoute(
+        path: '/settings/reminder',
+        builder: (ctx, st) => const ReminderManagePage(),
+        name: 'reminder_manage'),
     GoRoute(
       path: '/edit',
       name: 'edit',

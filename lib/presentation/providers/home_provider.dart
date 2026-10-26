@@ -5,7 +5,6 @@ import 'package:kakeibo/core/utils/period_utils.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/domain/usecases/get_transactions_by_range.dart';
 import 'package:kakeibo/presentation/providers/annual_schedule_provider.dart';
-import 'package:kakeibo/presentation/providers/settings_provider.dart';
 import 'package:kakeibo/presentation/utils/annual_schedule_colors.dart';
 
 class HomeStats {
@@ -77,14 +76,12 @@ final homeStatsProvider = Provider<HomeStats>((ref) {
 
 class HomeMonthSummary {
   final Map<DateTime, ({int income, int expense})> totalsByDay;
-  final Map<DateTime, int> variableExpensesByDay;
   final int income;
   final int fixedExpenses;
   final int specialExpenses;
 
   const HomeMonthSummary({
     required this.totalsByDay,
-    required this.variableExpensesByDay,
     required this.income,
     required this.fixedExpenses,
     required this.specialExpenses,
@@ -96,7 +93,6 @@ final homeMonthSummaryProvider =
   if (!sl.isRegistered<GetTransactionsByRange>()) {
     return const HomeMonthSummary(
       totalsByDay: <DateTime, ({int income, int expense})>{},
-      variableExpensesByDay: <DateTime, int>{},
       income: 0,
       fixedExpenses: 0,
       specialExpenses: 0,
@@ -111,7 +107,6 @@ final homeMonthSummaryProvider =
   final transactions =
       await sl<GetTransactionsByRange>()(gridStart, gridEndExclusive);
   final totalsByDay = <DateTime, ({int income, int expense})>{};
-  final variableExpensesByDay = <DateTime, int>{};
   var income = 0;
   var fixedExpenses = 0;
   var specialExpenses = 0;
@@ -123,13 +118,6 @@ final homeMonthSummaryProvider =
     totalsByDay[day] = isIncome
         ? (income: current.income + tx.amount.value, expense: current.expense)
         : (income: current.income, expense: current.expense + tx.amount.value);
-
-    if (!isIncome &&
-        (tx.expenseAttribute ?? kDefaultExpenseAttribute) ==
-            ExpenseAttribute.variable) {
-      variableExpensesByDay[day] =
-          (variableExpensesByDay[day] ?? 0) + tx.amount.value;
-    }
 
     if (day.year != month.year || day.month != month.month) continue;
     if (isIncome) {
@@ -150,7 +138,6 @@ final homeMonthSummaryProvider =
 
   return HomeMonthSummary(
     totalsByDay: totalsByDay,
-    variableExpensesByDay: variableExpensesByDay,
     income: income,
     fixedExpenses: fixedExpenses,
     specialExpenses: specialExpenses,
@@ -192,7 +179,6 @@ class BonusSummary {
 
 final bonusSummaryProvider = FutureProvider<BonusSummary>((ref) async {
   final schedule = await ref.watch(currentAnnualScheduleProvider.future);
-  final settings = ref.watch(settingsProvider);
   if (schedule == null ||
       schedule.periods.isEmpty ||
       !sl.isRegistered<GetTransactionsByRange>()) {
@@ -205,8 +191,8 @@ final bonusSummaryProvider = FutureProvider<BonusSummary>((ref) async {
   }
 
   final now = DateTime.now();
-  final yearStart = DateTime(schedule.year, 1, 1);
-  final yearEnd = DateTime(schedule.year + 1, 1, 1);
+  final yearStart = schedule.startDate;
+  final yearEnd = schedule.periods.last.endDate.add(const Duration(days: 1));
   final use = sl<GetTransactionsByRange>();
   final list = await use(yearStart, yearEnd);
 
@@ -222,13 +208,19 @@ final bonusSummaryProvider = FutureProvider<BonusSummary>((ref) async {
     }
   }
 
-  final periodBudgetTotal = settings.periodBudget * schedule.periods.length;
+  final periodBudgetTotal = schedule.periodBudget *
+      schedule.periods.where((period) => period.days > 0).length;
   final bonusBalance = periodBudgetTotal - variableTotal - bonusExpenseTotal;
   final bonusPeriods = schedule.bonusPeriods;
   final currentPeriod = resolveSchedulePeriod(schedule.periods, now);
+  final isZeroWeekBonusMonth = schedule.bonusMonths.any((bonus) =>
+      bonus.weeks == 0 &&
+      bonus.month == now.month &&
+      schedule.year == now.year);
 
   return BonusSummary(
-    isBonusPeriod: currentPeriod.days == 7,
+    isBonusPeriod:
+        isZeroWeekBonusMonth || bonusPeriods.contains(currentPeriod.index),
     bonusBalance: bonusBalance,
     bonusExpenseTotal: bonusExpenseTotal,
     bonusPeriods: bonusPeriods,

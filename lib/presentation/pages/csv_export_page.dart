@@ -7,6 +7,7 @@ import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 import 'package:kakeibo/domain/usecases/get_transactions_by_range.dart';
 import 'package:kakeibo/presentation/providers/categories_provider.dart';
+import 'package:kakeibo/presentation/widgets/adaptive_page_title.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -164,7 +165,7 @@ class _CsvExportPageState extends ConsumerState<CsvExportPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.csvExportTitle)),
+      appBar: AppBar(title: AdaptivePageTitle(l10n.csvExportTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

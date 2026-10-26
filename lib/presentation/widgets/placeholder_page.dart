@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kakeibo/presentation/widgets/adaptive_page_title.dart';
 
 class PlaceholderPage extends StatelessWidget {
   final String title;
@@ -13,7 +14,7 @@ class PlaceholderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: AdaptivePageTitle(title)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),

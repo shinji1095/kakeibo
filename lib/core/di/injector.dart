@@ -15,7 +15,7 @@ import 'package:kakeibo/domain/usecases/delete_transaction.dart';
 import 'package:kakeibo/domain/usecases/delete_category.dart';
 import 'package:kakeibo/domain/usecases/annual_schedule_generator.dart';
 import 'package:kakeibo/domain/usecases/get_annual_schedule.dart';
-import 'package:kakeibo/domain/usecases/set_annual_schedule_bonus_periods.dart';
+import 'package:kakeibo/domain/usecases/save_annual_schedule.dart';
 import 'package:kakeibo/domain/usecases/get_category_totals_by_range.dart';
 import 'package:kakeibo/domain/usecases/get_categories.dart';
 import 'package:kakeibo/domain/usecases/get_monthly_summary.dart';
@@ -61,7 +61,5 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => GetCategories(sl()));
   sl.registerLazySingleton(() => AnnualScheduleGenerator());
   sl.registerLazySingleton(() => GetAnnualSchedule(sl(), sl()));
-  sl.registerLazySingleton<SetAnnualScheduleBonusPeriods>(
-    () => SetAnnualScheduleBonusPeriodsImpl(sl(), sl()),
-  );
+  sl.registerLazySingleton(() => SaveAnnualSchedule(sl(), sl()));
 }

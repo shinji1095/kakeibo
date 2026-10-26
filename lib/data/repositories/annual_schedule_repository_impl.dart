@@ -9,7 +9,9 @@ class AnnualScheduleRepositoryImpl implements AnnualScheduleRepository {
 
   @override
   Future<AnnualScheduleConfig?> getConfig(int year) async {
-    final schedule = await (db.select(db.annualSchedules)..where((t) => t.year.equals(year))).getSingleOrNull();
+    final schedule = await (db.select(db.annualSchedules)
+          ..where((t) => t.year.equals(year)))
+        .getSingleOrNull();
     if (schedule == null) return null;
 
     final periods = await (db.select(db.annualPeriods)
@@ -22,6 +24,20 @@ class AnnualScheduleRepositoryImpl implements AnnualScheduleRepository {
       startDate: schedule.startDate,
       weekStart: schedule.weekStart,
       periodDays: periodDays,
+      bonusMonths: schedule.bonusConfig.isEmpty
+          ? const []
+          : schedule.bonusConfig.split(',').map((entry) {
+              final parts = entry.split(':');
+              return BonusMonthSetting(
+                month: int.parse(parts[0]),
+                weeks: int.parse(parts[1]),
+                periodIndex: parts.length > 2 ? int.parse(parts[2]) : null,
+              );
+            }).toList(),
+      sixWeekPeriods: schedule.sixWeekPeriods.isEmpty
+          ? const []
+          : schedule.sixWeekPeriods.split(',').map(int.parse).toList(),
+      periodBudget: schedule.periodBudget,
     );
   }
 
@@ -33,10 +49,19 @@ class AnnualScheduleRepositoryImpl implements AnnualScheduleRepository {
               year: d.Value(config.year),
               startDate: d.Value(config.startDate),
               weekStart: d.Value(config.weekStart),
+              bonusConfig: d.Value(config.bonusMonths
+                  .map((month) => month.periodIndex == null
+                      ? '${month.month}:${month.weeks}'
+                      : '${month.month}:${month.weeks}:${month.periodIndex}')
+                  .join(',')),
+              sixWeekPeriods: d.Value(config.sixWeekPeriods.join(',')),
+              periodBudget: d.Value(config.periodBudget),
             ),
           );
 
-      await (db.delete(db.annualPeriods)..where((t) => t.scheduleYear.equals(config.year))).go();
+      await (db.delete(db.annualPeriods)
+            ..where((t) => t.scheduleYear.equals(config.year)))
+          .go();
       if (config.periodDays.isNotEmpty) {
         await db.batch((b) {
           b.insertAll(
@@ -52,7 +77,6 @@ class AnnualScheduleRepositoryImpl implements AnnualScheduleRepository {
           );
         });
       }
-
     });
   }
 }

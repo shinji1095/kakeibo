@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
 import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/presentation/providers/settings_provider.dart';
+import 'package:kakeibo/presentation/widgets/adaptive_page_title.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -22,11 +23,12 @@ class SettingsPage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.settingsTitle)),
+      appBar: AppBar(title: AdaptivePageTitle(l10n.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(l10n.displaySection, style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.displaySection,
+              style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: Padding(
@@ -70,8 +72,8 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-
-          Text(l10n.accountSection, style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.accountSection,
+              style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: Column(
@@ -85,14 +87,15 @@ class SettingsPage extends ConsumerWidget {
                 ListTile(
                   title: Text(l10n.dataSharingSetting),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showPlaceholder(context, l10n.dataSharingSetting),
+                  onTap: () =>
+                      _showPlaceholder(context, l10n.dataSharingSetting),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-
-          Text(l10n.managementSection, style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.managementSection,
+              style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: Column(
@@ -112,7 +115,7 @@ class SettingsPage extends ConsumerWidget {
                 ListTile(
                   title: Text(l10n.budgetSettings),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/settings/budget'),
+                  onTap: () => context.push('/settings/annual'),
                 ),
                 const Divider(height: 1),
                 ListTile(

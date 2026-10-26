@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kakeibo/core/localization/app_localizations.dart';
-import 'package:kakeibo/presentation/pages/budget_settings_page.dart';
+import 'package:kakeibo/presentation/pages/annual_schedule_page.dart';
 import 'package:kakeibo/presentation/pages/home_page.dart';
 
 void main() {
@@ -20,12 +20,15 @@ void main() {
     binding.window.clearDevicePixelRatioTestValue();
   });
 
-  testWidgets('tapping home budget navigates to budget settings', (WidgetTester tester) async {
+  testWidgets('tapping annual schedule link navigates to annual settings',
+      (WidgetTester tester) async {
     final router = GoRouter(
       initialLocation: '/',
       routes: [
         GoRoute(path: '/', builder: (ctx, st) => const HomePage()),
-        GoRoute(path: '/settings/budget', builder: (ctx, st) => const BudgetSettingsPage()),
+        GoRoute(
+            path: '/settings/annual',
+            builder: (ctx, st) => const AnnualSchedulePage()),
       ],
     );
 
@@ -47,13 +50,13 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    final budgetLink = find.byKey(const Key('home-budget-link'));
-    expect(budgetLink, findsOneWidget);
-    await tester.ensureVisible(budgetLink);
+    final annualLink = find.text('年間スケジュール');
+    expect(annualLink, findsOneWidget);
+    await tester.ensureVisible(annualLink);
     await tester.pumpAndSettle();
-    await tester.tap(budgetLink);
+    await tester.tap(annualLink);
     await tester.pumpAndSettle();
 
-    expect(find.byType(BudgetSettingsPage), findsOneWidget);
+    expect(find.byType(AnnualSchedulePage), findsOneWidget);
   });
 }

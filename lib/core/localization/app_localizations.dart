@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kakeibo/core/theme/app_theme.dart';
 import 'package:kakeibo/domain/entities/transaction.dart';
 
@@ -71,7 +72,7 @@ class AppLocalizations {
       'budgetSavedMessage': 'やりくり費を保存しました',
       'bonusSettings': 'ボーナス設定',
       'annualSchedule': '年間スケジュール',
-      'annualScheduleYear': '{year}年の年間スケジュール',
+      'annualScheduleYear': '{year}年スケジュール',
       'annualScheduleStartDate': '開始日: {date}',
       'annualSchedulePeriodCount': '期間数: {count}',
       'annualScheduleTotalDays': '合計日数: {days}日',
@@ -84,6 +85,63 @@ class AppLocalizations {
       'annualSchedulePeriodIndex': '{index}期',
       'annualSchedulePeriodDays': '{days}日',
       'annualScheduleMissing': '年間スケジュールを取得できません。',
+      'annualScheduleBasics': '基本設定',
+      'annualStartWeekday': '開始する曜日',
+      'annualBasicStartHelp': '開始日: {date}',
+      'annualBasicCustomActive': '詳細設定が適用されています。基本設定に戻すと固定配分で再計算します。',
+      'annualBasicReset': '基本設定に戻す',
+      'annualAdvancedTitle': '詳細設定',
+      'annualAdvancedHelp': '家計簿の開始日、ボーナス月とそのやりくり期間、6週目を設ける月を変更できます。',
+      'annualAdvancedHelpTooltip': '詳細設定の説明',
+      'annualSelectYear': '年を選択',
+      'annualClose': '閉じる',
+      'annualBudgetHelp': '各通常期の目標額に適用します',
+      'annualBudgetUnit': '円/月',
+      'annualBonusHelp': '0週は暦月、1週は7日間にする期を選びます。',
+      'annualBonusWeeks': '集計する週',
+      'annualSixWeekTitle': '6週にする月',
+      'annualSixWeekHelp':
+          '6週目を設ける月を選択（必要数: {count}）。0週のボーナス月が2つなら、選択したうち期番号が最も大きい期の6週目は1日または2日です。実際の日付は下で確認できます。',
+      'annualPreviewTitle': '期間の確認',
+      'annualPreviewSaved': '設定を整えると変更後の期間を表示します。現在の保存内容を表示中です。',
+      'annualWeeks': '{count}週',
+      'annualBonusTag': 'ボーナス',
+      'annualWeekOfMonth': '第{week}週から',
+      'annualZeroWeekDate': '{date}（第{week}週から・集計0週）',
+      'annualScheduleSaved': '年間スケジュールを保存しました',
+      'annualNeighborWarning': '前後の年間スケジュールと日付が連続しません。隣接年の開始日も確認してください。',
+      'annualChooseBonus': 'ボーナス設定（年2回）',
+      'annualZeroMonthHelp': '独立したボーナス期を設けない暦月を選択',
+      'annualZeroMonthSummary': '{month}は0週。独立したボーナス期はありません。',
+      'annualOnePeriodHelp': '1週にする期を選択',
+      'annualChoosePeriod': '7日間のボーナス期間にする期',
+      'annualPeriodUnavailable': 'この期は他のボーナス設定と両立しません',
+      'annualOnePeriodDate': '{start} ～ {end}・第{week}週から',
+      'annualBoundaryHelp': '各月の最初の期間境界から始まります。',
+      'annualBoundaryInvalid':
+          'この組み合わせでは年間365日／366日にできません。開始日やボーナス期、6週にする月を変更してください。',
+      'annualBoundaryDate': '{date}・第{week}週から',
+      'annualUnsavedBadge': '未保存の変更があります',
+      'annualReplaceMonthTitle': '{month}に変更する月を選択',
+      'annualReplaceMonth': '{month}と入れ替える',
+      'annualBudgetError': 'やりくり費は1円以上で入力してください',
+      'annualSixWeekRequired': '6週目を設ける通常期を{count}期選んでください',
+      'annualSixUnavailable': 'この月に始まる6週の通常期は選択できません',
+      'annualSixCandidate': '{start} ～ {end}（変更後）',
+      'annualTimelineSummary': '{count}期',
+      'annualWeeksExtra': '{weeks}週＋{extra}',
+      'annualPartialSixWeeks': '5週＋{extra}（6週目・計{days}日）',
+      'annualZeroBoundary': '{date}に境界',
+      'annualNoCollection': '集計なし',
+      'annualSaveThis': 'この内容で設定',
+      'annualStartDateColumn': '開始日',
+      'annualEndDateColumn': '終了日',
+      'annualUnsavedTitle': '未保存の変更があります',
+      'annualUnsavedMessage': '年を切り替える前に変更を保存しますか？',
+      'annualDiscard': '破棄して移動',
+      'annualSaveAndContinue': '保存して移動',
+      'previousYear': '前年',
+      'nextYear': '翌年',
       'bonusSummaryTitle': 'ボーナス月',
       'bonusBalanceLabel': 'ボーナス残高',
       'bonusExpenseTotalLabel': 'ボーナス支出合計',
@@ -165,33 +223,35 @@ class AppLocalizations {
       'homeCurrentPeriod': '現在の期間',
       'homeSelectedPeriod': '選択中の期間',
       'homePeriodsTitle': 'やりくり期間',
+      'homeModePeriod': '期間',
+      'homeModeMonth': '暦月',
       'homeBudgetTitle': '予算',
       'homeMonthlyIncomeLabel': '月収',
       'homeVariableTotalLabel': 'やりくり費',
       'homeFixedExpensesLabel': '固定費',
       'homeSpecialExpensesLabel': '特別費',
-      'homePeriodRemaining': '今期は残り{amount}',
-      'homeSelectedPeriodRemaining': 'この期間は残り{amount}',
       'homeIncomeLabel': '収入',
       'homeFixedSpecialLabel': '固定費・特別費',
       'homeBudgetLabel': 'やりくり費',
       'homePeriodLabel': '{index}期',
-      'homeTimelinePeriodLabel': '期間{index}',
       'homeStartDate': '開始日',
       'homeEndDate': '終了日',
       'homePeriodLengthLabel': '期間長: {days}日',
-      'homeDaysRemaining': '終了日まであと{days}日',
       'homeCalendarTitle': 'カレンダー',
+      'homeGoToToday': '今日に戻る',
       'homePeriodColorsLabel': '期間の色分け',
       'homePeriodColorsOn': '期間の色分け：ON',
       'homePeriodColorsOff': '期間の色分け：OFF',
-      'homeDailyExpenseTotal': '支出',
-      'homeDailyIncome': 'この日の収入',
-      'homeDailyBudgetRatioLabel': 'やりくり費（支出 / 日割り目安）',
-      'currencyRatio': '{spent} / {target}円',
-      'homeDailyBudgetOver': '目安を{amount}超過',
-      'homeDailyInput': 'この日に入力',
-      'homeBudgetRemainingLabel': 'やりくり費 残額',
+      'homeMonthColorsLabel': '月の色分け',
+      'homeMonthColorsOn': '月の色分け：ON',
+      'homeMonthColorsOff': '月の色分け：OFF',
+      'homeCountdownPrefix': 'あと',
+      'homeCountdownDays': '{days}日',
+      'homeProgressSpent': '支出 {amount}',
+      'homeRemainingLabel': '残り',
+      'homeBudgetUnitWeek': '週',
+      'homeBudgetUnitMonth': '月',
+      'homeWeeklyBudgetOver': '週の目安を{amount}超過',
       'homeBonusPlaceholder': 'ボーナス表示は未実装です（プレースホルダー）',
       'expenseAttrFixed': '固定費',
       'expenseAttrVariable': 'やりくり費',
@@ -236,7 +296,7 @@ class AppLocalizations {
       'reminderManagePlaceholder': '初期リリース対象外のため未実装です（プレースホルダー）。',
       'bonusSettingsTitle': 'ボーナス設定',
       'bonusBudgetTitle': 'やりくり費',
-      'bonusBudgetLabel': '期間のやりくり費（円）',
+      'bonusBudgetLabel': '目標：やりくり費',
       'bonusBudgetHint': '例: 50000',
       'bonusBudgetNote': 'デフォルトは50,000円です',
       'bonusBudgetApplyNote': '設定変更は以後の期間から適用されます',
@@ -246,8 +306,8 @@ class AppLocalizations {
       'bonusMonthToggleOn': 'ボーナス月にする',
       'bonusMonthToggleOff': 'ボーナス月にしない',
       'bonusMonthSwapTitle': 'ボーナス月の設定',
-      'bonusMonthPrimary': 'ボーナス月1',
-      'bonusMonthSecondary': 'ボーナス月2',
+      'bonusMonthPrimary': 'ボーナス設定1',
+      'bonusMonthSecondary': 'ボーナス設定2',
       'bonusMonthSwapOption': '{from}をボーナス月から外す',
     },
     'en': {
@@ -288,7 +348,7 @@ class AppLocalizations {
       'budgetSavedMessage': 'Budget saved.',
       'bonusSettings': 'Bonus Settings',
       'annualSchedule': 'Annual Schedule',
-      'annualScheduleYear': 'Annual Schedule ({year})',
+      'annualScheduleYear': '{year} Schedule',
       'annualScheduleStartDate': 'Start: {date}',
       'annualSchedulePeriodCount': 'Periods: {count}',
       'annualScheduleTotalDays': 'Total Days: {days}',
@@ -383,33 +443,35 @@ class AppLocalizations {
       'homeCurrentPeriod': 'Current Period',
       'homeSelectedPeriod': 'Selected period',
       'homePeriodsTitle': 'Budget Periods',
+      'homeModePeriod': 'Period',
+      'homeModeMonth': 'Month',
       'homeBudgetTitle': 'Budget',
       'homeMonthlyIncomeLabel': 'Monthly income',
       'homeVariableTotalLabel': 'Discretionary spending',
       'homeFixedExpensesLabel': 'Fixed expenses',
       'homeSpecialExpensesLabel': 'Special expenses',
-      'homePeriodRemaining': 'Remaining this period: {amount}',
-      'homeSelectedPeriodRemaining': 'Remaining for selected period: {amount}',
       'homeIncomeLabel': 'Income',
       'homeFixedSpecialLabel': 'Fixed/Special',
       'homeBudgetLabel': 'Budget',
       'homePeriodLabel': 'Period {index}',
-      'homeTimelinePeriodLabel': 'Period {index}',
       'homeStartDate': 'Start',
       'homeEndDate': 'End',
       'homePeriodLengthLabel': 'Length: {days} days',
-      'homeDaysRemaining': '{days} days remaining',
       'homeCalendarTitle': 'Calendar',
+      'homeGoToToday': 'Go to today',
       'homePeriodColorsLabel': 'Period colors',
       'homePeriodColorsOn': 'Period colors: ON',
       'homePeriodColorsOff': 'Period colors: OFF',
-      'homeDailyExpenseTotal': 'Expenses',
-      'homeDailyIncome': 'Income for this day',
-      'homeDailyBudgetRatioLabel': 'Discretionary spending / daily target',
-      'currencyRatio': '{spent} / {target} JPY',
-      'homeDailyBudgetOver': '{amount} over daily target',
-      'homeDailyInput': 'Add for this day',
-      'homeBudgetRemainingLabel': 'Remaining Budget',
+      'homeMonthColorsLabel': 'Month colors',
+      'homeMonthColorsOn': 'Month colors: ON',
+      'homeMonthColorsOff': 'Month colors: OFF',
+      'homeCountdownPrefix': 'Ends in',
+      'homeCountdownDays': '{days} days',
+      'homeProgressSpent': 'Spent {amount}',
+      'homeRemainingLabel': 'Remaining',
+      'homeBudgetUnitWeek': 'week',
+      'homeBudgetUnitMonth': 'month',
+      'homeWeeklyBudgetOver': '{amount} over weekly target',
       'homeBonusPlaceholder': 'Bonus view is not implemented (placeholder).',
       'expenseAttrFixed': 'Fixed',
       'expenseAttrVariable': 'Variable',
@@ -444,6 +506,74 @@ class AppLocalizations {
       'categoryManagePlaceholder':
           'Category management is not implemented (placeholder).',
       'annualScheduleTitle': 'Annual Schedule',
+      'annualScheduleBasics': 'Basic settings',
+      'annualStartWeekday': 'Starting weekday',
+      'annualBasicStartHelp': 'Start date: {date}',
+      'annualBasicCustomActive':
+          'Advanced settings are active. Reset to basic settings to recalculate the fixed schedule.',
+      'annualBasicReset': 'Reset to basic settings',
+      'annualAdvancedTitle': 'Advanced settings',
+      'annualAdvancedHelp':
+          'Change the ledger start date, bonus months and their spending periods, and the periods with a sixth week.',
+      'annualAdvancedHelpTooltip': 'About advanced settings',
+      'annualSelectYear': 'Select year',
+      'annualClose': 'Close',
+      'annualBudgetHelp': 'Applied as the target for each regular period',
+      'annualBudgetUnit': 'JPY/month',
+      'annualBonusHelp':
+          'Choose a calendar month for zero weeks, or a seven-day period for one week.',
+      'annualBonusWeeks': 'Weeks counted',
+      'annualSixWeekTitle': 'Six-week months',
+      'annualSixWeekHelp':
+          'Choose periods with a sixth week ({count} needed). With two zero-week bonus months, the selected period with the highest number has only one or two days in its sixth week. Check actual dates below.',
+      'annualPreviewTitle': 'Review periods',
+      'annualPreviewSaved':
+          'Complete the settings to preview the changes. Showing saved periods.',
+      'annualWeeks': '{count} weeks',
+      'annualBonusTag': 'Bonus',
+      'annualWeekOfMonth': 'from week {week}',
+      'annualZeroWeekDate': '{date} (week {week}, zero weeks counted)',
+      'annualScheduleSaved': 'Annual schedule saved.',
+      'annualNeighborWarning':
+          'This schedule does not meet the adjacent year. Check the neighboring start dates.',
+      'annualChooseBonus': 'Bonus settings (twice a year)',
+      'annualZeroMonthHelp':
+          'Choose a calendar month without a separate bonus period',
+      'annualZeroMonthSummary':
+          '{month} has zero weeks and no separate bonus period.',
+      'annualOnePeriodHelp': 'Choose the one-week period',
+      'annualChoosePeriod': 'Choose the seven-day bonus period',
+      'annualPeriodUnavailable':
+          'This period conflicts with the other bonus setting',
+      'annualOnePeriodDate': '{start} - {end} · from week {week}',
+      'annualBoundaryHelp':
+          'Each bonus month starts at its first period boundary.',
+      'annualBoundaryInvalid':
+          'This combination cannot cover 365 or 366 days. Change the start date, bonus period, or six-week month.',
+      'annualBoundaryDate': '{date} · from week {week}',
+      'annualUnsavedBadge': 'Unsaved changes',
+      'annualReplaceMonthTitle': 'Which month should {month} replace?',
+      'annualReplaceMonth': 'Replace {month}',
+      'annualBudgetError': 'Enter a budget of at least 1 JPY.',
+      'annualSixWeekRequired':
+          'Choose {count} regular periods to make six weeks.',
+      'annualSixUnavailable':
+          'No selectable six-week period starts in this month.',
+      'annualSixCandidate': '{start} - {end} (after change)',
+      'annualTimelineSummary': '{count} periods',
+      'annualWeeksExtra': '{weeks} weeks + {extra}',
+      'annualPartialSixWeeks': '5 weeks + {extra} (week 6, {days} days total)',
+      'annualZeroBoundary': 'Boundary on {date}',
+      'annualNoCollection': 'No weeks counted',
+      'annualSaveThis': 'Apply these settings',
+      'annualStartDateColumn': 'Start date',
+      'annualEndDateColumn': 'End date',
+      'annualUnsavedTitle': 'Unsaved changes',
+      'annualUnsavedMessage': 'Save your changes before switching years?',
+      'annualDiscard': 'Discard and switch',
+      'annualSaveAndContinue': 'Save and switch',
+      'previousYear': 'Previous year',
+      'nextYear': 'Next year',
       'annualSchedulePlaceholder':
           'Annual schedule is not implemented (placeholder).',
       'bonusExpenseTitle': 'Bonus Expense',
@@ -457,7 +587,7 @@ class AppLocalizations {
       'reminderManagePlaceholder': 'Out of scope for v1 (placeholder).',
       'bonusSettingsTitle': 'Bonus Settings',
       'bonusBudgetTitle': 'Budget',
-      'bonusBudgetLabel': 'Period budget (JPY)',
+      'bonusBudgetLabel': 'Target: variable spending',
       'bonusBudgetHint': 'e.g. 50000',
       'bonusBudgetNote': 'Default is 50,000 JPY.',
       'bonusBudgetApplyNote': 'Changes apply from the next period.',
@@ -467,8 +597,8 @@ class AppLocalizations {
       'bonusMonthToggleOn': 'Set as bonus month',
       'bonusMonthToggleOff': 'Remove bonus month',
       'bonusMonthSwapTitle': 'Set Bonus Months',
-      'bonusMonthPrimary': 'Bonus Month 1',
-      'bonusMonthSecondary': 'Bonus Month 2',
+      'bonusMonthPrimary': 'Bonus 1',
+      'bonusMonthSecondary': 'Bonus 2',
       'bonusMonthSwapOption': 'Remove {from} from bonus months',
     },
   };
@@ -528,6 +658,45 @@ class AppLocalizations {
       _value('annualScheduleCountMismatchWarning');
   String get annualScheduleListTitle => _value('annualScheduleListTitle');
   String get annualScheduleMissing => _value('annualScheduleMissing');
+  String get annualScheduleBasics => _value('annualScheduleBasics');
+  String get annualStartWeekday => _value('annualStartWeekday');
+  String get annualBasicCustomActive => _value('annualBasicCustomActive');
+  String get annualBasicReset => _value('annualBasicReset');
+  String get annualAdvancedTitle => _value('annualAdvancedTitle');
+  String get annualAdvancedHelp => _value('annualAdvancedHelp');
+  String get annualAdvancedHelpTooltip => _value('annualAdvancedHelpTooltip');
+  String get annualSelectYear => _value('annualSelectYear');
+  String get annualClose => _value('annualClose');
+  String get annualBudgetHelp => _value('annualBudgetHelp');
+  String get annualBudgetUnit => _value('annualBudgetUnit');
+  String get annualBonusHelp => _value('annualBonusHelp');
+  String get annualBonusWeeks => _value('annualBonusWeeks');
+  String get annualSixWeekTitle => _value('annualSixWeekTitle');
+  String get annualPreviewTitle => _value('annualPreviewTitle');
+  String get annualPreviewSaved => _value('annualPreviewSaved');
+  String get annualBonusTag => _value('annualBonusTag');
+  String get annualScheduleSaved => _value('annualScheduleSaved');
+  String get annualNeighborWarning => _value('annualNeighborWarning');
+  String get annualChooseBonus => _value('annualChooseBonus');
+  String get annualZeroMonthHelp => _value('annualZeroMonthHelp');
+  String get annualOnePeriodHelp => _value('annualOnePeriodHelp');
+  String get annualChoosePeriod => _value('annualChoosePeriod');
+  String get annualPeriodUnavailable => _value('annualPeriodUnavailable');
+  String get annualBoundaryHelp => _value('annualBoundaryHelp');
+  String get annualBoundaryInvalid => _value('annualBoundaryInvalid');
+  String get annualUnsavedBadge => _value('annualUnsavedBadge');
+  String get annualBudgetError => _value('annualBudgetError');
+  String get annualSixUnavailable => _value('annualSixUnavailable');
+  String get annualNoCollection => _value('annualNoCollection');
+  String get annualSaveThis => _value('annualSaveThis');
+  String get annualStartDateColumn => _value('annualStartDateColumn');
+  String get annualEndDateColumn => _value('annualEndDateColumn');
+  String get annualUnsavedTitle => _value('annualUnsavedTitle');
+  String get annualUnsavedMessage => _value('annualUnsavedMessage');
+  String get annualDiscard => _value('annualDiscard');
+  String get annualSaveAndContinue => _value('annualSaveAndContinue');
+  String get previousYear => _value('previousYear');
+  String get nextYear => _value('nextYear');
   String get bonusSummaryTitle => _value('bonusSummaryTitle');
   String get bonusBalanceLabel => _value('bonusBalanceLabel');
   String get bonusExpenseTotalLabel => _value('bonusExpenseTotalLabel');
@@ -604,6 +773,8 @@ class AppLocalizations {
   String get homeSelectedPeriod => _value('homeSelectedPeriod');
   String get homePeriodsTitle => _value('homePeriodsTitle');
   String get homeBudgetTitle => _value('homeBudgetTitle');
+  String get homeModePeriod => _value('homeModePeriod');
+  String get homeModeMonth => _value('homeModeMonth');
   String get homeMonthlyIncomeLabel => _value('homeMonthlyIncomeLabel');
   String get homeVariableTotalLabel => _value('homeVariableTotalLabel');
   String get homeFixedExpensesLabel => _value('homeFixedExpensesLabel');
@@ -614,14 +785,17 @@ class AppLocalizations {
   String get homeStartDate => _value('homeStartDate');
   String get homeEndDate => _value('homeEndDate');
   String get homeCalendarTitle => _value('homeCalendarTitle');
+  String get homeGoToToday => _value('homeGoToToday');
   String get homePeriodColorsLabel => _value('homePeriodColorsLabel');
   String get homePeriodColorsOn => _value('homePeriodColorsOn');
   String get homePeriodColorsOff => _value('homePeriodColorsOff');
-  String get homeDailyExpenseTotal => _value('homeDailyExpenseTotal');
-  String get homeDailyIncome => _value('homeDailyIncome');
-  String get homeDailyBudgetRatioLabel => _value('homeDailyBudgetRatioLabel');
-  String get homeDailyInput => _value('homeDailyInput');
-  String get homeBudgetRemainingLabel => _value('homeBudgetRemainingLabel');
+  String get homeMonthColorsLabel => _value('homeMonthColorsLabel');
+  String get homeMonthColorsOn => _value('homeMonthColorsOn');
+  String get homeMonthColorsOff => _value('homeMonthColorsOff');
+  String get homeCountdownPrefix => _value('homeCountdownPrefix');
+  String get homeRemainingLabel => _value('homeRemainingLabel');
+  String get homeBudgetUnitWeek => _value('homeBudgetUnitWeek');
+  String get homeBudgetUnitMonth => _value('homeBudgetUnitMonth');
   String get homeBonusPlaceholder => _value('homeBonusPlaceholder');
   String get csvExportTitle => _value('csvExportTitle');
   String get csvExportPlaceholder => _value('csvExportPlaceholder');
@@ -694,6 +868,65 @@ class AppLocalizations {
   String annualScheduleYear(int year) =>
       _format('annualScheduleYear', {'year': year.toString()});
 
+  String annualBasicStartHelp(String date) =>
+      _format('annualBasicStartHelp', {'date': date});
+
+  String annualZeroMonthSummary(String month) =>
+      _format('annualZeroMonthSummary', {'month': month});
+
+  String annualTimelineSummary(int count) =>
+      _format('annualTimelineSummary', {'count': count.toString()});
+
+  String annualWeeksExtra(int weeks, int extra) => _format('annualWeeksExtra',
+      {'weeks': weeks.toString(), 'extra': _extraDays(extra)});
+
+  String annualPartialSixWeeks(int extra, int days) =>
+      _format('annualPartialSixWeeks', {
+        'extra': _extraDays(extra),
+        'days': days.toString(),
+      });
+
+  String annualSixWeekHelp(int count) =>
+      _format('annualSixWeekHelp', {'count': count.toString()});
+
+  String annualWeeks(int count) =>
+      _format('annualWeeks', {'count': count.toString()});
+
+  String annualZeroWeekDate(String date, int week) =>
+      _format('annualZeroWeekDate', {'date': date, 'week': week.toString()});
+
+  String annualWeekOfMonth(int week) =>
+      _format('annualWeekOfMonth', {'week': week.toString()});
+
+  String annualBoundaryDate(String date, int week) =>
+      _format('annualBoundaryDate', {'date': date, 'week': week.toString()});
+
+  String annualOnePeriodDate(String start, String end, int week) =>
+      _format('annualOnePeriodDate', {
+        'start': start,
+        'end': end,
+        'week': week.toString(),
+      });
+
+  String _extraDays(int count) => locale.languageCode == 'ja'
+      ? '$count日'
+      : '$count ${count == 1 ? 'day' : 'days'}';
+
+  String annualReplaceMonthTitle(String month) =>
+      _format('annualReplaceMonthTitle', {'month': month});
+
+  String annualReplaceMonth(String month) =>
+      _format('annualReplaceMonth', {'month': month});
+
+  String annualSixWeekRequired(int count) =>
+      _format('annualSixWeekRequired', {'count': count.toString()});
+
+  String annualSixCandidate(String start, String end) =>
+      _format('annualSixCandidate', {'start': start, 'end': end});
+
+  String annualZeroBoundary(String date) =>
+      _format('annualZeroBoundary', {'date': date});
+
   String annualScheduleStartDate(String date) =>
       _format('annualScheduleStartDate', {'date': date});
 
@@ -731,33 +964,24 @@ class AppLocalizations {
   String homePeriodLengthLabel(int days) =>
       _format('homePeriodLengthLabel', {'days': days.toString()});
 
-  String homeDaysRemaining(int days) =>
-      _format('homeDaysRemaining', {'days': days.toString()});
+  String homeCountdownDays(int days) =>
+      _format('homeCountdownDays', {'days': days.toString()});
+
+  String formatYenAmount(int? amount) {
+    if (amount == null) return '—';
+    final formatted =
+        NumberFormat.decimalPattern(locale.languageCode).format(amount.abs());
+    return amount < 0 ? '-¥$formatted' : '¥$formatted';
+  }
+
+  String homeProgressSpent(int? amount) =>
+      _format('homeProgressSpent', {'amount': formatYenAmount(amount)});
 
   String homePeriodLabel(int index) =>
       _format('homePeriodLabel', {'index': index.toString()});
 
-  String homeTimelinePeriodLabel(int index) => _format(
-        'homeTimelinePeriodLabel',
-        {'index': index.toString().padLeft(2, '0')},
-      );
-
-  String homePeriodRemaining(int amount) =>
-      _format('homePeriodRemaining', {'amount': formatCurrency(amount)});
-
-  String homeSelectedPeriodRemaining(int amount) => _format(
-      'homeSelectedPeriodRemaining', {'amount': formatCurrency(amount)});
-
-  String homeDailyBudgetOver(int amount) =>
-      _format('homeDailyBudgetOver', {'amount': formatCurrency(amount)});
-
-  String formatCurrencyRatio(int? spent, int? target) {
-    if (spent == null || target == null) return '—';
-    return _format('currencyRatio', {
-      'spent': spent.toString(),
-      'target': target.toString(),
-    });
-  }
+  String homeWeeklyBudgetOver(int amount) =>
+      _format('homeWeeklyBudgetOver', {'amount': formatCurrency(amount)});
 
   String languageLabel(AppLanguage language) {
     switch (language) {
@@ -799,8 +1023,15 @@ class AppLocalizations {
   String formatDate(DateTime d) =>
       '${d.year}/${_twoDigits(d.month)}/${_twoDigits(d.day)}';
 
+  String formatSpacedDate(DateTime d) =>
+      '${d.year} / ${_twoDigits(d.month)} / ${_twoDigits(d.day)}';
+
   String formatShortDate(DateTime d) =>
       '${_twoDigits(d.month)}/${_twoDigits(d.day)}';
+
+  String formatMonthDay(DateTime d) => locale.languageCode == 'ja'
+      ? '${d.month}月${d.day}日'
+      : '${d.month}/${d.day}';
 
   String _twoDigits(int value) => value.toString().padLeft(2, '0');
 
@@ -813,9 +1044,23 @@ class AppLocalizations {
 
   String formatMonth(int month) {
     if (locale.languageCode == 'ja') {
-      return '${month}月';
+      return '$month月';
     }
     return 'Month $month';
+  }
+
+  String formatWeekday(int weekday) {
+    const japanese = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日'];
+    const english = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    return (locale.languageCode == 'ja' ? japanese : english)[weekday - 1];
   }
 
   String formatCurrency(int amount) {
